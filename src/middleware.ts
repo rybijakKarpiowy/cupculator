@@ -1,12 +1,16 @@
+import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
-export function middleware(request: NextRequest) {
-    // if (session) {
-    //     return NextResponse.next();
-    // }
+export async function middleware(req: NextRequest) {
+    const res = NextResponse.next();
+    const supabase = createMiddlewareClient({req, res});
+    const session = await supabase.auth.getSession();
+    if (session) {
+        return NextResponse.next();
+    }
 
-    return NextResponse.redirect(new URL("/login", request.url));
+    return NextResponse.redirect(new URL("/login", req.url));
 }
 
 export const config = {

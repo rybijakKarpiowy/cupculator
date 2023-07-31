@@ -11,11 +11,11 @@ export const POST = async (req: NextRequest) => {
     }
 
     if (roleData.length === 0) {
-        return NextResponse.json({ status: 403 });
+        return NextResponse.redirect("/login");
     }
 
     if (roleData[0].role == "User") {
-        return NextResponse.json({ status: 403 });
+        return NextResponse.redirect("/");
     }
 
     const { data: usersInfo, error: error2 } = await supabase.from("users").select("*")

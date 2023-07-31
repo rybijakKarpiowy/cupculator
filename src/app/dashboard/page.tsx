@@ -1,10 +1,10 @@
 import { DashboardPages } from "@/components/dashboardPages";
 import { Database } from "@/database/types";
-import { SupabaseClient, createClientComponentClient, createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/dist/client/components/headers";
+import { User as AuthUser } from "@supabase/supabase-js"
 
-const getData = async (supabase: SupabaseClient<any, "public", any>) => {
-    const authUser = (await supabase.auth.getUser()).data.user
+const getUserData = async (authUser: AuthUser, lang: string, cup: string) => {
 
     const res = await fetch("http://localhost:3000/api/dashboard", {
         method: "POST",
@@ -15,7 +15,7 @@ const getData = async (supabase: SupabaseClient<any, "public", any>) => {
     });
 
     if (!res.ok) {
-        alert("Error");
+        alert("Something went wrong");
     }
 
     const { userInfo, clients, adminsAndSalesmen } : {userInfo: any, clients: Client[], adminsAndSalesmen: Client[]} = await res.json();
@@ -33,23 +33,53 @@ const getData = async (supabase: SupabaseClient<any, "public", any>) => {
         return { user, clients };
     }
 
-    return { user };
+    window.location.href = `/?lang=${lang}&cup=${cup}`;
+    return
 };
+
+const getPricings = async (authUser: AuthUser) => {
+    const res = await fetch("http://localhost:3000/api/pricings", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ user_id: authUser?.id }),
+    });
+
+    if (!res.ok) {
+        console.log("Something went wrong (no pricings)")
+        return { available_cup_pricings: [], available_color_pricings: [] };
+    }
+
+    const { available_cup_pricings, available_color_pricings } = await res.json();
+
+    return { available_cup_pricings, available_color_pricings };
+}
 
 export default async function Dashboard({
     searchParams,
 }: {
-    searchParams?: { [key: string]: string | string[] | undefined };
+    searchParams?: { [key: string]: string | undefined };
 }) {
     const lang = searchParams?.lang || "1";
     const cup = searchParams?.cup || "";
 
     const supabase = createServerComponentClient<Database>({cookies});
+    const authUser = (await supabase.auth.getUser()).data.user
 
-    const { user, clients, adminsAndSalesmen } = await getData(supabase);
+    if (!authUser) {
+        window.location.href = `/?lang=${lang}&cup=${cup}`;
+        return;
+    }
+
+    const userData = await getUserData(authUser, lang, cup) as { user: User, clients: Client[], adminsAndSalesmen?: Client[] };
+    const { user, clients, adminsAndSalesmen } = userData;
+
+    const pricings = await getPricings(authUser);
+    const { available_color_pricings, available_cup_pricings } = pricings;
 
     return (
-        <DashboardPages user={user} clients={clients} adminsAndSalesmen={adminsAndSalesmen} />
+        <DashboardPages user={user} clients={clients} adminsAndSalesmen={adminsAndSalesmen} available_color_pricings={available_color_pricings} available_cup_pricings={available_cup_pricings} />
     );
 }
 

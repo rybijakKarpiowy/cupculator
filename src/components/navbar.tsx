@@ -1,6 +1,14 @@
 "use client";
 
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+
 export const Navbar = () => {
+    const supabase = createClientComponentClient();
+
+    const handleLogout = () => {
+        supabase.auth.signOut();
+    };
+
     return (
         <nav
             className="lg:rounded-none fixed block right-0 left-0 top-0 border-b z-50 bg-white h-[115px] transition-all min-h-[50px] mb-5"
@@ -25,7 +33,10 @@ export const Navbar = () => {
                         <span className="block w-[22px] h-[2px] rounded-[1px]"></span>
                         <span className="block w-[22px] h-[2px] rounded-[1px]"></span>
                     </button>
-                    <a className="lg:-ml-[15px] drop-shadow float-left p-[15px] text-lg leading-5 h-[50px]" href="https://kubki.com.pl/">
+                    <a
+                        className="lg:-ml-[15px] drop-shadow float-left p-[15px] text-lg leading-5 h-[50px]"
+                        href="https://kubki.com.pl/"
+                    >
                         <img
                             className="h-[80px] w-auto"
                             src="https://kubki.com.pl/img/logo-20lat.png"
@@ -42,7 +53,11 @@ export const Navbar = () => {
                         <ul className="mt-[15px] pl-0 -ml-[5px] mb-[10px] block ">
                             <li>
                                 <a href="?lang=1">
-                                    <img className="align-middle overflow-clip" src="https://kubki.com.pl/img/pl.jpg" alt="pl" />
+                                    <img
+                                        className="align-middle overflow-clip"
+                                        src="https://kubki.com.pl/img/pl.jpg"
+                                        alt="pl"
+                                    />
                                 </a>
                             </li>
                             <li>
@@ -62,30 +77,69 @@ export const Navbar = () => {
                         </form>
                     </div>
                     <ul className="lg:float-right ml-[59px] mr-0 mt-12 mb-0 pl-0 leading-5 text-[14px]">
-                        <li  className="lg:float-left relative block box-border">
-                            <a href="https://kubki.com.pl/" className="ml-[5px] p-[6px_15px] rounded-[25px] duration-200 float-left relative block">
+                        <li className="lg:float-left relative block box-border">
+                            <a
+                                href="https://kubki.com.pl/"
+                                className="ml-[5px] p-[6px_15px] rounded-[25px] duration-200 float-left relative block"
+                            >
                                 <img src="https://kubki.com.pl/img/home.png" alt="" />
                             </a>
                         </li>
-                        <li  className="lg:float-left relative block">
-                            <a href="https://kubki.com.pl/blog.html" className="ml-[5px] p-[6px_15px] rounded-[25px] duration-200 float-left relative block font-[allerregular] text-[rgb(43,_41,_41)] border-none drop-shadow-sm">Blog</a>
+                        <li className="lg:float-left relative block">
+                            <a
+                                href="https://kubki.com.pl/blog.html"
+                                className="ml-[5px] p-[6px_15px] rounded-[25px] duration-200 float-left relative block font-[allerregular] text-[rgb(43,_41,_41)] border-none drop-shadow-sm"
+                            >
+                                Blog
+                            </a>
                         </li>
-                        <li  className="lg:float-left relative block">
-                            <a href="https://kubki.com.pl/Kubki.html?lang=1" className="ml-[5px] p-[6px_15px] rounded-[25px] duration-200 float-left relative block font-[allerregular] text-[rgb(43,_41,_41)] border-none drop-shadow-sm">Oferta</a>
+                        <li className="lg:float-left relative block">
+                            <a
+                                href="https://kubki.com.pl/Kubki.html?lang=1"
+                                className="ml-[5px] p-[6px_15px] rounded-[25px] duration-200 float-left relative block font-[allerregular] text-[rgb(43,_41,_41)] border-none drop-shadow-sm"
+                            >
+                                Oferta
+                            </a>
                         </li>
-                        <li  className="lg:float-left relative block">
-                            <a href="https://kubki.com.pl/O_firmie2.html" className="ml-[5px] p-[6px_15px] rounded-[25px] duration-200 float-left relative block font-[allerregular] text-[rgb(43,_41,_41)] border-none drop-shadow-sm">O firmie</a>
+                        <li className="lg:float-left relative block">
+                            <a
+                                href="https://kubki.com.pl/O_firmie2.html"
+                                className="ml-[5px] p-[6px_15px] rounded-[25px] duration-200 float-left relative block font-[allerregular] text-[rgb(43,_41,_41)] border-none drop-shadow-sm"
+                            >
+                                O firmie
+                            </a>
                         </li>
-                        <li  className="lg:float-left relative block">
-                            <a href="https://kubki.com.pl/ECO.html" className="ml-[5px] p-[6px_15px] rounded-[25px] duration-200 float-left relative block font-[allerregular] text-[rgb(43,_41,_41)] border-none drop-shadow-sm">ECO</a>
+                        <li className="lg:float-left relative block">
+                            <a
+                                href="https://kubki.com.pl/ECO.html"
+                                className="ml-[5px] p-[6px_15px] rounded-[25px] duration-200 float-left relative block font-[allerregular] text-[rgb(43,_41,_41)] border-none drop-shadow-sm"
+                            >
+                                ECO
+                            </a>
                         </li>
-                        <li  className="lg:float-left relative block">
-                            <a href="https://kubki.com.pl/Know_how.html" className="ml-[5px] p-[6px_15px] rounded-[25px] duration-200 float-left relative block font-[allerregular] text-[rgb(43,_41,_41)] border-none drop-shadow-sm">Strefa wiedzy</a>
+                        <li className="lg:float-left relative block">
+                            <a
+                                href="https://kubki.com.pl/Know_how.html"
+                                className="ml-[5px] p-[6px_15px] rounded-[25px] duration-200 float-left relative block font-[allerregular] text-[rgb(43,_41,_41)] border-none drop-shadow-sm"
+                            >
+                                Strefa wiedzy
+                            </a>
                         </li>
-                        <li  className="lg:float-left relative block">
-                            <a href="https://kubki.com.pl/Kontakt.html" className="ml-[5px] p-[6px_15px] rounded-[25px] duration-200 float-left relative block font-[allerregular] text-[rgb(43,_41,_41)] border-none drop-shadow-sm">Kontakt</a>
+                        <li className="lg:float-left relative block">
+                            <a
+                                href="https://kubki.com.pl/Kontakt.html"
+                                className="ml-[5px] p-[6px_15px] rounded-[25px] duration-200 float-left relative block font-[allerregular] text-[rgb(43,_41,_41)] border-none drop-shadow-sm"
+                            >
+                                Kontakt
+                            </a>
                         </li>
                     </ul>
+                    <div>
+                        {/* <label htmlFor="logout">
+                            <svg>logout</svg>
+                        </label>
+                        <a id="logout" onClick={() => handleLogout()}></a> */}
+                    </div>
                 </div>
             </div>
         </nav>

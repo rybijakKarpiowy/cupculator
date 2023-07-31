@@ -1,11 +1,34 @@
 'use client'
 
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { useSearchParams } from "next/navigation";
+
 export default function Login() {
-    const handleSubmit = (event: React.FormEvent<HTMLButtonElement>) => {
+    const searchParams = useSearchParams();
+    const lang = searchParams.get("lang") || "1";
+    const cup = searchParams.get("cup");
+
+    const supabase = createClientComponentClient();
+
+    const handleSubmit = async (event: React.FormEvent<HTMLButtonElement>) => {
         event.preventDefault();
         const email = (document.getElementById('email') as HTMLInputElement).value;
         const password = (document.getElementById('password') as HTMLInputElement).value;
-        console.log(email, password)
+
+        const { data, error } = await supabase.auth.signInWithPassword({
+            email: email,
+            password: password,
+        })
+
+        if (error) {
+            alert(error.message)
+            return
+        }
+
+        if (data) {
+            alert("Zalogowano!")
+            window.location.href = `/?cup=${cup}&lang=${lang}`
+        }
     }
 
     return (
@@ -21,8 +44,8 @@ export default function Login() {
             </div>
             <button type="submit" onClick={(e) => handleSubmit(e)}>Zaloguj</button>
         </form>
-        <span>Nie masz konta? <a href="/register">Zarejestruj się</a></span>
-        <a>Zapomniałeś hasła?</a>
+        <span>Nie masz konta? <a href={`/register?cup=${cup}&lang=${lang}`}>Zarejestruj się</a></span>
+        <a href={`/recovery?cup=${cup}&lang=${lang}`} >Zapomniałeś hasła?   </a>
         </div>
     );
 }

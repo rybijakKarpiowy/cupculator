@@ -37,24 +37,24 @@ const getUserData = async (authUser: AuthUser, lang: string, cup: string) => {
     return
 };
 
-// const getPricings = async (authUser: AuthUser) => {
-//     const res = await fetch("http://localhost:3000/api/pricings", {
-//         method: "POST",
-//         headers: {
-//             "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify({ user_id: authUser?.id }),
-//     });
+const getPricings = async (authUser: AuthUser) => {
+    const res = await fetch("http://localhost:3000/api/pricings", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ user_id: authUser?.id }),
+    });
 
-//     if (!res.ok) {
-//         console.log("Something went wrong (no pricings)")
-//         return { available_cup_pricings: [], available_color_pricings: [] };
-//     }
+    if (!res.ok) {
+        console.log("Something went wrong (no pricings)")
+        return { available_cup_pricings: [], available_color_pricings: [] };
+    }
 
-//     const { available_cup_pricings, available_color_pricings } = await res.json();
+    const { available_cup_pricings, available_color_pricings } = await res.json();
 
-//     return { available_cup_pricings, available_color_pricings };
-// }
+    return { available_cup_pricings, available_color_pricings };
+}
 
 export default async function Dashboard({
     searchParams,

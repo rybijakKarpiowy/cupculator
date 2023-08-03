@@ -19,6 +19,8 @@
     "encoding": "^0.1.13",
     "eslint": "8.44.0",
     "eslint-config-next": "13.4.10",
+    "google-auth-library": "^9.0.0",
+    "google-spreadsheet": "^4.0.2",
     "next": "13.4.10",
     "postcss": "8.4.26",
     "react": "18.2.0",
@@ -27,6 +29,7 @@
     "typescript": "5.1.6"
   },
   "devDependencies": {
+    "@types/gapi": "^0.0.44",
     "supabase": ">=1.8.1"
   }
 }

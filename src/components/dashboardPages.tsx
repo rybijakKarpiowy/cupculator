@@ -17,12 +17,24 @@ export const DashboardPages = ({
     available_color_pricings: string[];
 }) => {
     const [chosenTab, setChosenTab] = useState<
-        "activationRequests" | "clients" | "adminsAndSalesmen"
+        "activationRequests" | "clients" | "adminsAndSalesmen" | "pricings"
     >("activationRequests");
     const [loading, setLoading] = useState(false);
     const [addAdmin, setAddAdmin] = useState(false);
     const [clients, setClients] = useState(clientsInput);
     const [adminsAndSalesmen, setAdminsAndSalesmen] = useState(adminsAndSalesmenInput);
+    const [cups_or_colors, setCups_or_colors] = useState<"cups" | "colors" | "">("");
+    const [pricing_name, setPricing_name] = useState("");
+    const [newPricing, setNewPricing] = useState(false);
+
+    useEffect(() => {
+        const cupsOrColorsDiv = document.querySelector("#cups_or_colors") as HTMLSelectElement;
+        if (cupsOrColorsDiv) cupsOrColorsDiv.value = cups_or_colors;
+        const pricingNameDiv = document.querySelector("#pricing_name") as HTMLSelectElement;
+        if (pricingNameDiv) pricingNameDiv.value = pricing_name;
+
+        if (pricing_name === "new") setNewPricing(true);
+    }, [cups_or_colors, pricing_name]);
 
     const handleActication = async (user_id: string, e?: React.FormEvent<HTMLFormElement>) => {
         setLoading(true);
@@ -30,11 +42,11 @@ export const DashboardPages = ({
         let color_pricing = "";
 
         if (e) {
-        e.preventDefault();
-        cup_pricing = (e.currentTarget.querySelector("#cup_pricing") as HTMLInputElement)
-            ?.value;
-        color_pricing = (e.currentTarget.querySelector("#color_pricing") as HTMLInputElement)
-            ?.value;
+            e.preventDefault();
+            cup_pricing = (e.currentTarget.querySelector("#cup_pricing") as HTMLInputElement)
+                ?.value;
+            color_pricing = (e.currentTarget.querySelector("#color_pricing") as HTMLInputElement)
+                ?.value;
         } else {
             const clientDiv = document.querySelector(`#${user_id}`);
             cup_pricing = (clientDiv?.querySelector("#cup_pricing") as HTMLInputElement)?.value;
@@ -69,7 +81,7 @@ export const DashboardPages = ({
                     setClients([...clients]);
                     return;
                 }
-            })
+            });
             setLoading(false);
             return;
         }
@@ -100,7 +112,7 @@ export const DashboardPages = ({
                     setAdminsAndSalesmen([...adminsAndSalesmen]);
                     return;
                 }
-            })
+            });
             setLoading(false);
             return;
         }
@@ -108,7 +120,7 @@ export const DashboardPages = ({
         alert("Wystąpił błąd");
         setLoading(false);
         return;
-    }
+    };
 
     const handleDeleteUser = async (user_id: string) => {
         if (!confirm("Czy na pewno chcesz usunąć tego użytkownika?")) return;
@@ -131,7 +143,7 @@ export const DashboardPages = ({
                     setAdminsAndSalesmen([...adminsAndSalesmen]);
                     return;
                 }
-            })
+            });
             setLoading(false);
             return;
         }
@@ -139,7 +151,7 @@ export const DashboardPages = ({
         alert(await res.text());
         setLoading(false);
         return;
-    }
+    };
 
     const handleAddAdmin = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -147,8 +159,12 @@ export const DashboardPages = ({
 
         const email = (e.currentTarget.querySelector("#email") as HTMLInputElement)?.value;
         const password = (e.currentTarget.querySelector("#password") as HTMLInputElement)?.value;
-        const passwordRepeat = (e.currentTarget.querySelector("#passwordRepeat") as HTMLInputElement)?.value;
-        const role = (e.currentTarget.querySelector("#role") as HTMLInputElement)?.value as "Admin" | "Salesman";
+        const passwordRepeat = (
+            e.currentTarget.querySelector("#passwordRepeat") as HTMLInputElement
+        )?.value;
+        const role = (e.currentTarget.querySelector("#role") as HTMLInputElement)?.value as
+            | "Admin"
+            | "Salesman";
 
         if (!email || !password || !passwordRepeat || !role) {
             alert("Uzupełnij wszystkie pola");
@@ -191,7 +207,11 @@ export const DashboardPages = ({
         });
 
         if (res.ok) {
-            alert(`${role === "Admin" ? "Administrator" : "Sprzedawca"} został dodany, mail aktywacyjny został wysłany na podany adres email`);
+            alert(
+                `${
+                    role === "Admin" ? "Administrator" : "Sprzedawca"
+                } został dodany, mail aktywacyjny został wysłany na podany adres email`
+            );
             setAddAdmin(false);
             setLoading(false);
             window.location.reload();
@@ -201,7 +221,77 @@ export const DashboardPages = ({
         alert("Wystąpił błąd");
         setLoading(false);
         return;
-    }
+    };
+
+    const handleAddPricing = async () => {
+        setLoading(true);
+
+        const sheet_url = (document.querySelector("#sheet_url") as HTMLInputElement)?.value;
+
+        if (!cups_or_colors || !pricing_name || !sheet_url) {
+            alert("Uzupełnij wszystkie pola");
+            setLoading(false);
+            return;
+        }
+
+        if (sheet_url && !sheet_url.includes("docs.google.com/spreadsheets/d/")) {
+            alert("Niepoprawny link do arkusza");
+            setLoading(false);
+            return;
+        }
+
+        if (pricing_name.length > 64) {
+            alert("Nazwa cennika jest za długa");
+            setLoading(false);
+            return;
+        }
+
+        if (
+            (cups_or_colors === "cups" && available_cup_pricings?.includes(pricing_name)) ||
+            (cups_or_colors === "colors" && available_color_pricings?.includes(pricing_name))
+        ) {
+            alert("Taki cennik już istnieje, proszę wybrać go z listy");
+            setLoading(false);
+            return;
+        }
+
+        let res = {} as Response;
+        if (cups_or_colors === "cups") {
+            res = await fetch("/api/updatecups", {
+                method: "POST",
+                body: JSON.stringify({
+                    auth_id: user?.user_id,
+                    pricing_name,
+                    sheet_url,
+                }),
+            });
+        } else if (cups_or_colors === "colors") {
+            res = await fetch("/api/updatecolors", {
+                method: "POST",
+                body: JSON.stringify({
+                    auth_id: user?.user_id,
+                    pricing_name,
+                    sheet_url,
+                }),
+            });
+        }
+
+        if (res.ok) {
+            alert("Cennik został dodany");
+            setCups_or_colors("");
+            setLoading(false);
+            setPricing_name("");
+            setNewPricing(false);
+            window.location.reload();
+            return;
+        }
+
+        alert("Wystąpił błąd");
+        setLoading(false);
+        setPricing_name("");
+        setNewPricing(false);
+        return;
+    };
 
     return (
         <div>
@@ -224,14 +314,24 @@ export const DashboardPages = ({
                     Klienci
                 </button>
                 {user?.role === "Admin" && (
-                    <button
-                        className={`${
-                            chosenTab === "adminsAndSalesmen" ? "bg-slate-400" : "bg-slate-300"
-                        } px-2 rounded-md`}
-                        onClick={() => setChosenTab("adminsAndSalesmen")}
-                    >
-                        Admini i sprzedawcy
-                    </button>
+                    <>
+                        <button
+                            className={`${
+                                chosenTab === "adminsAndSalesmen" ? "bg-slate-400" : "bg-slate-300"
+                            } px-2 rounded-md`}
+                            onClick={() => setChosenTab("adminsAndSalesmen")}
+                        >
+                            Admini i sprzedawcy
+                        </button>
+                        <button
+                            className={`${
+                                chosenTab === "pricings" ? "bg-slate-400" : "bg-slate-300"
+                            } px-2 rounded-md`}
+                            onClick={() => setChosenTab("pricings")}
+                        >
+                            Cenniki
+                        </button>
+                    </>
                 )}
             </div>
             <p>Logged in as {user?.email}</p>
@@ -493,30 +593,46 @@ export const DashboardPages = ({
                                 .filter((user) => user.role == "Admin")
                                 .map((admin) => (
                                     <div key={admin.user_id} className="flex flex-row">
-                                        <li className={`px-2 border border-black w-64 text-center ${admin.user_id === user.user_id && "bg-blue-200"}`}>
-                                        {admin.user_id !== user.user_id ? <select
-                                                defaultValue={admin.role}
-                                                onChange={(e) => handleRoleChange(e, admin.user_id)}
-                                                disabled={loading}
-                                            >
-                                                <option value="Admin">Admin</option>
-                                                <option value="Salesman">Handlowiec</option>
-                                            </select>: admin.role}
+                                        <li
+                                            className={`px-2 border border-black w-64 text-center ${
+                                                admin.user_id === user.user_id && "bg-blue-200"
+                                            }`}
+                                        >
+                                            {admin.user_id !== user.user_id ? (
+                                                <select
+                                                    defaultValue={admin.role}
+                                                    onChange={(e) =>
+                                                        handleRoleChange(e, admin.user_id)
+                                                    }
+                                                    disabled={loading}
+                                                >
+                                                    <option value="Admin">Admin</option>
+                                                    <option value="Salesman">Handlowiec</option>
+                                                </select>
+                                            ) : (
+                                                admin.role
+                                            )}
                                         </li>
-                                        <li className={`px-2 border border-black w-80 text-center  ${admin.user_id === user.user_id && "bg-blue-200"}`}>
+                                        <li
+                                            className={`px-2 border border-black w-80 text-center  ${
+                                                admin.user_id === user.user_id && "bg-blue-200"
+                                            }`}
+                                        >
                                             {admin.email}
                                         </li>
-                                        {admin.user_id !== user.user_id && <button
-                                            onClick={() => handleDeleteUser(admin.user_id)}
-                                            className={`px-2 w-24 rounded-md ${
-                                                loading
-                                                    ? "bg-slate-400"
-                                                    : "bg-red-300 hover:bg-red-400"
-                                            }`}
-                                            disabled={loading}
-                                        >
-                                            Usuń
-                                        </button>}
+                                        {admin.user_id !== user.user_id && (
+                                            <button
+                                                onClick={() => handleDeleteUser(admin.user_id)}
+                                                className={`px-2 w-24 rounded-md ${
+                                                    loading
+                                                        ? "bg-slate-400"
+                                                        : "bg-red-300 hover:bg-red-400"
+                                                }`}
+                                                disabled={loading}
+                                            >
+                                                Usuń
+                                            </button>
+                                        )}
                                     </div>
                                 ))}
                             {adminsAndSalesmen
@@ -526,7 +642,9 @@ export const DashboardPages = ({
                                         <li className="px-2 border border-black w-64 text-center">
                                             <select
                                                 defaultValue={salesman.role}
-                                                onChange={(e) => handleRoleChange(e, salesman.user_id)}
+                                                onChange={(e) =>
+                                                    handleRoleChange(e, salesman.user_id)
+                                                }
                                                 disabled={loading}
                                             >
                                                 <option value="Admin">Admin</option>
@@ -538,7 +656,11 @@ export const DashboardPages = ({
                                         </li>
                                         <button
                                             onClick={() => handleDeleteUser(salesman.user_id)}
-                                            className={`px-2 w-24 rounded-md ${loading ? "bg-slate-400" : "bg-red-300 hover:bg-red-400"}`}
+                                            className={`px-2 w-24 rounded-md ${
+                                                loading
+                                                    ? "bg-slate-400"
+                                                    : "bg-red-300 hover:bg-red-400"
+                                            }`}
                                             disabled={loading}
                                         >
                                             Usuń
@@ -582,14 +704,20 @@ export const DashboardPages = ({
                                     ></input>
                                     <button
                                         type="submit"
-                                        className={`px-2 w-24 rounded-md ${loading ? "bg-slate-400" : "bg-green-300 hover:bg-green-400"}`}
+                                        className={`px-2 w-24 rounded-md ${
+                                            loading
+                                                ? "bg-slate-400"
+                                                : "bg-green-300 hover:bg-green-400"
+                                        }`}
                                         disabled={loading}
                                     >
                                         Dodaj
                                     </button>
                                     <button
                                         onClick={() => setAddAdmin(false)}
-                                        className={`px-2 w-24 rounded-md ${loading ? "bg-slate-400" : "bg-red-300 hover:bg-red-400"}`}
+                                        className={`px-2 w-24 rounded-md ${
+                                            loading ? "bg-slate-400" : "bg-red-300 hover:bg-red-400"
+                                        }`}
                                         disabled={loading}
                                     >
                                         Anuluj
@@ -607,6 +735,70 @@ export const DashboardPages = ({
                         </ul>
                     </div>
                 )}
+            {user?.role === "Admin" && chosenTab === "pricings" && (
+                <div>
+                    <h2>Aktualizuj/dodaj cennik</h2>
+                    <select
+                        id="cups_or_colors"
+                        defaultValue=""
+                        onChange={(e) => setCups_or_colors(e.target.value as "cups" | "colors")}
+                        disabled={loading}
+                    >
+                        <option value="" disabled>
+                            Kubki/kolory
+                        </option>
+                        <option value="cups">Kubki</option>
+                        <option value="colors">Kolory</option>
+                    </select>
+                    <select
+                        id="pricing_name"
+                        defaultValue=""
+                        disabled={!cups_or_colors || loading}
+                        onChange={(e) => setPricing_name(e.target.value as string)}
+                    >
+                        <option value="" disabled>
+                            Wybierz cennik
+                        </option>
+                        {cups_or_colors === "cups" &&
+                            available_cup_pricings.map((pricing) => (
+                                <option key={pricing} value={pricing}>
+                                    {pricing}
+                                </option>
+                            ))}
+                        {cups_or_colors === "colors" &&
+                            available_color_pricings.map((pricing) => (
+                                <option key={pricing} value={pricing}>
+                                    {pricing}
+                                </option>
+                            ))}
+                        <option value="new">Nowy cennik</option>
+                    </select>
+                    {newPricing && (
+                        <input
+                            type="text"
+                            id="new_pricing_name"
+                            placeholder="Nazwa nowego cennika"
+                            disabled={!cups_or_colors || loading}
+                            onChange={(e) => setPricing_name(e.target.value)}
+                        />
+                    )}
+                    <input
+                        type="text"
+                        id="sheet_url"
+                        disabled={!cups_or_colors || !pricing_name || loading}
+                        placeholder="Link do arkusza google"
+                    />
+                    <button
+                        onClick={() => handleAddPricing()}
+                        disabled={!cups_or_colors || !pricing_name || loading}
+                        className={`px-2 w-24 rounded-md ${
+                            loading ? "bg-slate-400" : "bg-green-300 hover:bg-green-400"
+                        }`}
+                    >
+                        Wyślij
+                    </button>
+                </div>
+            )}
         </div>
     );
 };

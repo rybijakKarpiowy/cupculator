@@ -3,8 +3,11 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (req: NextRequest) => {
     const { user_id } = await req.json();
-    
-    const { data: roleData, error: error1 } = await supabase.from("users_restricted").select("role").eq("user_id", user_id);
+
+    const { data: roleData, error: error1 } = await supabase
+        .from("users_restricted")
+        .select("role")
+        .eq("user_id", user_id);
 
     if (error1) {
         return NextResponse.json(error1.message, { status: 500 });
@@ -18,17 +21,27 @@ export const POST = async (req: NextRequest) => {
         return NextResponse.redirect("/");
     }
 
-    const { data: available_cup_pricings, error: error2 } = await supabase.from("cup_pricings").select("DISTINCT pricing").order("pricing", { ascending: true });
+    const { data: cup_data, error: error2 } = await supabase
+        .from("available_cup_pricings")
+        .select("*")
+        .order("pricing_name", { ascending: true });
 
     if (error2) {
         return NextResponse.json(error2.message, { status: 500 });
     }
 
-    const { data: available_color_pricings, error: error3 } = await supabase.from("color_pricings").select("DISTINCT pricing").order("pricing", { ascending: true });
+    const available_cup_pricings = cup_data.map((obj) => obj.pricing_name);
+
+    const { data: color_data, error: error3 } = await supabase
+        .from("available_color_pricings")
+        .select("*")
+        .order("pricing_name", { ascending: true });
 
     if (error3) {
         return NextResponse.json(error3.message, { status: 500 });
     }
 
+    const available_color_pricings = color_data.map((obj) => obj.pricing_name);
+
     return NextResponse.json({ available_cup_pricings, available_color_pricings }, { status: 200 });
-}
+};

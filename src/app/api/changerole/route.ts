@@ -14,7 +14,7 @@ export const POST = async (req: NextRequest) => {
         return NextResponse.redirect("/login");
     }
 
-    if (roleData[0].role == "User") {
+    if (roleData[0].role == "User" || roleData[0].role == "Salesman") {
         return NextResponse.redirect("/");
     }
 

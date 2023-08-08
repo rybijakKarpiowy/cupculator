@@ -46,14 +46,19 @@ export const POST = async (req: NextRequest) => {
         }
 
         if (statusCode === 403) {
-            return NextResponse.json("Brak uprawnień", { status: 403 });
+            return NextResponse.json("Serwer nie ma uprawnień do wglądu arkusza", { status: 403 });
         }
 
         return NextResponse.json(err.response.data.error.message, { status: 500 });
     });
 
     const sheet = doc.sheetsById[gid];
-    // i'm getting the sheet here yayy (service email has to be authorised though)
+    // i'm getting the sheet here yayy (keep in mind that gapi email has to be authorised in sheet)
+
+    const offset = 3    // number of rows to omit
+
+    const rows = await sheet.getRows();
+    console.log(rows.slice(offset-1, 5));
 
     return NextResponse.json({}, { status: 200 });
 };

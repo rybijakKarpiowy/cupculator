@@ -15,7 +15,7 @@ const getUserData = async (authUser: AuthUser, lang: string, cup: string) => {
     });
 
     if (!res.ok) {
-        alert("Something went wrong");
+        throw new Error("Something went wrong (no user data)");
     }
 
     const { userInfo, clients, adminsAndSalesmen } : {userInfo: any, clients: Client[], adminsAndSalesmen: Client[]} = await res.json();
@@ -72,7 +72,9 @@ export default async function Dashboard({
         return;
     }
 
-    const userData = await getUserData(authUser, lang, cup) as { user: User, clients: Client[], adminsAndSalesmen?: Client[] };
+    const userData = await getUserData(authUser, lang, cup).catch((e) => alert(e)) as { user: User, clients: Client[], adminsAndSalesmen?: Client[] }
+    if (!userData) return;
+    
     const { user, clients, adminsAndSalesmen } = userData;
 
     const pricings = await getPricings(authUser);

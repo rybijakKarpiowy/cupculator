@@ -265,6 +265,33 @@ export const DashboardPages = ({
                     sheet_url,
                 }),
             });
+
+            if (res.ok) {
+                const data = await res.json();
+                const { incompleteCups, cupsWithoutPrices, lastCellEmpty } = data as {
+                    incompleteCups: string[];
+                    cupsWithoutPrices: string[];
+                    lastCellEmpty: string[];
+                };
+                alert(
+                    `Cennik został dodany. ${
+                        lastCellEmpty.length > 0
+                            ? `Uzupełnij ostatnią kolumnę w wierszach: ${lastCellEmpty.join(
+                                  ", "
+                              )} - inaczej zostaną pominięte. `
+                            : ""
+                    }${
+                        incompleteCups.length > 0
+                            ? `Kubki z niepełnymi danymi: ${incompleteCups.join(", ")}. `
+                            : ""
+                    }${
+                        cupsWithoutPrices.length > 0
+                            ? `Kubki bez cen: ${cupsWithoutPrices.join(", ")}. `
+                            : ""
+                    }
+                Odśwież stronę, aby zobaczyć zmiany.`
+                );
+            }
         } else if (cups_or_colors === "colors") {
             res = await fetch("/api/updatecolors", {
                 method: "POST",
@@ -274,15 +301,14 @@ export const DashboardPages = ({
                     sheet_url,
                 }),
             });
+            // TODO: handle response
         }
 
         if (res.ok) {
-            alert("Cennik został dodany");
             setCups_or_colors("");
             setLoading(false);
             setPricing_name("");
             setNewPricing(false);
-            window.location.reload();
             return;
         }
 

@@ -301,7 +301,10 @@ export const DashboardPages = ({
                     sheet_url,
                 }),
             });
-            // TODO: handle response
+
+            if (res.ok) {
+                alert("Cennik został dodany. Odśwież stronę, aby zobaczyć zmiany.");
+            }
         }
 
         if (res.ok) {

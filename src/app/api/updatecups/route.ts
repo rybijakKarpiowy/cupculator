@@ -212,8 +212,8 @@ export const POST = async (req: NextRequest) => {
         .select("id, code");
 
     if (error2) {
-        console.log(error2);
-        return NextResponse.json({ message: error2.message }, { status: 500 });
+        console.error(error2);
+        return NextResponse.json(error2.message, { status: 500 });
     }
 
     const sheetCupIds = preparedData
@@ -232,8 +232,8 @@ export const POST = async (req: NextRequest) => {
         .not("cup_id", "in", `(${sheetCupIds.join(",")})`);
 
     if (error3) {
-        console.log(error3);
-        return NextResponse.json({ message: error3.message }, { status: 500 });
+        console.error(error3);
+        return NextResponse.json(error3.message, { status: 500 });
     }
 
     // update all cup pricings that are in the sheet
@@ -254,8 +254,8 @@ export const POST = async (req: NextRequest) => {
     );
 
     if (error4) {
-        console.log(error4);
-        return NextResponse.json({ message: error4.message }, { status: 500 });
+        console.error(error4);
+        return NextResponse.json(error4.message, { status: 500 });
     }
 
     // if there is a cup which is not in any pricing, delete it from db
@@ -275,8 +275,8 @@ export const POST = async (req: NextRequest) => {
             );
 
         if (error5) {
-            console.log(error5);
-            return NextResponse.json({ message: error5.message }, { status: 500 });
+            console.error(error5);
+            return NextResponse.json(error5.message, { status: 500 });
         }
     }
 

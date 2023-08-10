@@ -1,12 +1,18 @@
 "use client";
 
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { User, createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 
-export const Navbar = () => {
+export const Navbar = ({ authUser }: { authUser: User | null }) => {
     const supabase = createClientComponentClient();
 
-    const handleLogout = () => {
-        supabase.auth.signOut();
+    const handleLogout = async () => {
+        console.log("logout");
+        const err = await supabase.auth.signOut({ scope: "global" });
+        if (err) {
+            console.error(err);
+        }
+
+        window.location.reload();
     };
 
     return (
@@ -47,7 +53,7 @@ export const Navbar = () => {
 
                 <div
                     id="navbar"
-                    className="lg:mx-0 lg:px-0 lg:pb-0 block overflow-visible h-auto max-h-[340px]"
+                    className="lg:mx-0 lg:px-0 lg:pb-0 block overflow-visible h-auto max-h-[340px] relative"
                 >
                     <div className="block lg:float-right lg:-mr-[15px] ml-[59px]">
                         <ul className="mt-[15px] pl-0 -ml-[5px] mb-[10px] block ">
@@ -88,7 +94,7 @@ export const Navbar = () => {
                         <li className="lg:float-left relative block">
                             <a
                                 href="https://kubki.com.pl/blog.html"
-                                className="ml-[5px] p-[6px_15px] rounded-[25px] duration-200 float-left relative block font-[allerregular] text-[rgb(43,_41,_41)] border-none drop-shadow-sm"
+                                className="ml-[5px] p-[6px_15px] rounded-[25px] duration-200 float-left relative block border-none drop-shadow-sm"
                             >
                                 Blog
                             </a>
@@ -96,7 +102,7 @@ export const Navbar = () => {
                         <li className="lg:float-left relative block">
                             <a
                                 href="https://kubki.com.pl/Kubki.html?lang=1"
-                                className="ml-[5px] p-[6px_15px] rounded-[25px] duration-200 float-left relative block font-[allerregular] text-[rgb(43,_41,_41)] border-none drop-shadow-sm"
+                                className="ml-[5px] p-[6px_15px] rounded-[25px] duration-200 float-left relative block border-none drop-shadow-sm"
                             >
                                 Oferta
                             </a>
@@ -104,7 +110,7 @@ export const Navbar = () => {
                         <li className="lg:float-left relative block">
                             <a
                                 href="https://kubki.com.pl/O_firmie2.html"
-                                className="ml-[5px] p-[6px_15px] rounded-[25px] duration-200 float-left relative block font-[allerregular] text-[rgb(43,_41,_41)] border-none drop-shadow-sm"
+                                className="ml-[5px] p-[6px_15px] rounded-[25px] duration-200 float-left relative block border-none drop-shadow-sm"
                             >
                                 O firmie
                             </a>
@@ -112,7 +118,7 @@ export const Navbar = () => {
                         <li className="lg:float-left relative block">
                             <a
                                 href="https://kubki.com.pl/ECO.html"
-                                className="ml-[5px] p-[6px_15px] rounded-[25px] duration-200 float-left relative block font-[allerregular] text-[rgb(43,_41,_41)] border-none drop-shadow-sm"
+                                className="ml-[5px] p-[6px_15px] rounded-[25px] duration-200 float-left relative block border-none drop-shadow-sm"
                             >
                                 ECO
                             </a>
@@ -120,7 +126,7 @@ export const Navbar = () => {
                         <li className="lg:float-left relative block">
                             <a
                                 href="https://kubki.com.pl/Know_how.html"
-                                className="ml-[5px] p-[6px_15px] rounded-[25px] duration-200 float-left relative block font-[allerregular] text-[rgb(43,_41,_41)] border-none drop-shadow-sm"
+                                className="ml-[5px] p-[6px_15px] rounded-[25px] duration-200 float-left relative block border-none drop-shadow-sm"
                             >
                                 Strefa wiedzy
                             </a>
@@ -128,18 +134,35 @@ export const Navbar = () => {
                         <li className="lg:float-left relative block">
                             <a
                                 href="https://kubki.com.pl/Kontakt.html"
-                                className="ml-[5px] p-[6px_15px] rounded-[25px] duration-200 float-left relative block font-[allerregular] text-[rgb(43,_41,_41)] border-none drop-shadow-sm"
+                                className="ml-[5px] p-[6px_15px] rounded-[25px] duration-200 float-left relative block border-none drop-shadow-sm"
                             >
                                 Kontakt
                             </a>
                         </li>
                     </ul>
-                    <div>
-                        {/* <label htmlFor="logout">
-                            <svg>logout</svg>
-                        </label>
-                        <a id="logout" onClick={() => handleLogout()}></a> */}
-                    </div>
+                    {authUser && (
+                        <>
+                            <label
+                                className="z-20 w-6 h-6 absolute cursor-pointer"
+                                onClick={() => handleLogout()}
+                            >
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    strokeWidth="1.5"
+                                    stroke="currentColor"
+                                    className="w-6 h-6"
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"
+                                    />
+                                </svg>
+                            </label>
+                        </>
+                    )}
                 </div>
             </div>
         </nav>

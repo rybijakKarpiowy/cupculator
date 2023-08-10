@@ -3,6 +3,10 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 
 export async function middleware(req: NextRequest) {
+    const searchParams = new URL(req.url).searchParams;
+    const lang = searchParams.get("lang") || "1";
+    const cup = searchParams.get("cup");
+
     const res = NextResponse.next();
     const supabase = createMiddlewareClient({req, res});
     const session = await supabase.auth.getSession();
@@ -19,8 +23,12 @@ export async function middleware(req: NextRequest) {
 
         for (const key in data) {
             if (data[key] === null || data[key] === undefined || data[key] === "") {
-                return NextResponse.redirect(new URL("/details", req.url));
+                return NextResponse.redirect(new URL("/account/details", req.url));
             }
+        }
+
+        if (!cup || cup === "" || cup === "null" || cup === "undefined") {
+            return NextResponse.redirect(new URL("https://kubki.com.pl/Kubki", req.url));
         }
 
         return NextResponse.next();

@@ -2,6 +2,7 @@ import { supabase } from "@/database/supabase";
 import { NextRequest, NextResponse } from "next/server";
 import { JWT } from "google-auth-library";
 import { GoogleSpreadsheet } from "google-spreadsheet";
+import { colorSheetParser } from "@/lib/colorSheetParser";
 
 export const POST = async (req: NextRequest) => {
     const { auth_id, pricing_name, sheet_url } = (await req.json()) as {
@@ -55,22 +56,23 @@ export const POST = async (req: NextRequest) => {
     const sheet = doc.sheetsById[gid];
     // i'm getting the sheet here yayy (keep in mind that gapi email has to be authorised in sheet)
 
-    const transfer_plus_raw = await sheet.getCellsInRange("B6:Y12");
-    const polylux_raw = await sheet.getCellsInRange("B17:Y23");
-    const direct_print_raw = await sheet.getCellsInRange("B28:K31");
-    const trend_color_raw = await sheet.getCellsInRange("B36:K37");
-    const pro_color_raw = await sheet.getCellsInRange("B42:K43");
-    const deep_effect_raw = await sheet.getCellsInRange("B48:K49");
-    const digital_print_raw = await sheet.getCellsInRange("B54:K54");
-    const cardboard_print_raw = await sheet.getCellsInRange("B59:K60");
-    const soft_touch_raw = await sheet.getCellsInRange("B65:K65");
-    const deep_effect_plus_raw = await sheet.getCellsInRange("B70:K71");
-    const trend_color_lowered_edge_raw = await sheet.getCellsInRange("B76:K76");
-    const additional_costs_raw = await sheet.getCellsInRange("N26:U42");
-    const cardboards_raw = await sheet.getCellsInRange("N50:Y54");
+    try {
+        // parse sheet
+        const sheetDataParsed = await colorSheetParser(sheet);
 
+        // upsert to db
+        const { error: error2 } = await supabase
+            .from("color_pricings")
+            .upsert({ ...sheetDataParsed, pricing_name });
 
-    console.log(additional_costs_raw)
-    console.log(cardboards_raw)
-    // handle raw data here
-}
+        if (error2) {
+            return NextResponse.json(error2.message, { status: 500 });
+        }
+
+        return NextResponse.json("Pomyślnie zaktualizowano cennik", { status: 200 });
+
+        // handle parser function errors
+    } catch (err) {
+        return NextResponse.json(err, { status: 500 });
+    }
+};

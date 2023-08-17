@@ -315,7 +315,14 @@ export const DashboardPages = ({
             return;
         }
 
-        alert("Wystąpił błąd");
+        if (res.status === 400) {
+            const data = await res.json();
+            const { duplicateCodes } = data as { duplicateCodes: string[] };
+            alert("Cennik zawiera duplikaty kodów, proszę je usunąć i spróbować ponownie. Duplikaty: " + duplicateCodes.join(", "));
+        } else {
+            alert("Wystąpił błąd");
+        }
+        
         setLoading(false);
         setPricing_name("");
         setNewPricing(false);

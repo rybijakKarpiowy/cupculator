@@ -66,28 +66,30 @@ export default function AccountDetails() {
             return;
         }
 
-        const { error } = await supabase.from("users").insert({
-            user_id: user?.id,
-            email: user?.email,
-            first_name: userData.firstName,
-            last_name: userData.lastName,
-            company_name: userData.companyName,
-            country: userData.country,
-            region: userData.region,
-            adress: userData.adress,
-            postal_code: userData.postalCode,
-            city: userData.city,
-            phone: userData.phone,
-            NIP: userData.NIP,
-            eu: lang == "2" ? (userData.country == "Polska" ? false : true) : false,
-        });
+        const { error } = await supabase.from("users").upsert(
+            {
+                user_id: user?.id,
+                email: user?.email,
+                first_name: userData.firstName,
+                last_name: userData.lastName,
+                company_name: userData.companyName,
+                country: userData.country,
+                region: userData.region,
+                adress: userData.adress,
+                postal_code: userData.postalCode,
+                city: userData.city,
+                phone: userData.phone,
+                NIP: userData.NIP,
+                eu: lang == "2" ? (userData.country == "Polska" ? false : true) : false,
+            },
+            { onConflict: "user_id" }
+        );
 
         if (error) {
             alert(error.message);
             return;
         }
 
-        // move it to the backend
         const res = await fetch("/api/createuser", {
             method: "POST",
             headers: {
@@ -96,10 +98,10 @@ export default function AccountDetails() {
             body: JSON.stringify({
                 user_id: user?.id,
             }),
-        })
-        
+        });
+
         if (!res.ok) {
-            alert("Wystąpił błąd!");
+            alert("Wystąpił błąd, spróbuj ponownie później!");
             return;
         }
 

@@ -198,6 +198,29 @@ export const POST = async (req: NextRequest) => {
         );
     }
 
+    const encounteredCodes = new Set(preparedData.map((row) => row.code));
+    if (encounteredCodes.size !== preparedData.length) {
+        const allCodes = preparedData.map((row) => row.code);
+        const codesDict = {} as { [key: string]: number };
+        allCodes.forEach((code) => {
+            if (codesDict[code]) {
+                codesDict[code] += 1;
+            } else {
+                codesDict[code] = 1;
+            }
+        })
+        const duplicateCodes = Object.keys(codesDict).filter((code) => codesDict[code] > 1);
+
+        return NextResponse.json(
+            {
+                message: "Some of the cups have duplicate codes",
+                duplicateCodes
+            },
+            { status: 400 }
+        );
+    }
+    
+
     const cupData = preparedData.map((row) => {
         const { prices, ...rest } = row;
         return rest;

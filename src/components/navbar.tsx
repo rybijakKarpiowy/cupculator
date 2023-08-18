@@ -4,7 +4,7 @@ import { User, createClientComponentClient } from "@supabase/auth-helpers-nextjs
 import { useSearchParams } from "next/navigation";
 
 export const Navbar = ({ authUser }: { authUser: User | null }) => {
-    const searchParams = useSearchParams()
+    const searchParams = useSearchParams();
     const lang = searchParams.get("lang") || "1";
     const cup = searchParams.get("cup") || "";
 
@@ -46,7 +46,7 @@ export const Navbar = ({ authUser }: { authUser: User | null }) => {
                     </button>
                     <a
                         className="lg:-ml-[15px] drop-shadow float-left p-[15px] text-lg leading-5 h-[50px]"
-                        href="https://kubki.com.pl/"
+                        href={`https://kubki.com.pl/?lang=${lang}`}
                     >
                         <img
                             className="h-[80px] w-auto"
@@ -90,29 +90,51 @@ export const Navbar = ({ authUser }: { authUser: User | null }) => {
                     </div>
                     <ul className="lg:float-right ml-[59px] mr-0 mt-[47px] mb-0 pl-0 leading-[22.4px] text-[14px]">
                         <li className="lg:float-left relative block box-border mr-[15px]">
-                            <a
-                                href="https://kubki.com.pl/"
-                            >
+                            <a href={`https://kubki.com.pl/?lang=${lang}`}>
                                 <img src="https://kubki.com.pl/img/home.png" alt="" />
                             </a>
                         </li>
                         <li className="lg:float-left relative block">
-                            <a href="https://kubki.com.pl/blog.html" className="tab">Blog</a>
+                            <a href={`https://kubki.com.pl/blog.html?lang=${lang}`} className="tab">
+                                Blog
+                            </a>
                         </li>
                         <li className="lg:float-left relative block">
-                            <a href="https://kubki.com.pl/Kubki.html?lang=1" className="tab">Oferta</a>
+                            <a
+                                href={`https://kubki.com.pl/Kubki.html?lang=${lang}`}
+                                className="tab"
+                            >
+                                Oferta
+                            </a>
                         </li>
                         <li className="lg:float-left relative block">
-                            <a href="https://kubki.com.pl/O_firmie2.html" className="tab">O firmie</a>
+                            <a
+                                href={`https://kubki.com.pl/O_firmie2.html?lang=${lang}`}
+                                className="tab"
+                            >
+                                O firmie
+                            </a>
                         </li>
                         <li className="lg:float-left relative block">
-                            <a href="https://kubki.com.pl/ECO.html" className="tab">ECO</a>
+                            <a href={`https://kubki.com.pl/ECO.html?lang=${lang}`} className="tab">
+                                ECO
+                            </a>
                         </li>
                         <li className="lg:float-left relative block">
-                            <a href="https://kubki.com.pl/Know_how.html" className="tab">Strefa wiedzy</a>
+                            <a
+                                href={`https://kubki.com.pl/Know_how.html?lang=${lang}`}
+                                className="tab"
+                            >
+                                Strefa wiedzy
+                            </a>
                         </li>
                         <li className="lg:float-left relative block">
-                            <a href="https://kubki.com.pl/Kontakt.html" className="tab">Kontakt</a>
+                            <a
+                                href={`https://kubki.com.pl/Kontakt.html?lang=${lang}`}
+                                className="tab"
+                            >
+                                Kontakt
+                            </a>
                         </li>
                     </ul>
                     {authUser && (
@@ -137,6 +159,13 @@ export const Navbar = ({ authUser }: { authUser: User | null }) => {
                                 </svg>
                             </label>
                         </>
+                    )}
+                    {authUser && authUser.role !== "User" && (
+                        <li className="absolute block h-[33px] -right-[158px] top-[47px]">
+                            <a href="/dashboard" className="tab">
+                                Panel
+                            </a>
+                        </li>
                     )}
                 </div>
             </div>

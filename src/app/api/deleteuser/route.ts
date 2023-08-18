@@ -1,4 +1,5 @@
 import { supabase } from "@/database/supabase";
+import { baseUrl } from "@/middleware";
 import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (req: NextRequest) => {
@@ -17,11 +18,11 @@ export const POST = async (req: NextRequest) => {
     }
 
     if (roleData.length === 0) {
-        return NextResponse.redirect("/login");
+        return NextResponse.redirect(new URL("/login", baseUrl));
     }
 
     if (roleData[0].role == "User" || roleData[0].role == "Salesman") {
-        return NextResponse.redirect("/");
+        return NextResponse.redirect(new URL("/", baseUrl));
     }
 
     const { error: error2 } = await supabase.auth.admin.deleteUser(user_id);

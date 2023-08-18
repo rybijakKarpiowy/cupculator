@@ -3,6 +3,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { JWT } from "google-auth-library";
 import { GoogleSpreadsheet } from "google-spreadsheet";
 import { colorSheetParser } from "@/lib/colorSheetParser";
+import { baseUrl } from "@/middleware";
 
 export const POST = async (req: NextRequest) => {
     const { auth_id, pricing_name, sheet_url } = (await req.json()) as {
@@ -21,11 +22,11 @@ export const POST = async (req: NextRequest) => {
     }
 
     if (roleData.length === 0) {
-        return NextResponse.redirect("/login");
+        return NextResponse.redirect(new URL("/login", baseUrl));
     }
 
     if (roleData[0].role == "User" || roleData[0].role == "Salesman") {
-        return NextResponse.redirect("/");
+        return NextResponse.redirect(new URL("/", baseUrl));
     }
 
     const scopes = ["https://www.googleapis.com/auth/spreadsheets"];

@@ -4,18 +4,8 @@
 
 
 @font-face {
-  font-family: 'allerbold';
-  src: url('https://kubki.com.pl/aller_bd-webfont.woff2') format('woff2'),
-       url('https://kubki.com.pl/aller_bd-webfont.woff') format('woff');
-  font-weight: normal;
-  font-style: normal;
-
-}
-
-@font-face {
   font-family: 'allerregular';
-  src: url('https://kubki.com.pl/aller_rg-webfont.woff2') format('woff2'),
-       url('https://kubki.com.pl/aller_rg-webfont.woff') format('woff');
+  src: url('/aller_rg-webfont.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
 
@@ -32,4 +22,34 @@ body {
   font-weight: normal;
   font-family: 'allerregular';
   line-height: 1.6em;
+}
+
+.tab {
+  margin-left: 5px;
+  padding: 6px 15px;
+  border-radius: 25px;
+  transition: all 0.15s ease-in-out;
+  float: left;
+  position: relative;
+  border: none;
+}
+.tab:hover {
+  background-color: rgb(192, 4, 24);
+  color: white;
+}
+
+.search {
+  background-image: url("https://kubki.com.pl/img/szukaj.png");
+  background-position: 15px 50%;
+  background-repeat: no-repeat;
+  transition: all 0.4s ease;
+}
+.search:focus {
+  width: 150px;
+}
+
+.logout {
+  border-radius: 25px;
+  border: none;
+  background-color: rgb(192, 4, 24);
 }

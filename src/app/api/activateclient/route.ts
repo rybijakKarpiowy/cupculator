@@ -1,5 +1,6 @@
 import { supabase } from "@/database/supabase";
 import { NextRequest, NextResponse } from "next/server";
+import { baseUrl } from "@/middleware";
 
 export const POST = async (req: NextRequest) => {
     const { auth_id, user_id, cup_pricing, color_pricing } = await req.json() as { auth_id: string, user_id: string, cup_pricing: string, color_pricing: string };
@@ -11,11 +12,11 @@ export const POST = async (req: NextRequest) => {
     }
 
     if (roleData.length === 0) {
-        return NextResponse.redirect("/login");
+        return NextResponse.redirect(new URL("/login", baseUrl));
     }
 
     if (roleData[0].role == "User") {
-        return NextResponse.redirect("/");
+        return NextResponse.redirect(new URL("/", baseUrl));
     }
 
     const { error: error2 } = await supabase.from("users_restricted").update({ cup_pricing, color_pricing, activated: true }).eq("user_id", user_id);

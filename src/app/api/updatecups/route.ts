@@ -2,6 +2,7 @@ import { supabase } from "@/database/supabase";
 import { NextRequest, NextResponse } from "next/server";
 import { JWT } from "google-auth-library";
 import { GoogleSpreadsheet } from "google-spreadsheet";
+import { baseUrl } from "@/middleware";
 
 export const POST = async (req: NextRequest) => {
     const { auth_id, pricing_name, sheet_url } = (await req.json()) as {
@@ -20,11 +21,11 @@ export const POST = async (req: NextRequest) => {
     }
 
     if (roleData.length === 0) {
-        return NextResponse.redirect("/login");
+        return NextResponse.redirect(new URL("/login", baseUrl));
     }
 
     if (roleData[0].role == "User" || roleData[0].role == "Salesman") {
-        return NextResponse.redirect("/");
+        return NextResponse.redirect(new URL("/", baseUrl));
     }
 
     const scopes = ["https://www.googleapis.com/auth/spreadsheets"];
@@ -208,18 +209,17 @@ export const POST = async (req: NextRequest) => {
             } else {
                 codesDict[code] = 1;
             }
-        })
+        });
         const duplicateCodes = Object.keys(codesDict).filter((code) => codesDict[code] > 1);
 
         return NextResponse.json(
             {
                 message: "Some of the cups have duplicate codes",
-                duplicateCodes
+                duplicateCodes,
             },
             { status: 400 }
         );
     }
-    
 
     const cupData = preparedData.map((row) => {
         const { prices, ...rest } = row;
@@ -303,7 +303,7 @@ export const POST = async (req: NextRequest) => {
         }
     }
 
-    return NextResponse.json({incompleteCups, cupsWithoutPrices, lastCellEmpty}, { status: 200 });
+    return NextResponse.json({ incompleteCups, cupsWithoutPrices, lastCellEmpty }, { status: 200 });
 };
 
 interface Cup {

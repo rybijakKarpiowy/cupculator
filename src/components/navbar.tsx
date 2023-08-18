@@ -1,8 +1,13 @@
 "use client";
 
 import { User, createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { useSearchParams } from "next/navigation";
 
 export const Navbar = ({ authUser }: { authUser: User | null }) => {
+    const searchParams = useSearchParams()
+    const lang = searchParams.get("lang") || "1";
+    const cup = searchParams.get("cup") || "";
+
     const supabase = createClientComponentClient();
 
     const handleLogout = async () => {
@@ -17,12 +22,12 @@ export const Navbar = ({ authUser }: { authUser: User | null }) => {
 
     return (
         <nav
-            className="lg:rounded-none fixed block right-0 left-0 top-0 border-b z-50 bg-white h-[115px] transition-all min-h-[50px] mb-5"
+            className="lg:rounded-none fixed block right-0 left-0 top-0 z-50 bg-white h-[115px] transition-all min-h-[50px] mb-5"
             role="navigation"
             data-spy="affix"
             data-offset-top="100"
         >
-            <div className="block md:w-[750px] lg:w-[970px] xl:w-[1170px] h-full mr-auto ml-auto px-[15px]">
+            <div className="block md:w-[750px] lg:w-[970px] xl:w-[1170px] h-full mr-auto ml-auto px-[15px] border-none">
                 <div className="lg:float-left lg:mx-0 block">
                     <button
                         type="button"
@@ -55,10 +60,10 @@ export const Navbar = ({ authUser }: { authUser: User | null }) => {
                     id="navbar"
                     className="lg:mx-0 lg:px-0 lg:pb-0 block overflow-visible h-auto max-h-[340px] relative"
                 >
-                    <div className="block lg:float-right lg:-mr-[15px] ml-[59px]">
-                        <ul className="mt-[15px] pl-0 -ml-[5px] mb-[10px] block ">
-                            <li>
-                                <a href="?lang=1">
+                    <div className="block lg:float-right lg:-mr-[15px] ml-[59px] border-none">
+                        <ul className="mt-[18px] pl-0 -ml-[5px] mb-[10px] flex gap-1">
+                            <li className="px-[5px]">
+                                <a href={`?cup=${cup}&lang=1`}>
                                     <img
                                         className="align-middle overflow-clip"
                                         src="https://kubki.com.pl/img/pl.jpg"
@@ -66,84 +71,54 @@ export const Navbar = ({ authUser }: { authUser: User | null }) => {
                                     />
                                 </a>
                             </li>
-                            <li>
-                                <a href="?lang=2">
+                            <li className="px-[5px]">
+                                <a href={`?cup=${cup}&lang=2`}>
                                     <img src="https://kubki.com.pl/img/en.jpg" alt="en" />
                                 </a>
                             </li>
                         </ul>
 
-                        <form action="https://kubki.com.pl/" method="get">
+                        <form action="https://kubki.com.pl/" method="get" className="relative">
                             <input
                                 type="text"
                                 name="search"
                                 defaultValue="szukaj"
                                 onClick={(e) => ((e.target as HTMLInputElement).value = "")}
+                                className="bg-[rgb(192,_4,_24)] py-[5px] pl-[40px] pr-[15px] absolute right-0 top-[3px] w-[95px] h-[33px] z-50 text-white rounded-[25px] outline-none search"
                             />
                         </form>
                     </div>
-                    <ul className="lg:float-right ml-[59px] mr-0 mt-12 mb-0 pl-0 leading-5 text-[14px]">
-                        <li className="lg:float-left relative block box-border">
+                    <ul className="lg:float-right ml-[59px] mr-0 mt-[47px] mb-0 pl-0 leading-[22.4px] text-[14px]">
+                        <li className="lg:float-left relative block box-border mr-[15px]">
                             <a
                                 href="https://kubki.com.pl/"
-                                className="ml-[5px] p-[6px_15px] rounded-[25px] duration-200 float-left relative block"
                             >
                                 <img src="https://kubki.com.pl/img/home.png" alt="" />
                             </a>
                         </li>
                         <li className="lg:float-left relative block">
-                            <a
-                                href="https://kubki.com.pl/blog.html"
-                                className="ml-[5px] p-[6px_15px] rounded-[25px] duration-200 float-left relative block border-none drop-shadow-sm"
-                            >
-                                Blog
-                            </a>
+                            <a href="https://kubki.com.pl/blog.html" className="tab">Blog</a>
                         </li>
                         <li className="lg:float-left relative block">
-                            <a
-                                href="https://kubki.com.pl/Kubki.html?lang=1"
-                                className="ml-[5px] p-[6px_15px] rounded-[25px] duration-200 float-left relative block border-none drop-shadow-sm"
-                            >
-                                Oferta
-                            </a>
+                            <a href="https://kubki.com.pl/Kubki.html?lang=1" className="tab">Oferta</a>
                         </li>
                         <li className="lg:float-left relative block">
-                            <a
-                                href="https://kubki.com.pl/O_firmie2.html"
-                                className="ml-[5px] p-[6px_15px] rounded-[25px] duration-200 float-left relative block border-none drop-shadow-sm"
-                            >
-                                O firmie
-                            </a>
+                            <a href="https://kubki.com.pl/O_firmie2.html" className="tab">O firmie</a>
                         </li>
                         <li className="lg:float-left relative block">
-                            <a
-                                href="https://kubki.com.pl/ECO.html"
-                                className="ml-[5px] p-[6px_15px] rounded-[25px] duration-200 float-left relative block border-none drop-shadow-sm"
-                            >
-                                ECO
-                            </a>
+                            <a href="https://kubki.com.pl/ECO.html" className="tab">ECO</a>
                         </li>
                         <li className="lg:float-left relative block">
-                            <a
-                                href="https://kubki.com.pl/Know_how.html"
-                                className="ml-[5px] p-[6px_15px] rounded-[25px] duration-200 float-left relative block border-none drop-shadow-sm"
-                            >
-                                Strefa wiedzy
-                            </a>
+                            <a href="https://kubki.com.pl/Know_how.html" className="tab">Strefa wiedzy</a>
                         </li>
                         <li className="lg:float-left relative block">
-                            <a
-                                href="https://kubki.com.pl/Kontakt.html"
-                                className="ml-[5px] p-[6px_15px] rounded-[25px] duration-200 float-left relative block border-none drop-shadow-sm"
-                            >
-                                Kontakt
-                            </a>
+                            <a href="https://kubki.com.pl/Kontakt.html" className="tab">Kontakt</a>
                         </li>
                     </ul>
                     {authUser && (
                         <>
                             <label
-                                className="z-20 w-6 h-6 absolute cursor-pointer"
+                                className="z-20 w-[33px] h-[33px] absolute cursor-pointer logout -right-20 top-[47px]"
                                 onClick={() => handleLogout()}
                             >
                                 <svg
@@ -151,8 +126,8 @@ export const Navbar = ({ authUser }: { authUser: User | null }) => {
                                     fill="none"
                                     viewBox="0 0 24 24"
                                     strokeWidth="1.5"
-                                    stroke="currentColor"
-                                    className="w-6 h-6"
+                                    stroke="white"
+                                    className="w-6 h-6 relative top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
                                 >
                                     <path
                                         strokeLinecap="round"

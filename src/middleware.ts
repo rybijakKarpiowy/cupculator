@@ -5,8 +5,17 @@ import { Database } from "./database/types";
 
 export async function middleware(req: NextRequest) {
     const searchParams = new URL(req.url).searchParams;
-    const lang = searchParams.get("lang") || "1";
+    let lang = searchParams.get("lang");
     const cup = searchParams.get("cup");
+    let setBaseParams = false;
+
+    if (!lang) {
+        lang = "1";
+        setBaseParams = true;
+    }
+    if (!cup) {
+        setBaseParams = true;
+    }
 
     const res = NextResponse.next();
     const supabase = createMiddlewareClient<Database>({req, res});
@@ -16,37 +25,47 @@ export async function middleware(req: NextRequest) {
         
         if (error) {
             console.log(error);
-            return NextResponse.redirect(new URL("/login", req.url));
+            return NextResponse.redirect(new URL(`/login?cup=${cup}&lang=${lang}`, baseUrl));
         }
 
         if (!data) {
-            return NextResponse.redirect(new URL("/account/details", req.url));
+            return NextResponse.redirect(new URL(`/account/details?cup=${cup}&lang=${lang}`, baseUrl));
+        }
+
+        if (data.eu) {
+            lang = "2";
         }
 
         // @ts-ignore
         if (!data.users_restricted.role) {
             console.log("No users_restricted entry")
-            return NextResponse.redirect(new URL("/account/details", req.url));
+            return NextResponse.redirect(new URL(`/account/details?cup=${cup}&lang=${lang}`, baseUrl));
         }
 
         for (const key in data) {
             // @ts-ignore
             if (data[key] === null || data[key] === undefined || data[key] === "") {
-                return NextResponse.redirect(new URL("/account/details", req.url));
+                return NextResponse.redirect(new URL(`/account/details?cup=${cup}&lang=${lang}`, baseUrl));
             }
         }
 
         // @ts-ignore
         if ((!cup || cup === "" || cup === "null" || cup === "undefined") && data.users_restricted.role === "User") {
-            return NextResponse.redirect(new URL("https://kubki.com.pl/Kubki", req.url));
+            return NextResponse.redirect(new URL(`https://kubki.com.pl/Kubki&lang=${lang}`, baseUrl));
+        }
+
+        if (setBaseParams) {
+        return NextResponse.redirect(new URL(`?cup=${cup}&lang=${lang}`, req.url))
         }
 
         return NextResponse.next();
     }
 
-    return NextResponse.redirect(new URL("/login", req.url));
+    return NextResponse.redirect(new URL(`/login?cup=${cup}&lang=${lang}`, baseUrl));
 }
 
 export const config = {
     matcher: ["/", "/dashboard/:path*"],
 };
+
+export const baseUrl = new URL("http://localhost:3000");

@@ -331,7 +331,7 @@ export const DashboardPages = ({
 
     return (
         <div>
-            <h1>Dashboard</h1>
+            <h1>Panel</h1>
             <div className="flex flex-row gap-3">
                 <button
                     className={`${
@@ -370,8 +370,8 @@ export const DashboardPages = ({
                     </>
                 )}
             </div>
-            <p>Logged in as {user?.email}</p>
-            <p>Role: {user?.role}</p>
+            <p>Zalogowano jako: {user?.email}</p>
+            <p>Rola: {user?.role}</p>
             {chosenTab === "activationRequests" && (
                 <div>
                     <h2>Aktywacja klientów</h2>

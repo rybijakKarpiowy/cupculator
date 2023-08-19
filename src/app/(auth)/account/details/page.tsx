@@ -40,7 +40,7 @@ export default function AccountDetails() {
 
         for (const key in userData) {
             if (userData[key] == "") {
-                alert("Wypełnij wszystkie pola!");
+                alert(`${lang === "1" ? "Wypełnij wszystkie pola!" : "Fill in all fields!"}`);
                 return;
             }
         }
@@ -50,7 +50,7 @@ export default function AccountDetails() {
         } = await supabase.auth.getUser();
 
         if (!user) {
-            alert("Nie jesteś zalogowany!");
+            alert(`${lang === "1" ? "Nie jesteś zalogowany!" : "You are not logged in!"}`);
             window.location.href = `/login?cup=${cup}&lang=${lang}`;
             return;
         }
@@ -62,7 +62,7 @@ export default function AccountDetails() {
 
         if (userDataCheck && userDataCheck.length > 0) {
             alert("Dane zostały już wprowadzone!");
-            window.location.href = `/account?cup=${cup}&lang=${lang}`;
+            window.location.href = `/?cup=${cup}&lang=${lang}`;
             return;
         }
 
@@ -101,59 +101,59 @@ export default function AccountDetails() {
         });
 
         if (!res.ok) {
-            alert("Wystąpił błąd, spróbuj ponownie później!");
+            alert(`${lang === "1" ? "Wystąpił błąd, spróbuj ponownie później!" : "An error occurred, try again later!"}`);
             return;
         }
 
-        alert("Wprowadzono dane!");
-        window.location.href = `/account?cup=${cup}&lang=${lang}`;
+        alert(`${lang === "1" ? "Wprowadzono dane!" : "Data entered!"}`);
+        window.location.href = `/?cup=${cup}&lang=${lang}`;
     };
 
     return (
         <div>
             <form className="flex flex-col content-center" id="form">
                 <div className="flex flex-row justify-center">
-                    <label htmlFor="firstName">Imię: </label>
+                    <label htmlFor="firstName">{lang === "1" ? "Imię: " : "First name: "}</label>
                     <input id="firstName" type="text" />
                 </div>
                 <div className="flex flex-row justify-center">
-                    <label htmlFor="lastName">Nazwisko: </label>
+                    <label htmlFor="lastName">{lang === "1" ? "Nazwisko: " : "Last name: "}</label>
                     <input id="lastName" type="text" />
                 </div>
                 <div className="flex flex-row justify-center">
-                    <label htmlFor="companyName">Nazwa firmy: </label>
+                    <label htmlFor="companyName">{lang === "1" ? "Nazwa firmy: " : "Company name: "}</label>
                     <input id="companyName" type="text" />
                 </div>
                 <div className="flex flex-row justify-center">
-                    <label htmlFor="country">Kraj: </label>
+                    <label htmlFor="country">{lang === "1" ? "Kraj: " : "Country: "}</label>
                     <input id="country" type="text" defaultValue={lang == "1" ? "Polska" : ""} />
                 </div>
                 <div className="flex flex-row justify-center">
-                    <label htmlFor="region">Województwo: </label>
+                    <label htmlFor="region">{lang === "1" ? "Województwo: " : "Region: "}</label>
                     <input id="region" type="text" />
                 </div>
                 <div className="flex flex-row justify-center">
-                    <label htmlFor="adress">Adres: </label>
+                    <label htmlFor="adress">{lang === "1" ? "Adres: " : "Address: "}</label>
                     <input id="adress" type="text" />
                 </div>
                 <div className="flex flex-row justify-center">
-                    <label htmlFor="postalCode">Kod pocztowy: </label>
+                    <label htmlFor="postalCode">{lang === "1" ? "Kod pocztowy: " : "Postal code: "}</label>
                     <input id="postalCode" type="text" />
                 </div>
                 <div className="flex flex-row justify-center">
-                    <label htmlFor="city">Miejscowość: </label>
+                    <label htmlFor="city">{lang === "1" ? "Miejscowość: " : "City: "}</label>
                     <input id="city" type="text" />
                 </div>
                 <div className="flex flex-row justify-center">
-                    <label htmlFor="phone">Telefon: </label>
+                    <label htmlFor="phone">{lang === "1" ? "Telefon: " : "Phone number: "}</label>
                     <input id="phone" type="tel" />
                 </div>
                 <div className="flex flex-row justify-center">
-                    <label htmlFor="NIP">NIP: </label>
+                    <label htmlFor="NIP">{lang === "1" ? "NIP: " : "Taxpayer identification number: "}</label>
                     <input id="NIP" type="text" />
                 </div>
                 <button type="submit" onClick={(e) => handleSubmit(e)}>
-                    Zarejestruj
+                    {lang === "1" ? "Zarejestruj" : "Sign up"}
                 </button>
             </form>
         </div>

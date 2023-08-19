@@ -39,13 +39,13 @@ export default function Login() {
                 <input id="email" type="email" />
             </div>
             <div className="flex flex-row justify-center">
-                <label htmlFor="password">Hasło: </label>
+                <label htmlFor="password">{lang === "1" ? "Hasło: " : "Password: "}</label>
                 <input id="password" type="password" />
             </div>
             <button type="submit" onClick={(e) => handleSubmit(e)}>Zaloguj</button>
         </form>
-        <span>Nie masz konta? <a href={`/register?cup=${cup}&lang=${lang}`}>Zarejestruj się</a></span>
-        <a href={`/recovery?cup=${cup}&lang=${lang}`} >Zapomniałeś hasła?   </a>
+        <span>{lang === "1" ? "Nie masz konta? " : "Do not have an account yet? "}<a href={`/register?cup=${cup}&lang=${lang}`}>{lang === "1" ? "Zarejestruj się" : "Sign up"}</a></span>
+        <a href={`/recovery?cup=${cup}&lang=${lang}`} >{lang === "1" ? "Zapomniałeś hasła?" : "Forgot password?"}</a>
         </div>
     );
 }

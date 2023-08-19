@@ -16,17 +16,17 @@ export default function ResetPassword() {
         const passwordRepeat = (document.getElementById('passwordRepeat') as HTMLInputElement).value;
 
         if (password != passwordRepeat) {
-            alert("Hasła nie są takie same!")
+            alert(`${lang === "1" ? "Hasła nie są takie same!" : "Passwords are not the same!"}`)
             return;
         }
 
         if (password.length < 8) {
-            alert("Hasło jest za krótkie!")
+            alert(`${lang === "1" ? "Hasło jest za krótkie!" : "The password is too short!"}`)
             return;
         }
 
         if (password.length > 64) {
-            alert("Hasło jest za długie!")
+            alert(`${lang === "1" ? "Hasło jest za długie!" : "The password is too long!"}`)
             return;
         }
 
@@ -38,7 +38,7 @@ export default function ResetPassword() {
         }
 
         if (data) {
-            alert("Zresetowano hasło!")
+            alert(`${lang === "1" ? "Hasło zostało zmienione!" : "The password has been changed!"}`)
             window.location.href = `/?cup=${cup}&lang=${lang}`
         }
     }
@@ -47,14 +47,14 @@ export default function ResetPassword() {
         <div>
             <form className="flex flex-col content-center">
                 <div className="flex flex-row justify-center">
-                    <label htmlFor="password">Nowe hasło: </label>
+                    <label htmlFor="password">{lang === "1" ? "Nowe hasło: " : "New password: "}</label>
                     <input id="password" type="password" />
                 </div>
                 <div className="flex flex-row justify-center">
-                    <label htmlFor="passwordRepeat">Powtórz nowe hasło: </label>
+                    <label htmlFor="passwordRepeat">{lang === "1" ? "Powtórz nowe hasło: " : "Repeat password: "}</label>
                     <input id="passwordRepeat" type="password" />
                 </div>
-                <button type="submit" onClick={(e) => handleSubmit(e)}>Zresetuj hasło</button>
+                <button type="submit" onClick={(e) => handleSubmit(e)}>{lang === "1" ? "Zresetuj hasło" : "Reset password"}</button>
             </form>
         </div>
     )

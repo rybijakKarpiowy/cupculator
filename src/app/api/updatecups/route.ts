@@ -68,69 +68,70 @@ export const POST = async (req: NextRequest) => {
     const preparedData = rawData
         .map((row, i) => {
             const rowId = `${i + offset + 1}`;
-            if (row.length < 63) {
+            if (row.length < 64) {
                 lastCellEmpty.push(rowId);
                 return null;
             }
             const obj = {
-                code: row[0],
+                code: row[0].replace(" ", ""),
                 name: row[1],
                 color: row[2],
-                material: row[3],
-                category: row[4],
-                icon: row[5],
-                volume: row[6],
-                supplier: row[7],
-                supplier_code: row[8],
-                mini_pallet: row[31] ? parseInt(row[31]) : null,
-                half_pallet: row[32] ? parseInt(row[32]) : null,
-                full_pallet: row[33] ? parseInt(row[33]) : null,
-                deep_effect: row[35] === "1" ? true : row[35] === "0" ? false : null,
-                deep_effect_plus: row[36] === "1" ? true : row[36] === "0" ? false : null,
-                digital_print: row[37] === "1" ? true : row[37] === "0" ? false : null,
-                direct_print: row[38] === "1" ? true : row[38] === "0" ? false : null,
-                polylux: row[39] === "1" ? true : row[39] === "0" ? false : null,
-                transfer_plus: row[40] === "1" ? true : row[40] === "0" ? false : null,
-                nadruk_apla: row[41] === "1" ? true : row[41] === "0" ? false : null,
-                nadruk_dookola_pod_uchem: row[42] === "1" ? true : row[42] === "0" ? false : null,
-                nadruk_na_dnie: row[43] === "1" ? true : row[43] === "0" ? false : null,
+                link: row[3].trim(),
+                material: row[4],
+                category: row[5],
+                icon: row[6],
+                volume: row[7],
+                supplier: row[8],
+                supplier_code: row[9],
+                mini_pallet: row[32] ? parseInt(row[32]) : null,
+                half_pallet: row[33] ? parseInt(row[33]) : null,
+                full_pallet: row[34] ? parseInt(row[34]) : null,
+                deep_effect: row[36] === "1" ? true : row[36] === "0" ? false : null,
+                deep_effect_plus: row[37] === "1" ? true : row[37] === "0" ? false : null,
+                digital_print: row[38] === "1" ? true : row[38] === "0" ? false : null,
+                direct_print: row[39] === "1" ? true : row[39] === "0" ? false : null,
+                polylux: row[40] === "1" ? true : row[40] === "0" ? false : null,
+                transfer_plus: row[41] === "1" ? true : row[41] === "0" ? false : null,
+                nadruk_apla: row[42] === "1" ? true : row[42] === "0" ? false : null,
+                nadruk_dookola_pod_uchem: row[43] === "1" ? true : row[43] === "0" ? false : null,
+                nadruk_na_dnie: row[44] === "1" ? true : row[44] === "0" ? false : null,
                 nadruk_na_powloce_magicznej_1_kolor:
-                    row[44] === "1" ? true : row[44] === "0" ? false : null,
-                nadruk_na_spodzie: row[45] === "1" ? true : row[45] === "0" ? false : null,
-                nadruk_na_uchu: row[46] === "1" ? true : row[46] === "0" ? false : null,
-                nadruk_przez_rant: row[47] === "1" ? true : row[47] === "0" ? false : null,
-                nadruk_wewnatrz_na_sciance: row[48] === "1" ? true : row[48] === "0" ? false : null,
-                nadruk_zlotem_do_25cm2: row[49] === "1" ? true : row[49] === "0" ? false : null,
-                nadruk_zlotem_do_50cm2: row[50] === "1" ? true : row[50] === "0" ? false : null,
+                    row[45] === "1" ? true : row[45] === "0" ? false : null,
+                nadruk_na_spodzie: row[46] === "1" ? true : row[46] === "0" ? false : null,
+                nadruk_na_uchu: row[47] === "1" ? true : row[47] === "0" ? false : null,
+                nadruk_przez_rant: row[48] === "1" ? true : row[48] === "0" ? false : null,
+                nadruk_wewnatrz_na_sciance: row[49] === "1" ? true : row[49] === "0" ? false : null,
+                nadruk_zlotem_do_25cm2: row[50] === "1" ? true : row[50] === "0" ? false : null,
+                nadruk_zlotem_do_50cm2: row[51] === "1" ? true : row[51] === "0" ? false : null,
                 naklejka_papierowa_z_nadrukiem:
-                    row[51] === "1" ? true : row[51] === "0" ? false : null,
-                personalizacja: row[52] === "1" ? true : row[52] === "0" ? false : null,
-                pro_color: row[53] === "1" ? true : row[53] === "0" ? false : null,
-                soft_touch: row[54] === "1" ? true : row[54] === "0" ? false : null,
-                trend_color: row[55] === "1" ? true : row[55] === "0" ? false : null,
-                trend_color_lowered_edge: row[56] === "1" ? true : row[56] === "0" ? false : null,
-                wkladanie_ulotek_do_kubka: row[57] === "1" ? true : row[57] === "0" ? false : null,
+                    row[52] === "1" ? true : row[52] === "0" ? false : null,
+                personalizacja: row[53] === "1" ? true : row[53] === "0" ? false : null,
+                pro_color: row[54] === "1" ? true : row[54] === "0" ? false : null,
+                soft_touch: row[55] === "1" ? true : row[55] === "0" ? false : null,
+                trend_color: row[56] === "1" ? true : row[56] === "0" ? false : null,
+                trend_color_lowered_edge: row[57] === "1" ? true : row[57] === "0" ? false : null,
+                wkladanie_ulotek_do_kubka: row[58] === "1" ? true : row[58] === "0" ? false : null,
                 zdobienie_paskiem_bez_laczenia:
-                    row[58] === "1" ? true : row[58] === "0" ? false : null,
-                zdobienie_paskiem_z_laczeniem:
                     row[59] === "1" ? true : row[59] === "0" ? false : null,
-                zdobienie_tapeta_na_barylce_II_stopien_trudnosci:
+                zdobienie_paskiem_z_laczeniem:
                     row[60] === "1" ? true : row[60] === "0" ? false : null,
-                zdobienie_tapeta_na_barylce_I_stopien_trudnosci:
+                zdobienie_tapeta_na_barylce_II_stopien_trudnosci:
                     row[61] === "1" ? true : row[61] === "0" ? false : null,
-                digital_print_additional: row[62] === "1" ? true : row[62] === "0" ? false : null,
+                zdobienie_tapeta_na_barylce_I_stopien_trudnosci:
+                    row[62] === "1" ? true : row[62] === "0" ? false : null,
+                digital_print_additional: row[63] === "1" ? true : row[63] === "0" ? false : null,
                 prices: {
-                    price_24: parseFloat(row[9].replace("zł", "").trim().replace(",", ".")),
-                    price_72: parseFloat(row[10].replace("zł", "").trim().replace(",", ".")),
-                    price_108: parseFloat(row[11].replace("zł", "").trim().replace(",", ".")),
-                    price_216: parseFloat(row[12].replace("zł", "").trim().replace(",", ".")),
-                    price_504: parseFloat(row[13].replace("zł", "").trim().replace(",", ".")),
-                    price_1008: parseFloat(row[14].replace("zł", "").trim().replace(",", ".")),
-                    price_2520: parseFloat(row[15].replace("zł", "").trim().replace(",", ".")),
+                    price_24: parseFloat(row[10].replace("zł", "").trim().replace(",", ".")),
+                    price_72: parseFloat(row[11].replace("zł", "").trim().replace(",", ".")),
+                    price_108: parseFloat(row[12].replace("zł", "").trim().replace(",", ".")),
+                    price_216: parseFloat(row[13].replace("zł", "").trim().replace(",", ".")),
+                    price_504: parseFloat(row[14].replace("zł", "").trim().replace(",", ".")),
+                    price_1008: parseFloat(row[15].replace("zł", "").trim().replace(",", ".")),
+                    price_2520: parseFloat(row[16].replace("zł", "").trim().replace(",", ".")),
                 },
             };
 
-            if (!obj.code && !obj.name) {
+            if (!obj.code && !obj.name && !obj.link) {
                 // cup is not meant to be in this row (and it's not)
                 return null;
             }
@@ -140,6 +141,7 @@ export const POST = async (req: NextRequest) => {
                 !obj.code ||
                 !obj.name ||
                 !obj.color ||
+                !obj.link ||
                 !obj.material ||
                 !obj.category ||
                 !obj.volume ||
@@ -306,15 +308,17 @@ export const POST = async (req: NextRequest) => {
     return NextResponse.json({ incompleteCups, cupsWithoutPrices, lastCellEmpty }, { status: 200 });
 };
 
-interface Cup {
+export interface Cup {
     code: string;
     name: string;
     color: string;
+    link: string;
+    icon: string | null;
     material: string;
     category: string;
     volume: string;
-    supplier: string;
-    supplier_code: string;
+    supplier: string | null;
+    supplier_code: string | null;
     mini_pallet?: number;
     half_pallet?: number;
     full_pallet?: number;

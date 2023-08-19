@@ -35,7 +35,7 @@ export default function Recovery() {
                     <label htmlFor="email">Email: </label>
                     <input id="email" type="email" />
                 </div>
-                <button type="submit" onClick={(e) => handleSubmit(e)}>Zresetuj hasło</button>
+                <button type="submit" onClick={(e) => handleSubmit(e)}>{lang === "1" ? "Zresetuj hasło" : "Reset password"}</button>
             </form>
         </div>
     )

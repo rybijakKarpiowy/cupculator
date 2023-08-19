@@ -82,9 +82,9 @@ export const Navbar = ({ authUser }: { authUser: User | null }) => {
                             <input
                                 type="text"
                                 name="search"
-                                defaultValue="szukaj"
+                                defaultValue={lang === "1" ? "szukaj" : "search"}
                                 onClick={(e) => ((e.target as HTMLInputElement).value = "")}
-                                className="bg-[rgb(192,_4,_24)] py-[5px] pl-[40px] pr-[15px] absolute right-0 top-[3px] w-[95px] h-[33px] z-50 text-white rounded-[25px] outline-none search"
+                                className="bg-[rgb(192,_4,_24)] pt-[5px] pb-[8px] pl-[40px] pr-[15px] absolute right-0 top-[3px] w-[95px] h-[33px] z-50 text-white rounded-[25px] outline-none search"
                             />
                         </form>
                     </div>
@@ -104,7 +104,7 @@ export const Navbar = ({ authUser }: { authUser: User | null }) => {
                                 href={`https://kubki.com.pl/Kubki.html?lang=${lang}`}
                                 className="tab"
                             >
-                                Oferta
+                                {lang === "1" ? "Oferta" : "Offer"}
                             </a>
                         </li>
                         <li className="lg:float-left relative block">
@@ -112,7 +112,7 @@ export const Navbar = ({ authUser }: { authUser: User | null }) => {
                                 href={`https://kubki.com.pl/O_firmie2.html?lang=${lang}`}
                                 className="tab"
                             >
-                                O firmie
+                                {lang === "1" ? "O firmie" : "About company"}
                             </a>
                         </li>
                         <li className="lg:float-left relative block">
@@ -125,7 +125,7 @@ export const Navbar = ({ authUser }: { authUser: User | null }) => {
                                 href={`https://kubki.com.pl/Know_how.html?lang=${lang}`}
                                 className="tab"
                             >
-                                Strefa wiedzy
+                                {lang === "1" ? "Strefa wiedzy" : "Knowledge base"}
                             </a>
                         </li>
                         <li className="lg:float-left relative block">
@@ -133,7 +133,7 @@ export const Navbar = ({ authUser }: { authUser: User | null }) => {
                                 href={`https://kubki.com.pl/Kontakt.html?lang=${lang}`}
                                 className="tab"
                             >
-                                Kontakt
+                                {lang === "1" ? "Kontakt" : "Contact"}
                             </a>
                         </li>
                     </ul>

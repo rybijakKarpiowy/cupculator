@@ -162,7 +162,7 @@ export const Navbar = ({ authUser }: { authUser: User | null }) => {
                     )}
                     {authUser && authUser.role !== "User" && (
                         <li className="absolute block h-[33px] -right-[158px] top-[47px]">
-                            <a href="/dashboard" className="tab">
+                            <a href={`/dashboard?cup=${cup}&lang=${lang}`} className="tab">
                                 Panel
                             </a>
                         </li>

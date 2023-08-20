@@ -40,6 +40,7 @@ export const DashboardPages = ({
         setLoading(true);
         let cup_pricing = "";
         let color_pricing = "";
+        let eu = "" as "EU" | "PL" | "brak" | boolean;
 
         if (e) {
             e.preventDefault();
@@ -47,6 +48,15 @@ export const DashboardPages = ({
                 ?.value;
             color_pricing = (e.currentTarget.querySelector("#color_pricing") as HTMLInputElement)
                 ?.value;
+            eu = (e.currentTarget.querySelector("#eu") as HTMLInputElement)?.value as
+                | "EU"
+                | "PL"
+                | "brak";
+            if (eu === "brak") {
+                alert("Potwierdź czy klient ma być w EU czy nie");
+                setLoading(false);
+                return;
+            }
         } else {
             const clientDiv = document.querySelector(`#${user_id}`);
             cup_pricing = (clientDiv?.querySelector("#cup_pricing") as HTMLInputElement)?.value;
@@ -55,6 +65,7 @@ export const DashboardPages = ({
 
         if (!cup_pricing || !color_pricing) {
             alert("Uzupełnij cennik klienta");
+            setLoading(false);
             return;
         }
 
@@ -65,6 +76,7 @@ export const DashboardPages = ({
                 user_id,
                 cup_pricing,
                 color_pricing,
+                ...{ eu: eu === "EU" ? true : eu === "PL" ? false : undefined },
             }),
         });
 
@@ -141,6 +153,13 @@ export const DashboardPages = ({
                 if (client.user_id === user_id) {
                     adminsAndSalesmen.splice(index, 1);
                     setAdminsAndSalesmen([...adminsAndSalesmen]);
+                    return;
+                }
+            });
+            clients?.forEach((client, index) => {
+                if (client.user_id === user_id) {
+                    clients.splice(index, 1);
+                    setClients([...clients]);
                     return;
                 }
             });
@@ -318,11 +337,14 @@ export const DashboardPages = ({
         if (res.status === 400) {
             const data = await res.json();
             const { duplicateCodes } = data as { duplicateCodes: string[] };
-            alert("Cennik zawiera duplikaty kodów, proszę je usunąć i spróbować ponownie. Duplikaty: " + duplicateCodes.join(", "));
+            alert(
+                "Cennik zawiera duplikaty kodów, proszę je usunąć i spróbować ponownie. Duplikaty: " +
+                    duplicateCodes.join(", ")
+            );
         } else {
             alert("Wystąpił błąd");
         }
-        
+
         setLoading(false);
         setPricing_name("");
         setNewPricing(false);
@@ -393,7 +415,7 @@ export const DashboardPages = ({
                             </li>
                             <li className="px-2 border border-black w-48 text-center">Telefon</li>
                             <li className="px-2 border border-black w-48 text-center">NIP</li>
-                            <li className="px-2 border border-black w-12 text-center">EU?</li>
+                            <li className="px-2 border border-black w-16 text-center">EU?</li>
                             <li className="px-2 border border-black w-32 text-center">Kraj</li>
                             <li className="px-2 border border-black w-64 text-center">Email</li>
                             <li className="px-2 border border-black w-20 text-center">
@@ -436,8 +458,14 @@ export const DashboardPages = ({
                                     <li className="px-2 border border-black w-48 text-center">
                                         {client.NIP}
                                     </li>
-                                    <li className="px-2 border border-black w-12 text-center">
-                                        {client.eu ? "EU" : "PL"}
+                                    <li className="px-2 border border-black w-16 text-center">
+                                        <select id="eu" disabled={loading} defaultValue="brak">
+                                            <option value="brak" hidden disabled>
+                                                {client.eu ? "EU" : "PL"}
+                                            </option>
+                                            <option value="PL">PL</option>
+                                            <option value="EU">EU</option>
+                                        </select>
                                     </li>
                                     <li className="px-2 border border-black w-32 text-center">
                                         {client.country}
@@ -491,6 +519,16 @@ export const DashboardPages = ({
                                         }`}
                                     >
                                         Aktywuj
+                                    </button>
+                                    <button
+                                        type="button"
+                                        disabled={loading}
+                                        onClick={() => handleDeleteUser(client.user_id)}
+                                        className={`px-2 rounded-md ${
+                                            loading ? "bg-slate-400" : "bg-red-300 hover:bg-red-400"
+                                        }`}
+                                    >
+                                        Usuń
                                     </button>
                                 </form>
                             ))}

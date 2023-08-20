@@ -36,9 +36,9 @@ export const POST = async (req: NextRequest) => {
         .map((user) => {
             // Filter out the admins and salesmen
             // @ts-ignore
-            // if (user.users_restricted.role !== "User") {
-            //     return null;
-            // } UNCOMMENT THIS
+            if (user.users_restricted.role !== "User") {
+                return null;
+            }
             // Filter out unactivated users
             // @ts-ignore
             if (user.users_restricted.activated === false) {

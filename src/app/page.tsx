@@ -40,7 +40,7 @@ export default async function Home({
         }
         const { cupData, colorPricing } = pricingsData;
 
-        return <Calculator cupData={cupData} colorPricing={colorPricing} />;
+        return <Calculator cupData={cupData} colorPricing={colorPricing} lang={lang} clientPriceUnit={userData.eu ? "EUR" : "zł"} />;
     }
 
     // If role is Salesman or Admin, show select with all users, and calculator with selected user's data

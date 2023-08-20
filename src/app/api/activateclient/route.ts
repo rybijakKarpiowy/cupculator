@@ -3,9 +3,18 @@ import { NextRequest, NextResponse } from "next/server";
 import { baseUrl } from "@/middleware";
 
 export const POST = async (req: NextRequest) => {
-    const { auth_id, user_id, cup_pricing, color_pricing } = await req.json() as { auth_id: string, user_id: string, cup_pricing: string, color_pricing: string };
-    
-    const { data: roleData, error: error1 } = await supabase.from("users_restricted").select("role").eq("user_id", auth_id);
+    const { auth_id, user_id, cup_pricing, color_pricing, eu } = (await req.json()) as {
+        auth_id: string;
+        user_id: string;
+        cup_pricing: string;
+        color_pricing: string;
+        eu?: boolean;
+    };
+
+    const { data: roleData, error: error1 } = await supabase
+        .from("users_restricted")
+        .select("role")
+        .eq("user_id", auth_id);
 
     if (error1) {
         return NextResponse.json(error1.message, { status: 500 });
@@ -19,12 +28,23 @@ export const POST = async (req: NextRequest) => {
         return NextResponse.redirect(new URL("/", baseUrl));
     }
 
-    const { error: error2 } = await supabase.from("users_restricted").update({ cup_pricing, color_pricing, activated: true }).eq("user_id", user_id);
-    // console.log(error2)
-
+    const { error: error2 } = await supabase
+        .from("users_restricted")
+        .update({ cup_pricing, color_pricing, activated: true })
+        .eq("user_id", user_id);
     if (error2) {
         return NextResponse.json(error2.message, { status: 500 });
     }
 
+    if (eu !== undefined) {
+        const { error: error3 } = await supabase
+            .from("users")
+            .update({ eu })
+            .eq("user_id", user_id);
+        if (error3) {
+            return NextResponse.json(error3.message, { status: 500 });
+        }
+    }
+
     return NextResponse.json({ message: "success" }, { status: 200 });
-}
+};

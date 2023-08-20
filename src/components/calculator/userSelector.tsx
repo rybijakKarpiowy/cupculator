@@ -19,6 +19,7 @@ export const UserSelector = ({
     const [selectedPricingsData, setSelectedPricingsData] = useState<selectedPricingsDataInterface>(
         { cupData: [], colorPricing: null }
     );
+    const [selectedUserUnit, setSelectedUserUnit] = useState<"zł"|"EUR">();
     const [isError, setIsError] = useState(false);
     const [loading, setLoading] = useState(false);
 
@@ -26,6 +27,7 @@ export const UserSelector = ({
         setLoading(true);
 
         const selectedUser = e.target.value;
+        setSelectedUserUnit(allUsersData.find((user) => user.user_id === selectedUser)?.eu ? "EUR" : "zł");
 
         const pricingsData = await getUserPricings(selectedUser, cup);
         if (!pricingsData) {
@@ -65,10 +67,12 @@ export const UserSelector = ({
                         : "An error occured, refresh the page"}
                 </div>
             )}
-            {selectedPricingsData.colorPricing && selectedPricingsData.cupData.length > 0 && (
+            {selectedPricingsData.colorPricing && selectedPricingsData.cupData.length > 0 && selectedUserUnit && (
                 <Calculator
                     cupData={selectedPricingsData.cupData}
                     colorPricing={selectedPricingsData.colorPricing}
+                    lang={lang}
+                    clientPriceUnit={selectedUserUnit}
                 />
             )}
         </>

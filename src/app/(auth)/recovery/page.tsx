@@ -1,42 +1,85 @@
-'use client'
+"use client";
 
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useSearchParams } from "next/navigation";
+import { useState } from "react";
 
 export default function Recovery() {
+    const [loading, setLoading] = useState(false);
+
     const searchParams = useSearchParams();
     const lang = searchParams.get("lang") || "1";
     const cup = searchParams.get("cup");
-    
+
     const supabase = createClientComponentClient();
 
     const handleSubmit = async (event: React.FormEvent<HTMLButtonElement>) => {
+        setLoading(true);
         event.preventDefault();
-        const email = (document.getElementById('email') as HTMLInputElement).value;
+        const email = (document.getElementById("email") as HTMLInputElement).value;
 
         const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
             redirectTo: `http://localhost:3000/resetpassword?cup=${cup}&lang=${lang}`,
-        })
+        });
 
         if (error) {
-            alert(error.message)
+            alert(error.message);
+            setLoading(false);
+            return;
         }
 
         if (data) {
-            alert("Wysłano link do zresetowania hasła!")
-            window.location.href = `/?cup=${cup}&lang=${lang}`
+            alert("Wysłano link do zresetowania hasła!");
+            window.location.href = `/?cup=${cup}&lang=${lang}`;
+            setLoading(false);
         }
-    }
+    };
 
     return (
-        <div>
-            <form className="flex flex-col content-center">
-                <div className="flex flex-row justify-center">
-                    <label htmlFor="email">Email: </label>
-                    <input id="email" type="email" />
+        <div className="pt-24">
+            <form className="flex flex-col content-center gap-4">
+                <div className="flex flex-row justify-end pr-[42%] items-center gap-4">
+                    <label htmlFor="email" className="text-lg">
+                        Email:
+                    </label>
+                    <input
+                        id="email"
+                        type="email"
+                        className="border border-[#bbb] bg-slate-50 text-black px-2 py-1 w-80 rounded-md"
+                        disabled={loading}
+                    />
                 </div>
-                <button type="submit" onClick={(e) => handleSubmit(e)}>{lang === "1" ? "Zresetuj hasło" : "Reset password"}</button>
+                <div className="flex flex-row justify-center items-center mt-4">
+                    <button
+                        type="submit"
+                        className={`border-[#c00418] border rounded-[25px] w-fit px-4 py-2 text-black ${loading ? "bg-slate-400" : "bg-white hover:bg-[#c00418]"} hover:text-white duration-150 ease-in-out`}
+                        onClick={(e) => handleSubmit(e)}
+                        disabled={loading}
+                    >
+                        {lang === "1" ? "Zresetuj hasło" : "Reset password"}
+                    </button>
+                </div>
             </form>
+            <div className="flex flex-row justify-center items-center gap-12 mt-8">
+                <span className="flex flex-col items-center">
+                    {lang === "1" ? "Nie masz konta? " : "Do not have an account yet? "}
+                    <a
+                        href={`/register?cup=${cup}&lang=${lang}`}
+                        className="font-semibold text-black hover:text-[#c00418]"
+                    >
+                        {lang === "1" ? "Zarejestruj się" : "Sign up"}
+                    </a>
+                </span>
+                <span className="flex flex-col items-center">
+                    {lang === "1" ? "Pamiętasz hasło?" : "Remember your password?"}
+                    <a
+                        href={`/login?cup=${cup}&lang=${lang}`}
+                        className="font-semibold text-black hover:text-[#c00418]"
+                    >
+                        {lang === "1" ? "Zaloguj się" : "Sign in"}
+                    </a>
+                </span>
+            </div>
         </div>
-    )
+    );
 }

@@ -97,40 +97,43 @@ export const POST = async (req: NextRequest) => {
                 mini_pallet: row[32] ? parseInt(row[32]) : null,
                 half_pallet: row[33] ? parseInt(row[33]) : null,
                 full_pallet: row[34] ? parseInt(row[34]) : null,
-                deep_effect: row[36] === "1" ? true : row[36] === "0" ? false : null,
-                deep_effect_plus: row[37] === "1" ? true : row[37] === "0" ? false : null,
-                digital_print: row[38] === "1" ? true : row[38] === "0" ? false : null,
-                direct_print: row[39] === "1" ? true : row[39] === "0" ? false : null,
-                polylux: row[40] === "1" ? true : row[40] === "0" ? false : null,
-                transfer_plus: row[41] === "1" ? true : row[41] === "0" ? false : null,
-                nadruk_apla: row[42] === "1" ? true : row[42] === "0" ? false : null,
-                nadruk_dookola_pod_uchem: row[43] === "1" ? true : row[43] === "0" ? false : null,
-                nadruk_na_dnie: row[44] === "1" ? true : row[44] === "0" ? false : null,
+                mini_pallet_singular: row[35] ? parseInt(row[35]) : null,
+                half_pallet_singular: row[36] ? parseInt(row[36]) : null,
+                full_pallet_singular: row[37] ? parseInt(row[37]) : null,
+                deep_effect: row[38] === "1" ? true : row[38] === "0" ? false : null,
+                deep_effect_plus: row[39] === "1" ? true : row[39] === "0" ? false : null,
+                digital_print: row[40] === "1" ? true : row[40] === "0" ? false : null,
+                direct_print: row[41] === "1" ? true : row[41] === "0" ? false : null,
+                polylux: row[42] === "1" ? true : row[42] === "0" ? false : null,
+                transfer_plus: row[43] === "1" ? true : row[43] === "0" ? false : null,
+                nadruk_apla: row[44] === "1" ? true : row[44] === "0" ? false : null,
+                nadruk_dookola_pod_uchem: row[45] === "1" ? true : row[45] === "0" ? false : null,
+                nadruk_na_dnie: row[46] === "1" ? true : row[46] === "0" ? false : null,
                 nadruk_na_powloce_magicznej_1_kolor:
-                    row[45] === "1" ? true : row[45] === "0" ? false : null,
-                nadruk_na_spodzie: row[46] === "1" ? true : row[46] === "0" ? false : null,
-                nadruk_na_uchu: row[47] === "1" ? true : row[47] === "0" ? false : null,
-                nadruk_przez_rant: row[48] === "1" ? true : row[48] === "0" ? false : null,
-                nadruk_wewnatrz_na_sciance: row[49] === "1" ? true : row[49] === "0" ? false : null,
-                nadruk_zlotem_do_25cm2: row[50] === "1" ? true : row[50] === "0" ? false : null,
-                nadruk_zlotem_do_50cm2: row[51] === "1" ? true : row[51] === "0" ? false : null,
+                    row[47] === "1" ? true : row[47] === "0" ? false : null,
+                nadruk_na_spodzie: row[48] === "1" ? true : row[48] === "0" ? false : null,
+                nadruk_na_uchu: row[49] === "1" ? true : row[49] === "0" ? false : null,
+                nadruk_przez_rant: row[50] === "1" ? true : row[50] === "0" ? false : null,
+                nadruk_wewnatrz_na_sciance: row[51] === "1" ? true : row[51] === "0" ? false : null,
+                nadruk_zlotem_do_25cm2: row[52] === "1" ? true : row[52] === "0" ? false : null,
+                nadruk_zlotem_do_50cm2: row[53] === "1" ? true : row[53] === "0" ? false : null,
                 naklejka_papierowa_z_nadrukiem:
-                    row[52] === "1" ? true : row[52] === "0" ? false : null,
-                personalizacja: row[53] === "1" ? true : row[53] === "0" ? false : null,
-                pro_color: row[54] === "1" ? true : row[54] === "0" ? false : null,
-                soft_touch: row[55] === "1" ? true : row[55] === "0" ? false : null,
-                trend_color: row[56] === "1" ? true : row[56] === "0" ? false : null,
-                trend_color_lowered_edge: row[57] === "1" ? true : row[57] === "0" ? false : null,
-                wkladanie_ulotek_do_kubka: row[58] === "1" ? true : row[58] === "0" ? false : null,
+                    row[54] === "1" ? true : row[54] === "0" ? false : null,
+                personalizacja: row[55] === "1" ? true : row[55] === "0" ? false : null,
+                pro_color: row[56] === "1" ? true : row[56] === "0" ? false : null,
+                soft_touch: row[57] === "1" ? true : row[57] === "0" ? false : null,
+                trend_color: row[58] === "1" ? true : row[58] === "0" ? false : null,
+                trend_color_lowered_edge: row[59] === "1" ? true : row[59] === "0" ? false : null,
+                wkladanie_ulotek_do_kubka: row[60] === "1" ? true : row[60] === "0" ? false : null,
                 zdobienie_paskiem_bez_laczenia:
-                    row[59] === "1" ? true : row[59] === "0" ? false : null,
-                zdobienie_paskiem_z_laczeniem:
-                    row[60] === "1" ? true : row[60] === "0" ? false : null,
-                zdobienie_tapeta_na_barylce_II_stopien_trudnosci:
                     row[61] === "1" ? true : row[61] === "0" ? false : null,
-                zdobienie_tapeta_na_barylce_I_stopien_trudnosci:
+                zdobienie_paskiem_z_laczeniem:
                     row[62] === "1" ? true : row[62] === "0" ? false : null,
-                digital_print_additional: row[63] === "1" ? true : row[63] === "0" ? false : null,
+                zdobienie_tapeta_na_barylce_II_stopien_trudnosci:
+                    row[63] === "1" ? true : row[63] === "0" ? false : null,
+                zdobienie_tapeta_na_barylce_I_stopien_trudnosci:
+                    row[64] === "1" ? true : row[64] === "0" ? false : null,
+                digital_print_additional: row[65] === "1" ? true : row[65] === "0" ? false : null,
                 prices: {
                     price_24: parseFloat(row[10].replace("zł", "").trim().replace(",", ".")),
                     price_72: parseFloat(row[11].replace("zł", "").trim().replace(",", ".")),
@@ -218,7 +221,7 @@ export const POST = async (req: NextRequest) => {
     }
 
     const encounteredCodes = new Set(preparedData.map((row) => row.code));
-    if (encounteredCodes.size !== preparedData.length) {
+    if (encounteredCodes.size !== allCodes.length) {
         const codesDict = {} as { [key: string]: number };
         allCodes.forEach((code) => {
             if (codesDict[code]) {

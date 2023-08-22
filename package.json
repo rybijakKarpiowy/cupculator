@@ -31,6 +31,6 @@
   },
   "devDependencies": {
     "@types/gapi": "^0.0.44",
-    "supabase": "^1.83.7"
+    "supabase": "^1.88.0"
   }
 }

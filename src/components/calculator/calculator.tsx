@@ -32,7 +32,9 @@ export const Calculator = ({
                 unit: null,
                 prep: null,
             });
-            toast.warn(lang === "1" ? "Minimalna ilość to 24 sztuki" : "Minimum amount is 24 pieces");
+            toast.warn(
+                lang === "1" ? "Minimalna ilość to 24 sztuki" : "Minimum amount is 24 pieces"
+            );
             return;
         }
         if (amount >= 50 && amount < 72) {
@@ -99,27 +101,48 @@ export const Calculator = ({
             ) : (
                 <Image src={noImage} alt={""} />
             )}
-            <div>
-                {selectedCup.code}
-                {selectedCup.name}
-                {selectedCup.volume}
-                {lang === "1" ? "Sztuk: " : "Pieces: "}
-                {amount}
-                {lang === "1"
-                    ? "Jednostkowa cena produktu z nadrukiem: "
-                    : "Price for printed product per unit: "}
-                {calculatedPrices.unit}
-                {clientPriceUnit}
-                {lang === "1" ? "Koszt przygotowalni: " : "Preparation cost: "}
-                {calculatedPrices.prep}
-                {clientPriceUnit}
-                {lang === "1" ? "Całkowity koszt: " : "Total cost: "}
-                {calculatedPrices.prep &&
-                    calculatedPrices.unit &&
-                    amount &&
-                    calculatedPrices.prep + calculatedPrices.unit * amount}
-                {clientPriceUnit}
-            </div>
+            {selectedCup.prices.price_24 === 0 ? (
+                <div>
+                    <p>{selectedCup.code}</p>
+                    <p>{selectedCup.name}</p>
+                    <p>{selectedCup.volume}</p>
+                    <h1>
+                        {lang === "1"
+                            ? "Brak danych w systemie dla tego koloru, skontaktuj się z działem handlowym."
+                            : "No data in system for this color, contact our sales department."}
+                    </h1>
+                </div>
+            ) : (
+                <div>
+                    <p>{selectedCup.code}</p>
+                    <p>{selectedCup.name}</p>
+                    <p>{selectedCup.volume}</p>
+                    <p>
+                        {lang === "1" ? "Sztuk: " : "Pieces: "}
+                        {amount}
+                    </p>
+                    <p>
+                        {lang === "1"
+                            ? "Jednostkowa cena produktu z nadrukiem: "
+                            : "Price for printed product per unit: "}
+                        {calculatedPrices.unit}
+                        {clientPriceUnit}
+                    </p>
+                    <p>
+                        {lang === "1" ? "Koszt przygotowalni: " : "Preparation cost: "}
+                        {calculatedPrices.prep}
+                        {clientPriceUnit}
+                    </p>
+                    <p>
+                        {lang === "1" ? "Całkowity koszt: " : "Total cost: "}
+                        {calculatedPrices.prep &&
+                            calculatedPrices.unit &&
+                            amount &&
+                            calculatedPrices.prep + calculatedPrices.unit * amount}
+                        {clientPriceUnit}
+                    </p>
+                </div>
+            )}
             <div>
                 <div>
                     {lang == "1" ? "Wybierz kolor: " : "Select color: "}
@@ -140,6 +163,7 @@ export const Calculator = ({
                 <div>
                     {lang === "1" ? "Ilość: " : "Amount: "}
                     <input
+                        disabled={selectedCup.prices.price_24 === 0}
                         type="number"
                         min="1"
                         onChange={(e) => {

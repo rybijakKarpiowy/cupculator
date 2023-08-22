@@ -3,6 +3,7 @@
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 export default function Login() {
     const [loading, setLoading] = useState(false);
@@ -25,14 +26,15 @@ export default function Login() {
         });
 
         if (error) {
-            alert(error.message);
+            console.log(error.message);
+            toast.error(lang === "1" ? "Błędny email lub hasło" : "Incorrect email or password");
             setLoading(false);
             return;
         }
 
         if (data) {
-            alert("Zalogowano!");
-            window.location.href = `/?cup=${cup}&lang=${lang}`;
+            toast.success(lang === "1" ? "Zalogowano!": "Signed in!", { autoClose: 3000 });
+            setTimeout(()=>window.location.href = `/?cup=${cup}&lang=${lang}`, 3000);
             setLoading(false);
         }
     };

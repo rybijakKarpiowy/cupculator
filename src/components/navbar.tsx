@@ -1,9 +1,10 @@
 "use client";
 
-import { User, createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { Database } from "@/database/types";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useSearchParams } from "next/navigation";
 
-export const Navbar = ({ authUser }: { authUser: User | null }) => {
+export const Navbar = ({ authUser }: { authUser: Database["public"]["Tables"]["users_restricted"]["Row"] | null }) => {
     const searchParams = useSearchParams();
     const lang = searchParams.get("lang") || "1";
     const cup = searchParams.get("cup") || "";
@@ -11,7 +12,6 @@ export const Navbar = ({ authUser }: { authUser: User | null }) => {
     const supabase = createClientComponentClient();
 
     const handleLogout = async () => {
-        console.log("logout");
         const err = await supabase.auth.signOut({ scope: "global" });
         if (err) {
             console.error(err);
@@ -89,7 +89,7 @@ export const Navbar = ({ authUser }: { authUser: User | null }) => {
                         </form>
                     </div>
                     <ul className="lg:float-right ml-[59px] mr-0 mt-[47px] mb-0 pl-0 leading-[22.4px] text-[14px]">
-                        <li className="lg:float-left relative block box-border mr-[15px]">
+                        <li className={`lg:float-left relative block box-border ${lang === "1" ? "mr-[15px]" : "mr-[14px]"}`}>
                             <a href={`https://kubki.com.pl/?lang=${lang}`}>
                                 <img src="https://kubki.com.pl/img/home.png" alt="" />
                             </a>

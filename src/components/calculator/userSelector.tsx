@@ -19,7 +19,7 @@ export const UserSelector = ({
     const [selectedPricingsData, setSelectedPricingsData] = useState<selectedPricingsDataInterface>(
         { cupData: [], colorPricing: null }
     );
-    const [selectedUserUnit, setSelectedUserUnit] = useState<"zł"|"EUR">();
+    const [selectedUserUnit, setSelectedUserUnit] = useState<"zł" | "EUR">();
     const [isError, setIsError] = useState(false);
     const [loading, setLoading] = useState(false);
 
@@ -27,7 +27,9 @@ export const UserSelector = ({
         setLoading(true);
 
         const selectedUser = e.target.value;
-        setSelectedUserUnit(allUsersData.find((user) => user.user_id === selectedUser)?.eu ? "EUR" : "zł");
+        setSelectedUserUnit(
+            allUsersData.find((user) => user.user_id === selectedUser)?.eu ? "EUR" : "zł"
+        );
 
         const pricingsData = await getUserPricings(selectedUser, cup);
         if (!pricingsData) {
@@ -45,7 +47,7 @@ export const UserSelector = ({
         <>
             <select
                 onChange={(e) => selectHandler(e)}
-                className="w-max h-6 fixed top-[90px] left-6 z-[100] border"
+                className="w-max fixed top-[87px] left-6 z-[100] border border-[#c00418] rounded-full px-2 py-[2px] bg-white"
                 defaultValue=""
             >
                 <option value="" disabled hidden>
@@ -61,20 +63,22 @@ export const UserSelector = ({
             </select>
             {loading && <div>{lang === "1" ? "Ładowanie..." : "Loading..."}</div>}
             {isError && (
-                <div>
+                <div className="text-center text-2xl mt-72">
                     {lang === "1"
                         ? "Wystąpił błąd, odśwież stronę"
                         : "An error occured, refresh the page"}
                 </div>
             )}
-            {selectedPricingsData.colorPricing && selectedPricingsData.cupData.length > 0 && selectedUserUnit && (
-                <Calculator
-                    cupData={selectedPricingsData.cupData}
-                    colorPricing={selectedPricingsData.colorPricing}
-                    lang={lang}
-                    clientPriceUnit={selectedUserUnit}
-                />
-            )}
+            {selectedPricingsData.colorPricing &&
+                selectedPricingsData.cupData.length > 0 &&
+                selectedUserUnit && (
+                    <Calculator
+                        cupData={selectedPricingsData.cupData}
+                        colorPricing={selectedPricingsData.colorPricing}
+                        lang={lang}
+                        clientPriceUnit={selectedUserUnit}
+                    />
+                )}
         </>
     );
 };

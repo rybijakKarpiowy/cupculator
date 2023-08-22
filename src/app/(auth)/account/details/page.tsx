@@ -1,8 +1,10 @@
 "use client";
 
+import { Database } from "@/database/types";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 export default function AccountDetails() {
     const [loading, setLoading] = useState(false);
@@ -10,8 +12,20 @@ export default function AccountDetails() {
     const searchParams = useSearchParams();
     const lang = searchParams.get("lang") || "1";
     const cup = searchParams.get("cup");
+    const error_description = searchParams.get("error_description");
 
-    const supabase = createClientComponentClient();
+    if (error_description === "No associated flow state found. 400: Flow state is expired") {
+        toast.error(
+            `${
+                lang === "1"
+                    ? "Sesja wygasła! Zarejestruj się ponownie"
+                    : "Session expired! Sign up again"
+            }`
+        );
+        setTimeout(() => (window.location.href = `/register?cup=${cup}&lang=${lang}`), 5000);
+    }
+
+    const supabase = createClientComponentClient<Database>();
 
     const handleSubmit = async (event: React.FormEvent<HTMLButtonElement>) => {
         setLoading(true);
@@ -48,7 +62,7 @@ export default function AccountDetails() {
 
         for (const key in userData) {
             if (userData[key] == "") {
-                alert(`${lang === "1" ? "Uzupełnij wszystkie pola!" : "Fill in all fields!"}`);
+                toast.warn(`${lang === "1" ? "Uzupełnij wszystkie pola!" : "Fill in all fields!"}`);
                 setLoading(false);
                 return;
             }
@@ -59,22 +73,22 @@ export default function AccountDetails() {
         } = await supabase.auth.getUser();
 
         if (!user) {
-            alert(`${lang === "1" ? "Nie jesteś zalogowany!" : "You are not logged in!"}`);
-            window.location.href = `/login?cup=${cup}&lang=${lang}`;
+            toast.error(`${lang === "1" ? "Nie jesteś zalogowany!" : "You are not logged in!"}`);
+            setTimeout(() => (window.location.href = `/login?cup=${cup}&lang=${lang}`), 5000);
             setLoading(false);
             return;
         }
 
         // name and surname validation
         if (!/^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ ]+$/g.test(userData.firstName)) {
-            alert(
+            toast.warn(
                 `${lang === "1" ? "Niepoprawne imię!" : "Invalid name! Remove special characters"}`
             );
             setLoading(false);
             return;
         }
         if (!/^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ ]+$/g.test(userData.lastName)) {
-            alert(
+            toast.warn(
                 `${
                     lang === "1"
                         ? "Niepoprawne nazwisko!"
@@ -86,7 +100,7 @@ export default function AccountDetails() {
         }
         // country validation
         if (!/^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ ]+$/g.test(userData.country)) {
-            alert(
+            toast.warn(
                 `${
                     lang === "1"
                         ? "Niepoprawny kraj!"
@@ -98,7 +112,7 @@ export default function AccountDetails() {
         }
         // region validation
         if (!/^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ ]+$/g.test(userData.region)) {
-            alert(
+            toast.warn(
                 `${
                     lang === "1"
                         ? "Niepoprawny region!"
@@ -109,14 +123,17 @@ export default function AccountDetails() {
             return;
         }
         // postal code validation
-        if (!/^[0-9 ]+$/g.test(userData.postalCodeprefix) || !/^[0-9 ]+$/g.test(userData.postalCode)) {
-            alert(`${lang === "1" ? "Niepoprawny kod pocztowy!" : "Invalid postal code!"}`);
+        if (
+            !/^[0-9 ]+$/g.test(userData.postalCodeprefix) ||
+            !/^[0-9 ]+$/g.test(userData.postalCode)
+        ) {
+            toast.warn(`${lang === "1" ? "Niepoprawny kod pocztowy!" : "Invalid postal code!"}`);
             setLoading(false);
             return;
         }
         // city validation
         if (!/^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ ]+$/g.test(userData.city)) {
-            alert(
+            toast.warn(
                 `${
                     lang === "1"
                         ? "Niepoprawna miejscowość!"
@@ -128,19 +145,19 @@ export default function AccountDetails() {
         }
         // phone validation
         if (!/^[0-9+ ]+$/g.test(userData.phone)) {
-            console.log(userData.phone)
-            alert(`${lang === "1" ? "Niepoprawny numer telefonu!" : "Invalid phone number!"}`);
+            console.log(userData.phone);
+            toast.warn(`${lang === "1" ? "Niepoprawny numer telefonu!" : "Invalid phone number!"}`);
             setLoading(false);
             return;
         }
         // NIP validation
         if (!/^[A-Z ]+$/g.test(userData.NIPprefix)) {
-            alert(`${lang === "1" ? "Niepoprawny prefiks NIP!" : "Invalid NIP prefix!"}`);
+            toast.warn(`${lang === "1" ? "Niepoprawny prefiks NIP!" : "Invalid NIP prefix!"}`);
             setLoading(false);
             return;
         }
         if (!/^[0-9 ]+$/g.test(userData.NIP)) {
-            alert(`${lang === "1" ? "Niepoprawny NIP!" : "Invalid NIP!"}`);
+            toast.warn(`${lang === "1" ? "Niepoprawny NIP!" : "Invalid NIP!"}`);
             setLoading(false);
             return;
         }
@@ -151,8 +168,14 @@ export default function AccountDetails() {
             .eq("user_id", user?.id);
 
         if (userDataCheck && userDataCheck.length > 0) {
-            alert("Dane zostały już wprowadzone!");
-            window.location.href = `/?cup=${cup}&lang=${lang}`;
+            toast.warn(
+                `${
+                    lang === "1"
+                        ? "Dane zostały już uzupełnione!"
+                        : "Data has already been completed!"
+                }`
+            );
+            setTimeout(() => (window.location.href = `/?cup=${cup}&lang=${lang}`), 5000);
             setLoading(false);
             return;
         }
@@ -162,7 +185,7 @@ export default function AccountDetails() {
         const { error } = await supabase.from("users").upsert(
             {
                 user_id: user?.id,
-                email: user?.email,
+                email: user?.email as string,
                 first_name: userData.firstName,
                 last_name: userData.lastName,
                 company_name: userData.companyName,
@@ -179,23 +202,8 @@ export default function AccountDetails() {
         );
 
         if (error) {
-            alert(error.message);
-            setLoading(false);
-            return;
-        }
-
-        const res = await fetch("/api/createuser", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({
-                user_id: user?.id,
-            }),
-        });
-
-        if (!res.ok) {
-            alert(
+            console.log(error);
+            toast.error(
                 `${
                     lang === "1"
                         ? "Wystąpił błąd, spróbuj ponownie później!"
@@ -206,8 +214,27 @@ export default function AccountDetails() {
             return;
         }
 
-        alert(`${lang === "1" ? "Wprowadzono dane!" : "Data entered!"}`);
-        window.location.href = `/?cup=${cup}&lang=${lang}`;
+        const res = await fetch("/api/createuser", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+        });
+
+        if (!res.ok) {
+            toast.error(
+                `${
+                    lang === "1"
+                        ? "Wystąpił błąd, spróbuj ponownie później!"
+                        : "An error occurred, try again later!"
+                }`
+            );
+            setLoading(false);
+            return;
+        }
+
+        toast.success(`${lang === "1" ? "Wprowadzono dane!" : "Data entered!"}`);
+        setTimeout(() => window.location.href = `/?cup=${cup}&lang=${lang}`, 5000);
         setLoading(false);
     };
 
@@ -342,7 +369,9 @@ export default function AccountDetails() {
                 <div className="flex flex-row justify-center items-center mt-2">
                     <button
                         type="submit"
-                        className={`border-[#c00418] border rounded-[25px] w-fit px-4 py-2 text-black ${loading ? "bg-slate-400" : "bg-white hover:bg-[#c00418]"} hover:text-white duration-150 ease-in-out`}
+                        className={`border-[#c00418] border rounded-[25px] w-fit px-4 py-2 text-black ${
+                            loading ? "bg-slate-400" : "bg-white hover:bg-[#c00418]"
+                        } hover:text-white duration-150 ease-in-out`}
                         onClick={(e) => handleSubmit(e)}
                         disabled={loading}
                     >

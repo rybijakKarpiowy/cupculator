@@ -1,9 +1,19 @@
 import { supabase } from "@/database/supabase";
+import { Database } from "@/database/types";
 import { baseUrl } from "@/middleware";
+import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (req: NextRequest) => {
-    const { auth_id, email, password, role } = (await req.json()) as {
+    const res = NextResponse.next();
+    const clientSupabase = createMiddlewareClient<Database>({req, res});
+    const auth_id = (await clientSupabase.auth.getSession()).data.session?.user.id;
+
+    if (!auth_id) {
+        return NextResponse.redirect(new URL("/login", baseUrl));
+    }
+
+    const { email, password, role } = (await req.json()) as {
         auth_id: string;
         email: string;
         password: string;

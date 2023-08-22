@@ -2,6 +2,7 @@
 
 import { Client, User } from "@/app/dashboard/page";
 import { ChangeEvent, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 
 export const DashboardPages = ({
     clientsInput,
@@ -53,7 +54,7 @@ export const DashboardPages = ({
                 | "PL"
                 | "brak";
             if (eu === "brak") {
-                alert("Potwierdź czy klient ma być w EU czy nie");
+                toast.warn("Potwierdź czy klient ma być w EU czy nie");
                 setLoading(false);
                 return;
             }
@@ -64,7 +65,7 @@ export const DashboardPages = ({
         }
 
         if (!cup_pricing || !color_pricing) {
-            alert("Uzupełnij cennik klienta");
+            toast.warn("Uzupełnij cennik klienta");
             setLoading(false);
             return;
         }
@@ -72,7 +73,6 @@ export const DashboardPages = ({
         const res = await fetch("/api/activateclient", {
             method: "POST",
             body: JSON.stringify({
-                auth_id: user?.user_id,
                 user_id,
                 cup_pricing,
                 color_pricing,
@@ -83,7 +83,7 @@ export const DashboardPages = ({
         console.log(res);
 
         if (res.ok) {
-            alert("Klient został aktywowany");
+            toast.success("Klient został aktywowany");
             clients?.forEach((client) => {
                 if (client.user_id === user_id) {
                     client.activated = true;
@@ -98,7 +98,7 @@ export const DashboardPages = ({
             return;
         }
 
-        alert("Wystąpił błąd");
+        toast.error("Wystąpił błąd");
         setLoading(false);
         return;
     };
@@ -110,14 +110,13 @@ export const DashboardPages = ({
         const res = await fetch("/api/changerole", {
             method: "POST",
             body: JSON.stringify({
-                auth_id: user?.user_id,
                 user_id,
                 role,
             }),
         });
 
         if (res.ok) {
-            alert("Rola została zmieniona");
+            toast.success("Rola została zmieniona");
             adminsAndSalesmen?.forEach((client) => {
                 if (client.user_id === user_id) {
                     client.role = role;
@@ -129,7 +128,7 @@ export const DashboardPages = ({
             return;
         }
 
-        alert("Wystąpił błąd");
+        toast.error("Wystąpił błąd");
         setLoading(false);
         return;
     };
@@ -142,13 +141,12 @@ export const DashboardPages = ({
         const res = await fetch("/api/deleteuser", {
             method: "POST",
             body: JSON.stringify({
-                auth_id: user?.user_id,
                 user_id,
             }),
         });
 
         if (res.ok) {
-            alert("Użytkownik został usunięty");
+            toast.success("Użytkownik został usunięty");
             adminsAndSalesmen?.forEach((client, index) => {
                 if (client.user_id === user_id) {
                     adminsAndSalesmen.splice(index, 1);
@@ -167,7 +165,7 @@ export const DashboardPages = ({
             return;
         }
 
-        alert(await res.text());
+        toast.error(await res.text());
         setLoading(false);
         return;
     };
@@ -186,31 +184,31 @@ export const DashboardPages = ({
             | "Salesman";
 
         if (!email || !password || !passwordRepeat || !role) {
-            alert("Uzupełnij wszystkie pola");
+            toast.warn("Uzupełnij wszystkie pola");
             setLoading(false);
             return;
         }
 
         if (password !== passwordRepeat) {
-            alert("Hasła nie są takie same");
+            toast.warn("Hasła nie są takie same");
             setLoading(false);
             return;
         }
 
         if (password.length < 6) {
-            alert("Hasło musi mieć co najmniej 8 znaków");
+            toast.warn("Hasło musi mieć co najmniej 8 znaków");
             setLoading(false);
             return;
         }
 
         if (!email.includes("@")) {
-            alert("Niepoprawny adres email");
+            toast.warn("Niepoprawny adres email");
             setLoading(false);
             return;
         }
 
         if (password.length > 64) {
-            alert("Hasło jest za długie");
+            toast.warn("Hasło jest za długie");
             setLoading(false);
             return;
         }
@@ -218,7 +216,6 @@ export const DashboardPages = ({
         const res = await fetch("/api/addadmin", {
             method: "POST",
             body: JSON.stringify({
-                auth_id: user?.user_id,
                 email,
                 password,
                 role,
@@ -226,18 +223,18 @@ export const DashboardPages = ({
         });
 
         if (res.ok) {
-            alert(
+            toast.success(
                 `${
                     role === "Admin" ? "Administrator" : "Sprzedawca"
                 } został dodany, mail aktywacyjny został wysłany na podany adres email`
             );
             setAddAdmin(false);
             setLoading(false);
-            window.location.reload();
+            setTimeout(() => window.location.reload(), 5000);
             return;
         }
 
-        alert("Wystąpił błąd");
+        toast.error("Wystąpił błąd");
         setLoading(false);
         return;
     };
@@ -248,19 +245,19 @@ export const DashboardPages = ({
         const sheet_url = (document.querySelector("#sheet_url") as HTMLInputElement)?.value;
 
         if (!cups_or_colors || !pricing_name || !sheet_url) {
-            alert("Uzupełnij wszystkie pola");
+            toast.warn("Uzupełnij wszystkie pola");
             setLoading(false);
             return;
         }
 
         if (sheet_url && !sheet_url.includes("docs.google.com/spreadsheets/d/")) {
-            alert("Niepoprawny link do arkusza");
+            toast.warn("Niepoprawny link do arkusza");
             setLoading(false);
             return;
         }
 
-        if (pricing_name.length > 64) {
-            alert("Nazwa cennika jest za długa");
+        if (pricing_name.length > 32) {
+            toast.warn("Nazwa cennika jest za długa");
             setLoading(false);
             return;
         }
@@ -269,7 +266,7 @@ export const DashboardPages = ({
             (cups_or_colors === "cups" && available_cup_pricings?.includes(pricing_name)) ||
             (cups_or_colors === "colors" && available_color_pricings?.includes(pricing_name))
         ) {
-            alert("Taki cennik już istnieje, proszę wybrać go z listy");
+            toast.warn("Taki cennik już istnieje, proszę wybrać go z listy");
             setLoading(false);
             return;
         }
@@ -279,7 +276,6 @@ export const DashboardPages = ({
             res = await fetch("/api/updatecups", {
                 method: "POST",
                 body: JSON.stringify({
-                    auth_id: user?.user_id,
                     pricing_name,
                     sheet_url,
                 }),
@@ -292,7 +288,7 @@ export const DashboardPages = ({
                     cupsWithoutPrices: string[];
                     lastCellEmpty: string[];
                 };
-                alert(
+                toast.success(
                     `Cennik został dodany. ${
                         lastCellEmpty.length > 0
                             ? `Uzupełnij ostatnią kolumnę w wierszach: ${lastCellEmpty.join(
@@ -301,28 +297,32 @@ export const DashboardPages = ({
                             : ""
                     }${
                         incompleteCups.length > 0
-                            ? `Kubki z niepełnymi danymi: ${incompleteCups.join(", ")}. `
+                            ? `Kubki z niepełnymi danymi (zostaną pominięte) w wierszach: ${incompleteCups.join(
+                                  ", "
+                              )}. `
                             : ""
                     }${
                         cupsWithoutPrices.length > 0
-                            ? `Kubki bez cen: ${cupsWithoutPrices.join(", ")}. `
+                            ? `Kubki bez cen w wierszach: ${cupsWithoutPrices.join(", ")}. `
                             : ""
                     }
-                Odśwież stronę, aby zobaczyć zmiany.`
+                Odśwież stronę, aby zobaczyć zmiany.`,
+                    {
+                        autoClose: false,
+                    }
                 );
             }
         } else if (cups_or_colors === "colors") {
             res = await fetch("/api/updatecolors", {
                 method: "POST",
                 body: JSON.stringify({
-                    auth_id: user?.user_id,
                     pricing_name,
                     sheet_url,
                 }),
             });
 
             if (res.ok) {
-                alert("Cennik został dodany. Odśwież stronę, aby zobaczyć zmiany.");
+                toast.success("Cennik został dodany. Odśwież stronę, aby zobaczyć zmiany.");
             }
         }
 
@@ -337,12 +337,13 @@ export const DashboardPages = ({
         if (res.status === 400) {
             const data = await res.json();
             const { duplicateCodes } = data as { duplicateCodes: string[] };
-            alert(
+            toast.error(
                 "Cennik zawiera duplikaty kodów, proszę je usunąć i spróbować ponownie. Duplikaty: " +
-                    duplicateCodes.join(", ")
+                    duplicateCodes.join(", "),
+                { autoClose: false }
             );
         } else {
-            alert("Wystąpił błąd");
+            toast.error("Wystąpił błąd");
         }
 
         setLoading(false);

@@ -1,8 +1,10 @@
 "use client";
 
+import { baseUrl } from "@/middleware";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 export default function Register() {
     const [loading, setLoading] = useState(false);
@@ -27,32 +29,34 @@ export default function Register() {
 
         for (const key in userData) {
             if (userData[key] == "") {
-                alert(`${lang === "1" ? "Wypełnij wszystkie pola!" : "Fill in all fields!"}`);
+                toast.warn(`${lang === "1" ? "Wypełnij wszystkie pola!" : "Fill in all fields!"}`);
                 setLoading(false);
                 return;
             }
         }
 
         if (userData.password != userData.passwordRepeat) {
-            alert(`${lang === "1" ? "Hasła nie są takie same!" : "Passwords are not the same!"}`);
+            toast.warn(
+                `${lang === "1" ? "Hasła nie są takie same!" : "Passwords are not the same!"}`
+            );
             setLoading(false);
             return;
         }
 
         if (userData.password.length < 8) {
-            alert(`${lang === "1" ? "Hasło jest za krótkie!" : "The password is too short!"}`);
+            toast.warn(`${lang === "1" ? "Hasło jest za krótkie!" : "The password is too short!"}`);
             setLoading(false);
             return;
         }
 
         if (userData.password.length > 64) {
-            alert(`${lang === "1" ? "Hasło jest za długie!" : "The password is too long!"}`);
+            toast.warn(`${lang === "1" ? "Hasło jest za długie!" : "The password is too long!"}`);
             setLoading(false);
             return;
         }
 
         if (!userData.email.includes("@")) {
-            alert(`${lang === "1" ? "Email jest niepoprawny!" : "The email is incorrect!"}`);
+            toast.warn(`${lang === "1" ? "Email jest niepoprawny!" : "The email is incorrect!"}`);
             setLoading(false);
             return;
         }
@@ -61,25 +65,32 @@ export default function Register() {
             email: userData.email,
             password: userData.password,
             options: {
-                emailRedirectTo: `http://localhost:3000/account/details?cup=${cup}&lang=${lang}`,
+                emailRedirectTo: `${baseUrl}account/details?cup=${cup}&lang=${lang}`,
             },
         });
 
         if (error) {
-            alert(error.message);
+            console.log(error);
+            toast.error(
+                `${
+                    lang === "1"
+                        ? "Wystąpił błąd, spróbuj ponownie później!"
+                        : "An error occurred, try again later!"
+                }`
+            );
             setLoading(false);
             return;
         }
 
         if (data) {
-            alert(
+            toast.success(
                 `${
                     lang === "1"
                         ? "Zarejestrowano pomyślnie! Potwierdź swój adres email!"
                         : "Registered successfully! Confirm your email address!"
                 }`
             );
-            window.location.href = `/?cup=${cup}&lang=${lang}`;
+            setTimeout(() => (window.location.href = `/?cup=${cup}&lang=${lang}`), 5000);
             setLoading(false);
             return;
         }
@@ -124,7 +135,9 @@ export default function Register() {
                 <div className="flex flex-row justify-center items-center mt-2">
                     <button
                         type="submit"
-                        className={`border-[#c00418] border rounded-[25px] w-fit px-4 py-2 text-black ${loading ? "bg-slate-400" : "bg-white hover:bg-[#c00418]"} hover:text-white duration-150 ease-in-out`}
+                        className={`border-[#c00418] border rounded-[25px] w-fit px-4 py-2 text-black ${
+                            loading ? "bg-slate-400" : "bg-white hover:bg-[#c00418]"
+                        } hover:text-white duration-150 ease-in-out`}
                         onClick={(e) => handleSubmit(e)}
                         disabled={loading}
                     >

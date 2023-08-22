@@ -3,9 +3,13 @@ import { baseUrl } from "@/middleware";
 import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (req: NextRequest) => {
-    const { user_id } = await req.json();
+    const { auth_id } = await req.json();
+
+    if (!auth_id) {
+        return NextResponse.redirect(new URL("/login", baseUrl));
+    }
     
-    const { data: roleData, error: error1 } = await supabase.from("users_restricted").select("role").eq("user_id", user_id);
+    const { data: roleData, error: error1 } = await supabase.from("users_restricted").select("role").eq("user_id", auth_id);
 
     if (error1) {
         return NextResponse.json(error1.message, { status: 500 });
@@ -45,7 +49,7 @@ export const POST = async (req: NextRequest) => {
         (user) => user.role === "Admin" || user.role === "Salesman" // consider getting data from endpoint with service key
     );
 
-    const userInfo = users?.find((user) => user.user_id === user_id);
+    const userInfo = users?.find((user) => user.user_id === auth_id);
     
     if (roleData[0].role == "Admin") {
         return NextResponse.json({ clients, adminsAndSalesmen, userInfo });

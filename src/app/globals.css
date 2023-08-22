@@ -32,6 +32,7 @@ body {
   float: left;
   position: relative;
   border: none;
+  text-shadow: 0 1px 0 rgba(255,255,255,0.25);
 }
 .tab:hover {
   background-color: #c00418;

@@ -3,9 +3,19 @@ import { NextRequest, NextResponse } from "next/server";
 import { JWT } from "google-auth-library";
 import { GoogleSpreadsheet } from "google-spreadsheet";
 import { baseUrl } from "@/middleware";
+import { Database } from "@/database/types";
+import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 
 export const POST = async (req: NextRequest) => {
-    const { auth_id, pricing_name, sheet_url } = (await req.json()) as {
+    const res = NextResponse.next();
+    const clientSupabase = createMiddlewareClient<Database>({ req, res });
+    const auth_id = (await clientSupabase.auth.getSession()).data.session?.user.id;
+
+    if (!auth_id) {
+        return NextResponse.redirect(new URL("/login", baseUrl));
+    }
+
+    const { pricing_name, sheet_url } = (await req.json()) as {
         auth_id: string;
         pricing_name: string;
         sheet_url: string;
@@ -62,6 +72,7 @@ export const POST = async (req: NextRequest) => {
     // @ts-ignore
     const rawData = rows.slice(offset - 1).map((row) => row._rawData) as string[][];
 
+    let allCodes = [] as string[];
     let incompleteCups = [] as string[];
     let cupsWithoutPrices = [] as string[];
     let lastCellEmpty = [] as string[];
@@ -136,6 +147,11 @@ export const POST = async (req: NextRequest) => {
                 return null;
             }
 
+            // collect cups' codes
+            if (obj.code) {
+                allCodes.push(obj.code);
+            }
+            
             // check if the row that's supposed to be a cup is not missing any attributes
             if (
                 !obj.code ||
@@ -203,7 +219,6 @@ export const POST = async (req: NextRequest) => {
 
     const encounteredCodes = new Set(preparedData.map((row) => row.code));
     if (encounteredCodes.size !== preparedData.length) {
-        const allCodes = preparedData.map((row) => row.code);
         const codesDict = {} as { [key: string]: number };
         allCodes.forEach((code) => {
             if (codesDict[code]) {

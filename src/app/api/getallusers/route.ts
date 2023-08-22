@@ -3,14 +3,16 @@ import { baseUrl } from "@/middleware";
 import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (req: NextRequest) => {
-    const { authId } = (await req.json()) as {
-        authId: string;
-    };
+    const { auth_id } = await req.json();
+
+    if (!auth_id) {
+        return NextResponse.redirect(new URL("/login", baseUrl));
+    }
 
     const { data: roleData, error: error1 } = await supabase
         .from("users_restricted")
         .select("role")
-        .eq("user_id", authId);
+        .eq("user_id", auth_id);
 
     if (error1) {
         return NextResponse.json(error1.message, { status: 500 });

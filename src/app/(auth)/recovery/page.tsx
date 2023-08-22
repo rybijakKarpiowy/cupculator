@@ -1,8 +1,10 @@
 "use client";
 
+import { baseUrl } from "@/middleware";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
+import { toast } from "react-toastify";
 
 export default function Recovery() {
     const [loading, setLoading] = useState(false);
@@ -19,18 +21,23 @@ export default function Recovery() {
         const email = (document.getElementById("email") as HTMLInputElement).value;
 
         const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-            redirectTo: `http://localhost:3000/resetpassword?cup=${cup}&lang=${lang}`,
+            redirectTo: `${baseUrl}resetpassword?cup=${cup}&lang=${lang}`,
         });
 
         if (error) {
-            alert(error.message);
+            console.log(error);
+            toast.error(lang === "1" ? "Błędny email" : "Incorrect email");
             setLoading(false);
             return;
         }
 
         if (data) {
-            alert("Wysłano link do zresetowania hasła!");
-            window.location.href = `/?cup=${cup}&lang=${lang}`;
+            toast.success(
+                lang === "1"
+                    ? "Wysłano link do zresetowania hasła!"
+                    : "Sent a link to reset your password!"
+            );
+            setTimeout(() => (window.location.href = `/?cup=${cup}&lang=${lang}`), 5000);
             setLoading(false);
         }
     };
@@ -52,7 +59,9 @@ export default function Recovery() {
                 <div className="flex flex-row justify-center items-center mt-4">
                     <button
                         type="submit"
-                        className={`border-[#c00418] border rounded-[25px] w-fit px-4 py-2 text-black ${loading ? "bg-slate-400" : "bg-white hover:bg-[#c00418]"} hover:text-white duration-150 ease-in-out`}
+                        className={`border-[#c00418] border rounded-[25px] w-fit px-4 py-2 text-black ${
+                            loading ? "bg-slate-400" : "bg-white hover:bg-[#c00418]"
+                        } hover:text-white duration-150 ease-in-out`}
                         onClick={(e) => handleSubmit(e)}
                         disabled={loading}
                     >

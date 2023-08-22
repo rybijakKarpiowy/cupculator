@@ -4,9 +4,20 @@ import { JWT } from "google-auth-library";
 import { GoogleSpreadsheet } from "google-spreadsheet";
 import { colorSheetParser } from "@/lib/colorSheetParser";
 import { baseUrl } from "@/middleware";
+import { Database } from "@/database/types";
+import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 
 export const POST = async (req: NextRequest) => {
-    const { auth_id, pricing_name, sheet_url } = (await req.json()) as {
+    const res = NextResponse.next();
+    const clientSupabase = createMiddlewareClient<Database>({req, res});
+    const auth_id = (await clientSupabase.auth.getSession()).data.session?.user.id;
+
+    if (!auth_id) {
+        return NextResponse.redirect(new URL("/login", baseUrl));
+    }
+
+
+    const { pricing_name, sheet_url } = (await req.json()) as {
         auth_id: string;
         pricing_name: string;
         sheet_url: string;

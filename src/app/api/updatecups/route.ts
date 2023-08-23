@@ -89,7 +89,7 @@ export const POST = async (req: NextRequest) => {
                 color: row[2],
                 link: row[3].trim(),
                 material: row[4],
-                category: row[5],
+                category: row[5].replace(" ", ""),
                 icon: row[6],
                 volume: row[7],
                 supplier: row[8],
@@ -340,6 +340,9 @@ export interface Cup {
     mini_pallet?: number;
     half_pallet?: number;
     full_pallet?: number;
+    mini_pallet_singular?: number;
+    half_pallet_singular?: number;
+    full_pallet_singular?: number;
     deep_effect?: boolean;
     deep_effect_plus?: boolean;
     digital_print?: boolean;

@@ -44,7 +44,9 @@ export async function middleware(req: NextRequest) {
 
         if (error) {
             console.log(error);
-            return NextResponse.redirect(new URL(`/account/details?cup=${cup}&lang=${lang}`, baseUrl));
+            return NextResponse.redirect(
+                new URL(`/account/details?cup=${cup}&lang=${lang}`, baseUrl)
+            );
         }
 
         if (!data) {
@@ -102,4 +104,6 @@ export const config = {
     matcher: ["/", "/dashboard/:path*", "/login", "/recovery", "/register", "/resetpassword"],
 };
 
-export const baseUrl = new URL("http://localhost:3000");
+export const baseUrl = process.env.VERCEL_URL
+    ? new URL(`https://${process.env.VERCEL_URL}`)
+    : new URL("http://localhost:3000");

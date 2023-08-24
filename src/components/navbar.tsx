@@ -2,6 +2,7 @@
 
 import { Database } from "@/database/types";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 
 export const Navbar = ({ authUser }: { authUser: Database["public"]["Tables"]["users_restricted"]["Row"] | null }) => {
@@ -44,7 +45,7 @@ export const Navbar = ({ authUser }: { authUser: Database["public"]["Tables"]["u
                         <span className="block w-[22px] h-[2px] rounded-[1px]"></span>
                         <span className="block w-[22px] h-[2px] rounded-[1px]"></span>
                     </button>
-                    <a
+                    <Link
                         className="lg:-ml-[15px] drop-shadow float-left p-[15px] text-lg leading-5 h-[50px]"
                         href={`https://kubki.com.pl/?lang=${lang}`}
                     >
@@ -53,7 +54,7 @@ export const Navbar = ({ authUser }: { authUser: Database["public"]["Tables"]["u
                             src="https://kubki.com.pl/img/logo-20lat.png"
                             alt="Kubki.com.pl"
                         />
-                    </a>
+                    </Link>
                 </div>
 
                 <div
@@ -63,18 +64,18 @@ export const Navbar = ({ authUser }: { authUser: Database["public"]["Tables"]["u
                     <div className="block lg:float-right lg:-mr-[15px] ml-[59px] border-none">
                         <ul className="mt-[18px] pl-0 -ml-[5px] mb-[10px] flex gap-1">
                             <li className="px-[5px]">
-                                <a href={`?cup=${cup}&lang=1`}>
+                                <Link href={`?cup=${cup}&lang=1`}>
                                     <img
                                         className="align-middle overflow-clip"
                                         src="https://kubki.com.pl/img/pl.jpg"
                                         alt="pl"
                                     />
-                                </a>
+                                </Link>
                             </li>
                             <li className="px-[5px]">
-                                <a href={`?cup=${cup}&lang=2`}>
+                                <Link href={`?cup=${cup}&lang=2`}>
                                     <img src="https://kubki.com.pl/img/en.jpg" alt="en" />
-                                </a>
+                                </Link>
                             </li>
                         </ul>
 
@@ -90,51 +91,51 @@ export const Navbar = ({ authUser }: { authUser: Database["public"]["Tables"]["u
                     </div>
                     <ul className="lg:float-right ml-[59px] mr-0 mt-[47px] mb-0 pl-0 leading-[22.4px] text-[14px]">
                         <li className={`lg:float-left relative block box-border ${lang === "1" ? "mr-[15px]" : "mr-[14px]"}`}>
-                            <a href={`https://kubki.com.pl/?lang=${lang}`}>
+                            <Link href={`https://kubki.com.pl/?lang=${lang}`}>
                                 <img src="https://kubki.com.pl/img/home.png" alt="" />
-                            </a>
+                            </Link>
                         </li>
                         <li className="lg:float-left relative block">
-                            <a href={`https://kubki.com.pl/blog.html?lang=${lang}`} className="tab">
+                            <Link href={`https://kubki.com.pl/blog.html?lang=${lang}`} className="tab">
                                 Blog
-                            </a>
+                            </Link>
                         </li>
                         <li className="lg:float-left relative block">
-                            <a
+                            <Link
                                 href={`https://kubki.com.pl/Kubki.html?lang=${lang}`}
                                 className="tab"
                             >
                                 {lang === "1" ? "Oferta" : "Offer"}
-                            </a>
+                            </Link>
                         </li>
                         <li className="lg:float-left relative block">
-                            <a
+                            <Link
                                 href={`https://kubki.com.pl/O_firmie2.html?lang=${lang}`}
                                 className="tab"
                             >
                                 {lang === "1" ? "O firmie" : "About company"}
-                            </a>
+                            </Link>
                         </li>
                         <li className="lg:float-left relative block">
-                            <a href={`https://kubki.com.pl/ECO.html?lang=${lang}`} className="tab">
+                            <Link href={`https://kubki.com.pl/ECO.html?lang=${lang}`} className="tab">
                                 ECO
-                            </a>
+                            </Link>
                         </li>
                         <li className="lg:float-left relative block">
-                            <a
+                            <Link
                                 href={`https://kubki.com.pl/Know_how.html?lang=${lang}`}
                                 className="tab"
                             >
                                 {lang === "1" ? "Strefa wiedzy" : "Knowledge base"}
-                            </a>
+                            </Link>
                         </li>
                         <li className="lg:float-left relative block">
-                            <a
+                            <Link
                                 href={`https://kubki.com.pl/Kontakt.html?lang=${lang}`}
                                 className="tab"
                             >
                                 {lang === "1" ? "Kontakt" : "Contact"}
-                            </a>
+                            </Link>
                         </li>
                     </ul>
                     {authUser && (
@@ -162,9 +163,9 @@ export const Navbar = ({ authUser }: { authUser: Database["public"]["Tables"]["u
                     )}
                     {authUser && authUser.role !== "User" && (
                         <li className="absolute block h-[33px] -right-[158px] top-[47px]">
-                            <a href={`/dashboard?cup=${cup}&lang=${lang}`} className="tab">
+                            <Link href={`/dashboard?cup=${cup}&lang=${lang}`} className="tab">
                                 Panel
-                            </a>
+                            </Link>
                         </li>
                     )}
                 </div>

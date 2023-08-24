@@ -10,6 +10,7 @@ import "react-toastify/dist/ReactToastify.css";
 export const metadata: Metadata = {
     title: "Kalkulator",
     description: "Kalulator do obliczania cen kubków",
+    viewport: "width=1920, initial-scale=1",
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
@@ -45,7 +46,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                     newestOnTop
                     closeOnClick
                     rtl={false}
-                    pauseOnFocusLoss
+                    pauseOnFocusLoss={false}
                     draggable={false}
                     pauseOnHover
                     theme="light"

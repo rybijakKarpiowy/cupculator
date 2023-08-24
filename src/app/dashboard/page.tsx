@@ -61,6 +61,7 @@ const getPricings = async (authUser: AuthUser) => {
     return { available_cup_pricings, available_color_pricings };
 };
 
+
 export default async function Dashboard({
     searchParams,
 }: {
@@ -89,6 +90,12 @@ export default async function Dashboard({
     const pricings = await getPricings(authUser);
     const { available_color_pricings, available_cup_pricings } = pricings;
 
+    const { data: additionalValues, error } = await supabase.from("additional_values").select("*").single();
+    if (error) {
+        console.log(error);
+        redirect(`/?lang=${lang}&cup=${cup}`);
+    }
+
     return (
         <DashboardPages
             user={user}
@@ -96,6 +103,7 @@ export default async function Dashboard({
             adminsAndSalesmenInput={adminsAndSalesmen}
             available_color_pricings={available_color_pricings}
             available_cup_pricings={available_cup_pricings}
+            additionalValues={additionalValues}
         />
     );
 }

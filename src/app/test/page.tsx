@@ -81,28 +81,46 @@ export default function Test({
         amount1: number | null;
         amount2: number | null;
         amount3: number | null;
+        inputs: number;
     }>({
         amount1: null,
         amount2: null,
         amount3: null,
+        inputs: 1,
     });
-    const [calculatedPrices, setCalculatedPrices] = useState<{
-        unit: number | null;
-        prep: number | null;
-        transport: number | null;
-    }>({ unit: null, prep: null, transport: null });
-    const [imprintType, setImprintType] = useState<string>("");
-    const [selectedServices, setSelectedServices] = useState<string[]>([]);
-    const [selectedCardboard, setSelectedCardboard] = useState<string>("");
+    const [cupConfig, setCupConfig] = useState<CupConfigInterface>({
+        imprintType: "",
+        nadruk_wewnatrz_na_sciance: 0,
+        nadruk_na_uchu: false,
+        nadruk_na_spodzie: false,
+        nadruk_na_dnie: false,
+        nadruk_przez_rant: false,
+        nadruk_apla: false,
+        nadruk_dookola_pod_uchem: false,
+        nadruk_zlotem: false,
+        personalizacja: false,
+        zdobienie_paskiem: false,
+        zdobienie_tapeta_na_barylce: false,
+        nadruk_na_powloce_magicznej_1_kolor: false,
+        naklejka_papierowa_z_nadrukiem: false,
+        wkladanie_ulotek_do_kubka: false,
+        cardboard: ""
+    });
 
-    const amountAlerts = (amount: number | null) => {
+    const amountAlerts = (amount: number | null, inputId: number) => {
         if (!amount) return;
         if (amount < 24) {
-            setCalculatedPrices({
-                unit: null,
-                prep: null,
-                transport: null,
-            });
+            switch (inputId) {
+                case 1:
+                    setAmounts({ ...amounts, amount1: null });
+                    break;
+                case 2:
+                    setAmounts({ ...amounts, amount2: null });
+                    break;
+                case 3:
+                    setAmounts({ ...amounts, amount3: null });
+                    break;
+            }
             toast.warn(
                 lang === "1" ? "Minimalna ilość to 24 sztuki" : "Minimum amount is 24 pieces"
             );
@@ -155,10 +173,21 @@ export default function Test({
             return;
         }
         if (amount >= 5040) {
+            switch (inputId) {
+                case 1:
+                    setAmounts({ ...amounts, amount1: null });
+                    break;
+                case 2:
+                    setAmounts({ ...amounts, amount2: null });
+                    break;
+                case 3:
+                    setAmounts({ ...amounts, amount3: null });
+                    break;
+            }
             toast.info(
                 lang === "1"
-                    ? "Skontaktuj się z działem handlowym w celu uzyskania indywidualnej kalkulacji"
-                    : "Contact our sales department for individual pricing"
+                    ? "Skontaktuj się z działem handlowym w celu uzyskania indywidualnej kalkulacji (co najmniej 5040 sztuk)"
+                    : "Contact our sales department for individual pricing (at least 5040 pieces)"
             );
             return;
         }
@@ -188,25 +217,24 @@ export default function Test({
                             <PricesDisplay
                                 amount={amounts.amount1}
                                 lang={lang}
-                                calculatedPrices={calculatedPrices}
                                 clientPriceUnit={clientPriceUnit}
-                                keep
+                                keep={amounts.inputs > 0}
                             />
                         </div>
                         <div className="absolute -right-[320px] flex flex-row">
                             <PricesDisplay
                                 amount={amounts.amount2}
                                 lang={lang}
-                                calculatedPrices={calculatedPrices}
                                 clientPriceUnit={clientPriceUnit}
+                                keep={amounts.inputs > 1}
                             />
                         </div>
                         <div className="absolute -right-[512px] flex flex-row">
                             <PricesDisplay
                                 amount={amounts.amount3}
                                 lang={lang}
-                                calculatedPrices={calculatedPrices}
                                 clientPriceUnit={clientPriceUnit}
+                                keep={amounts.inputs > 2}
                             />
                         </div>
                     </div>
@@ -230,21 +258,86 @@ export default function Test({
                         ))}
                     </select>
                 </div>
-                <div>
+                <div className="relative">
                     {lang === "1" ? "Ilość: " : "Amount: "}
+                    <div className="flex flex-row absolute ml-[16px] top-0 left-[10vw] gap-[40px]">
                     <input
                         type="number"
                         min="1"
+                        className="text-right border"
                         onBlur={(e) => {
-                            setAmounts({ ...amounts, amount1: parseInt(e.target.value) });
-                            amountAlerts(parseInt(e.target.value));
+                            e.target.value ? setAmounts({ ...amounts, amount1: parseInt(e.target.value) }) : setAmounts({ ...amounts, amount1: null });
+                            amountAlerts(parseInt(e.target.value), 1);
                         }}
                         onKeyUp={(e) => {
-                            if (e.key === "Enter") {
+                            if (e.key === "Enter" || e.key === "Escape") {
                                 (e.target as HTMLInputElement).blur();
                             }
                         }}
                     />
+                    {amounts.inputs > 1 && (
+                        <input
+                            type="number"
+                            min="1"
+                            className="text-right border"
+                            onBlur={(e) => {
+                                e.target.value ? setAmounts({ ...amounts, amount2: parseInt(e.target.value) }) : setAmounts({ ...amounts, amount2: null });
+                                amountAlerts(parseInt(e.target.value), 2);
+                            }}
+                            onKeyUp={(e) => {
+                                if (e.key === "Enter" || e.key === "Escape") {
+                                    (e.target as HTMLInputElement).blur();
+                                }
+                            }}
+                        />
+                    )}
+                    {amounts.inputs > 2 && (
+                        <input
+                            type="number"
+                            min="1"
+                            className="text-right border"
+                            onBlur={(e) => {
+                                e.target.value ? setAmounts({ ...amounts, amount3: parseInt(e.target.value) }) : setAmounts({ ...amounts, amount3: null });
+                                amountAlerts(parseInt(e.target.value), 3);
+                            }}
+                            onKeyUp={(e) => {
+                                if (e.key === "Enter" || e.key === "Escape") {
+                                    (e.target as HTMLInputElement).blur();
+                                }
+                            }}
+                        />
+                    )}
+                    <div className="flex flex-row">
+                    {amounts.inputs < 3 && (
+                        <button
+                            onClick={() => setAmounts({ ...amounts, inputs: amounts.inputs + 1 })}
+                        >
+                            +
+                        </button>
+                    )}
+                    {amounts.inputs > 1 && (
+                        <button
+                            onClick={() => {
+                                if (amounts.inputs === 3) {
+                                    setAmounts({
+                                        ...amounts,
+                                        amount3: null,
+                                        inputs: amounts.inputs - 1,
+                                    });
+                                } else if (amounts.inputs === 2) {
+                                    setAmounts({
+                                        ...amounts,
+                                        amount2: null,
+                                        inputs: amounts.inputs - 1,
+                                    });
+                                }
+                            }}
+                        >
+                            x
+                        </button>
+                    )}
+                    </div>
+                    </div>
                 </div>
                 {selectedCup.trend_color && (
                     <div>
@@ -294,7 +387,15 @@ export default function Test({
                 )}
                 <div>
                     {lang === "1" ? "Wybierz nadruk: " : "Select print type: "}
-                    <select defaultValue="" onChange={(e) => setImprintType(e.target.value)}>
+                    <select
+                        defaultValue=""
+                        onChange={(e) =>
+                            setCupConfig({
+                                ...cupConfig,
+                                imprintType: e.target.value as CupConfigInterface["imprintType"],
+                            })
+                        }
+                    >
                         <option value="">{lang === "1" ? "Brak" : "None"}</option>
                         {/* tutaj trzeba dolozyc troche +20% np do wpisania w panelu */}
                         {selectedCup.direct_print && (
@@ -365,10 +466,12 @@ export default function Test({
                     {lang === "1" ? "Liczba kolorów nadruku: " : "Number of print colors: "}
                     <select
                         defaultValue=""
-                        disabled={!imprintType || imprintType === "digital_print"}
+                        disabled={
+                            !cupConfig.imprintType || cupConfig.imprintType === "digital_print"
+                        }
                     >
                         <option value="" disabled hidden>
-                            {imprintType !== "digital_print"
+                            {cupConfig.imprintType !== "digital_print"
                                 ? lang === "1"
                                     ? "Brak"
                                     : "None"
@@ -376,13 +479,13 @@ export default function Test({
                                 ? "Pełny kolor"
                                 : "Full color"}
                         </option>
-                        {imprintType &&
+                        {cupConfig.imprintType &&
                             [
                                 "deep_effect_1",
                                 "deep_effect_2",
                                 "deep_effect_plus_1",
                                 "deep_effect_plus_2",
-                            ].includes(imprintType) &&
+                            ].includes(cupConfig.imprintType) &&
                             [...Array(2)].map(
                                 (_, index) => (
                                     (index += 1),
@@ -393,8 +496,8 @@ export default function Test({
                                     )
                                 )
                             )}
-                        {imprintType &&
-                            imprintType === "direct_print" &&
+                        {cupConfig.imprintType &&
+                            cupConfig.imprintType === "direct_print" &&
                             [...Array(4)].map(
                                 (_, index) => (
                                     (index += 1),
@@ -405,7 +508,7 @@ export default function Test({
                                     )
                                 )
                             )}
-                        {imprintType &&
+                        {cupConfig.imprintType &&
                             [
                                 "transfer_plus_1",
                                 "transfer_plus_2",
@@ -413,7 +516,7 @@ export default function Test({
                                 "polylux_1",
                                 "polylux_2",
                                 "polylux_round",
-                            ].includes(imprintType) &&
+                            ].includes(cupConfig.imprintType) &&
                             [...Array(16)].map(
                                 (_, index) => (
                                     (index += 1),
@@ -433,16 +536,14 @@ export default function Test({
                                 type="checkbox"
                                 onChange={(e) =>
                                     e.target.checked
-                                        ? setSelectedServices(
-                                              selectedServices.concat([
-                                                  "nadruk_wewnatrz_na_sciance",
-                                              ])
-                                          )
-                                        : setSelectedServices(
-                                              selectedServices.filter(
-                                                  (v) => v !== "nadruk_wewnatrz_na_sciance"
-                                              )
-                                          )
+                                        ? setCupConfig({
+                                              ...cupConfig,
+                                              nadruk_wewnatrz_na_sciance: 1,
+                                          })
+                                        : setCupConfig({
+                                              ...cupConfig,
+                                              nadruk_wewnatrz_na_sciance: 0,
+                                          })
                                 }
                             />
                             <p>
@@ -450,16 +551,25 @@ export default function Test({
                                     ? "Nadruk wewnątrz na ściance"
                                     : "Print on the inside"}
                             </p>
-                            {selectedServices.includes("nadruk_wewnatrz_na_sciance") && (
+                            {cupConfig.nadruk_wewnatrz_na_sciance && (
                                 <>
-                                    <select defaultValue="1">
+                                    <select
+                                        defaultValue="1"
+                                        onChange={(e) =>
+                                            setCupConfig({
+                                                ...cupConfig,
+                                                nadruk_wewnatrz_na_sciance: parseInt(
+                                                    e.target.value
+                                                ) as 1 | 2 | 3 | 4,
+                                            })
+                                        }
+                                    >
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
                                         <option value="4">4</option>
                                     </select>
                                     <p>{lang === "1" ? "nadruków" : "prints"}</p>
-                                    {/* to znandlowac */}
                                 </>
                             )}
                         </div>
@@ -469,13 +579,7 @@ export default function Test({
                             <input
                                 type="checkbox"
                                 onChange={(e) =>
-                                    e.target.checked
-                                        ? setSelectedServices(
-                                              selectedServices.concat(["nadruk_na_uchu"])
-                                          )
-                                        : setSelectedServices(
-                                              selectedServices.filter((v) => v !== "nadruk_na_uchu")
-                                          )
+                                    setCupConfig({ ...cupConfig, nadruk_na_uchu: e.target.checked })
                                 }
                             />
                             <p>{lang === "1" ? "Nadruk na uchu" : "Print on the handle"}</p>
@@ -486,15 +590,10 @@ export default function Test({
                             <input
                                 type="checkbox"
                                 onChange={(e) =>
-                                    e.target.checked
-                                        ? setSelectedServices(
-                                              selectedServices.concat(["nadruk_na_spodzie"])
-                                          )
-                                        : setSelectedServices(
-                                              selectedServices.filter(
-                                                  (v) => v !== "nadruk_na_spodzie"
-                                              )
-                                          )
+                                    setCupConfig({
+                                        ...cupConfig,
+                                        nadruk_na_spodzie: e.target.checked,
+                                    })
                                 }
                             />
                             <p>
@@ -509,13 +608,7 @@ export default function Test({
                             <input
                                 type="checkbox"
                                 onChange={(e) =>
-                                    e.target.checked
-                                        ? setSelectedServices(
-                                              selectedServices.concat(["nadruk_na_dnie"])
-                                          )
-                                        : setSelectedServices(
-                                              selectedServices.filter((v) => v !== "nadruk_na_dnie")
-                                          )
+                                    setCupConfig({ ...cupConfig, nadruk_na_dnie: e.target.checked })
                                 }
                             />
                             <p>
@@ -530,15 +623,10 @@ export default function Test({
                             <input
                                 type="checkbox"
                                 onChange={(e) =>
-                                    e.target.checked
-                                        ? setSelectedServices(
-                                              selectedServices.concat(["nadruk_przez_rant"])
-                                          )
-                                        : setSelectedServices(
-                                              selectedServices.filter(
-                                                  (v) => v !== "nadruk_przez_rant"
-                                              )
-                                          )
+                                    setCupConfig({
+                                        ...cupConfig,
+                                        nadruk_przez_rant: e.target.checked,
+                                    })
                                 }
                             />
                             <p>{lang === "1" ? "Nadruk przez rant" : "Over the rim imprint"}</p>
@@ -549,16 +637,10 @@ export default function Test({
                             <input
                                 type="checkbox"
                                 onChange={(e) =>
-                                    e.target.checked
-                                        ? setSelectedServices(
-                                              selectedServices.concat(["nadruk_apla"])
-                                          )
-                                        : setSelectedServices(
-                                              selectedServices.filter((v) => v !== "nadruk_apla")
-                                          )
+                                    setCupConfig({ ...cupConfig, nadruk_apla: e.target.checked })
                                 }
                             />
-                            <p>{lang === "1" ? "Nadruk aplą" : "Apla print"}</p>
+                            <p>{lang === "1" ? "Nadruk apla" : "Apla print"}</p>
                         </div>
                     )}
                     {selectedCup.nadruk_dookola_pod_uchem && (
@@ -566,15 +648,10 @@ export default function Test({
                             <input
                                 type="checkbox"
                                 onChange={(e) =>
-                                    e.target.checked
-                                        ? setSelectedServices(
-                                              selectedServices.concat(["nadruk_dookola_pod_uchem"])
-                                          )
-                                        : setSelectedServices(
-                                              selectedServices.filter(
-                                                  (v) => v !== "nadruk_dookola_pod_uchem"
-                                              )
-                                          )
+                                    setCupConfig({
+                                        ...cupConfig,
+                                        nadruk_dookola_pod_uchem: e.target.checked,
+                                    })
                                 }
                             />
                             <p>
@@ -589,24 +666,28 @@ export default function Test({
                             <input
                                 type="checkbox"
                                 onChange={(e) =>
-                                    e.target.checked
-                                        ? setSelectedServices(
-                                              selectedServices.concat(["nadruk_zlotem"])
-                                          )
-                                        : setSelectedServices(
-                                              selectedServices.filter((v) => v !== "nadruk_zlotem")
-                                          )
+                                    setCupConfig({ ...cupConfig, nadruk_zlotem: e.target.checked })
                                 }
                             />
                             <p>{lang === "1" ? "Nadruk złotem" : "Gold print"}</p>
-                            {selectedServices.includes("nadruk_zlotem") && (
-                                <select defaultValue="">
-                                    <option>{lang === "1" ? "Brak" : "None"}</option>
+                            {cupConfig.nadruk_zlotem && (
+                                <select
+                                    defaultValue=""
+                                    onChange={(e) => {
+                                        setCupConfig({
+                                            ...cupConfig,
+                                            nadruk_zlotem: e.target.value as "25" | "50",
+                                        });
+                                    }}
+                                >
+                                    <option value="" disabled hidden>
+                                        {lang === "1" ? "Brak" : "None"}
+                                    </option>
                                     {selectedCup.nadruk_zlotem_do_25cm2 && (
-                                        <option value="nadruk_zlotem_do_25cm2">{"<= 25cm2"}</option>
+                                        <option value="25">{"<= 25cm2"}</option>
                                     )}
                                     {selectedCup.nadruk_zlotem_do_50cm2 && (
-                                        <option value="nadruk_zlotem_do_50cm2">{"<= 50cm2"}</option>
+                                        <option value="50">{"<= 50cm2"}</option>
                                     )}
                                 </select>
                             )}
@@ -617,66 +698,52 @@ export default function Test({
                             <input
                                 type="checkbox"
                                 onChange={(e) =>
-                                    e.target.checked
-                                        ? setSelectedServices(
-                                              selectedServices.concat(["personalizacja"])
-                                          )
-                                        : setSelectedServices(
-                                              selectedServices.filter((v) => v !== "personalizacja")
-                                          )
+                                    setCupConfig({ ...cupConfig, personalizacja: e.target.checked })
                                 }
                             />
                             <p>{lang === "1" ? "Personalizacja" : "Personalization"}</p>
                         </div>
                     )}
-                    {selectedCup.zdobienie_paskiem_bez_laczenia && (
+                    {(selectedCup.zdobienie_paskiem_bez_laczenia ||
+                        selectedCup.zdobienie_paskiem_z_laczeniem) && (
                         <div className="flex flex-row">
                             <input
                                 type="checkbox"
                                 onChange={(e) =>
-                                    e.target.checked
-                                        ? setSelectedServices(
-                                              selectedServices.concat([
-                                                  "zdobienie_paskiem_bez_laczenia",
-                                              ])
-                                          )
-                                        : setSelectedServices(
-                                              selectedServices.filter(
-                                                  (v) => v !== "zdobienie_paskiem_bez_laczenia"
-                                              )
-                                          )
+                                    setCupConfig({
+                                        ...cupConfig,
+                                        zdobienie_paskiem: e.target.checked,
+                                    })
                                 }
                             />
-                            <p>
-                                {lang === "1"
-                                    ? "Zdobienie paskiem bez łączenia"
-                                    : "Decoration with stripe without connection"}
-                            </p>
-                        </div>
-                    )}
-                    {selectedCup.zdobienie_paskiem_z_laczeniem && (
-                        <div className="flex flex-row">
-                            <input
-                                type="checkbox"
-                                onChange={(e) =>
-                                    e.target.checked
-                                        ? setSelectedServices(
-                                              selectedServices.concat([
-                                                  "zdobienie_paskiem_z_laczeniem",
-                                              ])
-                                          )
-                                        : setSelectedServices(
-                                              selectedServices.filter(
-                                                  (v) => v !== "zdobienie_paskiem_z_laczeniem"
-                                              )
-                                          )
-                                }
-                            />
-                            <p>
-                                {lang === "1"
-                                    ? "Zdobienie paskiem z łączeniem"
-                                    : "Decoration with stripe with connection"}
-                            </p>
+                            <p>{lang === "1" ? "Zdobienie paskiem" : "Decoration with stripe"}</p>
+                            {cupConfig.zdobienie_paskiem && (
+                                <select
+                                    defaultValue=""
+                                    onChange={(e) => {
+                                        setCupConfig({
+                                            ...cupConfig,
+                                            zdobienie_paskiem: e.target.value as
+                                                | "bez_laczenia"
+                                                | "z_laczeniem",
+                                        });
+                                    }}
+                                >
+                                    <option value="" disabled hidden>
+                                        {lang === "1" ? "Brak" : "None"}
+                                    </option>
+                                    {selectedCup.zdobienie_paskiem_bez_laczenia && (
+                                        <option value="bez_laczenia">
+                                            {lang === "1" ? "Bez łączenia" : "Without connection"}
+                                        </option>
+                                    )}
+                                    {selectedCup.zdobienie_paskiem_z_laczeniem && (
+                                        <option value="z_laczeniem">
+                                            {lang === "1" ? "Z łączeniem" : "With connection"}
+                                        </option>
+                                    )}
+                                </select>
+                            )}
                         </div>
                     )}
                     {selectedCup.nadruk_na_powloce_magicznej_1_kolor && (
@@ -685,16 +752,14 @@ export default function Test({
                                 type="checkbox"
                                 onChange={(e) =>
                                     e.target.checked
-                                        ? setSelectedServices(
-                                              selectedServices.concat([
-                                                  "nadruk_na_powloce_magicznej_1_kolor",
-                                              ])
-                                          )
-                                        : setSelectedServices(
-                                              selectedServices.filter(
-                                                  (v) => v !== "nadruk_na_powloce_magicznej_1_kolor"
-                                              )
-                                          )
+                                        ? setCupConfig({
+                                              ...cupConfig,
+                                              nadruk_na_powloce_magicznej_1_kolor: true,
+                                          })
+                                        : setCupConfig({
+                                              ...cupConfig,
+                                              nadruk_na_powloce_magicznej_1_kolor: false,
+                                          })
                                 }
                             />
                             <p>
@@ -704,58 +769,54 @@ export default function Test({
                             </p>
                         </div>
                     )}
-                    {selectedCup.zdobienie_tapeta_na_barylce_I_stopien_trudnosci && (
+                    {(selectedCup.zdobienie_tapeta_na_barylce_I_stopien_trudnosci ||
+                        selectedCup.zdobienie_tapeta_na_barylce_II_stopien_trudnosci) && (
                         <div className="flex flex-row">
                             <input
                                 type="checkbox"
                                 onChange={(e) =>
-                                    e.target.checked
-                                        ? setSelectedServices(
-                                              selectedServices.concat([
-                                                  "zdobienie_tapeta_na_barylce_I_stopien_trudnosci",
-                                              ])
-                                          )
-                                        : setSelectedServices(
-                                              selectedServices.filter(
-                                                  (v) =>
-                                                      v !==
-                                                      "zdobienie_tapeta_na_barylce_I_stopien_trudnosci"
-                                              )
-                                          )
+                                    setCupConfig({
+                                        ...cupConfig,
+                                        zdobienie_tapeta_na_barylce: e.target.checked,
+                                    })
                                 }
                             />
                             <p>
                                 {lang === "1"
-                                    ? "Zdobienie tapetą na baryłce - I stopień trudności"
-                                    : "Decoration with tape on the barrel - I degree of difficulty"}
+                                    ? "Zdobienie tapetą na baryłce"
+                                    : "Decoration with tape on the barrel"}
                             </p>
-                        </div>
-                    )}
-                    {selectedCup.zdobienie_tapeta_na_barylce_II_stopien_trudnosci && (
-                        <div className="flex flex-row">
-                            <input
-                                type="checkbox"
-                                onChange={(e) =>
-                                    e.target.checked
-                                        ? setSelectedServices(
-                                              selectedServices.concat([
-                                                  "zdobienie_tapeta_na_barylce_II_stopien_trudnosci",
-                                              ])
-                                          )
-                                        : setSelectedServices(
-                                              selectedServices.filter(
-                                                  (v) =>
-                                                      v !==
-                                                      "zdobienie_tapeta_na_barylce_II_stopien_trudnosci"
-                                              )
-                                          )
-                                }
-                            />
-                            <p>
-                                {lang === "1"
-                                    ? "Zdobienie tapetą na baryłce - II stopień trudności"
-                                    : "Decoration with tape on the barrel - II degree of difficulty"}
-                            </p>
+                            {cupConfig.zdobienie_tapeta_na_barylce && (
+                                <select
+                                    defaultValue=""
+                                    onChange={(e) => {
+                                        setCupConfig({
+                                            ...cupConfig,
+                                            zdobienie_tapeta_na_barylce: e.target.value as
+                                                | "I_stopien"
+                                                | "II_stopien",
+                                        });
+                                    }}
+                                >
+                                    <option value="" disabled hidden>
+                                        {lang === "1" ? "Brak" : "None"}
+                                    </option>
+                                    {selectedCup.zdobienie_tapeta_na_barylce_I_stopien_trudnosci && (
+                                        <option value="I_stopien">
+                                            {lang === "1"
+                                                ? "I stopień trudności"
+                                                : "First degree of difficulty"}
+                                        </option>
+                                    )}
+                                    {selectedCup.zdobienie_tapeta_na_barylce_II_stopien_trudnosci && (
+                                        <option value="II_stopien">
+                                            {lang === "1"
+                                                ? "II stopień trudności"
+                                                : "Second degree of difficulty"}
+                                        </option>
+                                    )}
+                                </select>
+                            )}
                         </div>
                     )}
                     {selectedCup.naklejka_papierowa_z_nadrukiem && (
@@ -764,16 +825,14 @@ export default function Test({
                                 type="checkbox"
                                 onChange={(e) =>
                                     e.target.checked
-                                        ? setSelectedServices(
-                                              selectedServices.concat([
-                                                  "naklejka_papierowa_z_nadrukiem",
-                                              ])
-                                          )
-                                        : setSelectedServices(
-                                              selectedServices.filter(
-                                                  (v) => v !== "naklejka_papierowa_z_nadrukiem"
-                                              )
-                                          )
+                                        ? setCupConfig({
+                                              ...cupConfig,
+                                              naklejka_papierowa_z_nadrukiem: true,
+                                          })
+                                        : setCupConfig({
+                                              ...cupConfig,
+                                              naklejka_papierowa_z_nadrukiem: false,
+                                          })
                                 }
                             />
                             <p>
@@ -789,14 +848,14 @@ export default function Test({
                                 type="checkbox"
                                 onChange={(e) =>
                                     e.target.checked
-                                        ? setSelectedServices(
-                                              selectedServices.concat(["wkladanie_ulotek_do_kubka"])
-                                          )
-                                        : setSelectedServices(
-                                              selectedServices.filter(
-                                                  (v) => v !== "wkladanie_ulotek_do_kubka"
-                                              )
-                                          )
+                                        ? setCupConfig({
+                                              ...cupConfig,
+                                              wkladanie_ulotek_do_kubka: true,
+                                          })
+                                        : setCupConfig({
+                                              ...cupConfig,
+                                              naklejka_papierowa_z_nadrukiem: false,
+                                          })
                                 }
                             />
                             <p>
@@ -808,13 +867,20 @@ export default function Test({
                     )}
                 </div>
             </div>
-            <div className="ml-[40%]">
+            <div className="ml-[40%] w-[60%]">
                 <div className="flex flex-row">
-                    <select defaultValue="" onChange={(e) => setSelectedCardboard(e.target.value)}>
+                    <select
+                        defaultValue=""
+                        onChange={(e) =>
+                            setCupConfig({
+                                ...cupConfig,
+                                cardboard: e.target.value as CupConfigInterface["cardboard"],
+                            })
+                        }
+                    >
                         <option value="">
                             {lang === "1" ? "Opakowanie zbiorcze" : "Bulk packaging"}
-                        </option>{" "}
-                        {/* free */}
+                        </option>
                         <option value="singular">
                             {lang === "1" ? "Kartoniki jednostkowe" : "Unit cartons"}
                         </option>
@@ -831,29 +897,63 @@ export default function Test({
                     </select>
                 </div>
                 {/* transport tylko w polsce (dla klientow PL) */}
-                <div className="flex flex-row">
+                <div className="flex flex-row ml-56 gap-[24px]">
                     <PalletQuantities
                         lang={lang}
-                        selectedCardboard={selectedCardboard}
+                        selectedCardboard={cupConfig.cardboard}
                         selectedCup={selectedCup}
                         amount={amounts.amount1}
-                        keep
+                        keep={amounts.inputs > 0}
                     />
                     <PalletQuantities
                         lang={lang}
-                        selectedCardboard={selectedCardboard}
+                        selectedCardboard={cupConfig.cardboard}
                         selectedCup={selectedCup}
                         amount={amounts.amount2}
+                        keep={amounts.inputs > 1}
                     />
                     <PalletQuantities
                         lang={lang}
-                        selectedCardboard={selectedCardboard}
+                        selectedCardboard={cupConfig.cardboard}
                         selectedCup={selectedCup}
                         amount={amounts.amount3}
+                        keep={amounts.inputs > 2}
                     />
                     {/* ceny palet tez w panelu do wrzucenia */}
                 </div>
             </div>
         </div>
     );
+}
+
+export interface CupConfigInterface {
+    imprintType:
+        | ""
+        | "direct_print"
+        | "transfer_plus_1"
+        | "transfer_plus_2"
+        | "transfer_plus_round"
+        | "polylux_1"
+        | "polylux_2"
+        | "polylux_round"
+        | "deep_effect_1"
+        | "deep_effect_2"
+        | "deep_effect_plus_1"
+        | "deep_effect_plus_2"
+        | "digital_print";
+    nadruk_wewnatrz_na_sciance: 0 | 1 | 2 | 3 | 4;
+    nadruk_na_uchu: boolean;
+    nadruk_na_spodzie: boolean;
+    nadruk_na_dnie: boolean;
+    nadruk_przez_rant: boolean;
+    nadruk_apla: boolean;
+    nadruk_dookola_pod_uchem: boolean;
+    nadruk_zlotem: true | false | "25" | "50";
+    personalizacja: boolean;
+    zdobienie_paskiem: true | false | "bez_laczenia" | "z_laczeniem";
+    nadruk_na_powloce_magicznej_1_kolor: boolean;
+    zdobienie_tapeta_na_barylce: true | false | "I_stopien" | "II_stopien";
+    naklejka_papierowa_z_nadrukiem: boolean;
+    wkladanie_ulotek_do_kubka: boolean;
+    cardboard: "" | "singular" | "6pack_wykrojnik" | "6pack_klapowy";
 }

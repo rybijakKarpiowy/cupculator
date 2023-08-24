@@ -1,17 +1,19 @@
+import { calculatePrices } from "@/lib/calculatePrices";
+
 export const PricesDisplay = ({
     amount,
     lang,
-    calculatedPrices,
     clientPriceUnit,
     keep,
 }: {
     amount: number | null;
     lang: "1" | "2";
-    calculatedPrices: { unit: number | null; prep: number | null; transport: number | null };
     clientPriceUnit: "zł" | "EUR";
     keep?: boolean;
 }) => {
     if (!amount && !keep) return <></>;
+
+    const calculatedPrices = calculatePrices(amount)
 
     return (
         <div className="flex flex-col text-right">

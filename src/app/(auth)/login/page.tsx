@@ -1,6 +1,7 @@
 "use client";
 
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
@@ -78,21 +79,21 @@ export default function Login() {
             <div className="flex flex-row justify-center items-center gap-12 mt-8">
                 <span className="flex flex-col items-center">
                     {lang === "1" ? "Nie masz konta? " : "Do not have an account yet? "}
-                    <a
+                    <Link
                         href={`/register?cup=${cup}&lang=${lang}`}
                         className="font-semibold text-black hover:text-[#c00418]"
                     >
                         {lang === "1" ? "Zarejestruj się" : "Sign up"}
-                    </a>
+                    </Link>
                 </span>
                 <span className="flex flex-col items-center">
                     {lang === "1" ? "Zapomniałeś hasła?" : "Forgot password?"}
-                    <a
+                    <Link
                         href={`/recovery?cup=${cup}&lang=${lang}`}
                         className="font-semibold text-black hover:text-[#c00418]"
                     >
                         {lang === "1" ? "Zresetuj hasło" : "Reset password"}
-                    </a>
+                    </Link>
                 </span>
             </div>
         </div>

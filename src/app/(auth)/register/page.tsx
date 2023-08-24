@@ -2,6 +2,7 @@
 
 import { baseUrl } from "@/middleware";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
@@ -148,21 +149,21 @@ export default function Register() {
             <div className="flex flex-row justify-center items-center gap-12 mt-8">
                 <span className="flex flex-col items-center">
                     {lang === "1" ? "Masz już konto?" : "Already have an account?"}
-                    <a
+                    <Link
                         href={`/login?cup=${cup}&lang=${lang}`}
                         className="font-semibold text-black hover:text-[#c00418]"
                     >
                         {lang === "1" ? "Zaloguj się" : "Sign in"}
-                    </a>
+                    </Link>
                 </span>
                 <span className="flex flex-col items-center">
                     {lang === "1" ? "Zapomniałeś hasła?" : "Forgot password?"}
-                    <a
+                    <Link
                         href={`/recovery?cup=${cup}&lang=${lang}`}
                         className="font-semibold text-black hover:text-[#c00418]"
                     >
                         {lang === "1" ? "Zresetuj hasło" : "Reset password"}
-                    </a>
+                    </Link>
                 </span>
             </div>
         </div>

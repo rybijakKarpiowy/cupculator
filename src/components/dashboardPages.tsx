@@ -1,7 +1,9 @@
 "use client";
 
 import { Client, User } from "@/app/dashboard/page";
-import { ChangeEvent, useEffect, useState } from "react";
+import { Database } from "@/database/types";
+import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 export const DashboardPages = ({
@@ -10,15 +12,23 @@ export const DashboardPages = ({
     user,
     available_cup_pricings,
     available_color_pricings,
+    additionalValues,
 }: {
     clientsInput?: Client[];
     adminsAndSalesmenInput?: Client[];
     user: User;
     available_cup_pricings: string[];
     available_color_pricings: string[];
+    additionalValues: {
+        plain_cup_markup_percent: number;
+        mini_pallet_price: number;
+        half_pallet_price: number;
+        full_pallet_price: number;
+        id: number;
+    };
 }) => {
     const [chosenTab, setChosenTab] = useState<
-        "activationRequests" | "clients" | "adminsAndSalesmen" | "pricings"
+        "activationRequests" | "clients" | "adminsAndSalesmen" | "pricings" | "additionalValues"
     >("activationRequests");
     const [loading, setLoading] = useState(false);
     const [addAdmin, setAddAdmin] = useState(false);
@@ -28,6 +38,8 @@ export const DashboardPages = ({
     const [pricing_name, setPricing_name] = useState("");
     const [newPricing, setNewPricing] = useState(false);
 
+    const supabase = createClientComponentClient<Database>();
+
     useEffect(() => {
         const cupsOrColorsDiv = document.querySelector("#cups_or_colors") as HTMLSelectElement;
         if (cupsOrColorsDiv) cupsOrColorsDiv.value = cups_or_colors;
@@ -36,6 +48,45 @@ export const DashboardPages = ({
 
         if (pricing_name === "new") setNewPricing(true);
     }, [cups_or_colors, pricing_name]);
+
+    const changeAdditionalValue = async (
+        e: FormEvent<HTMLFormElement>,
+        attr:
+            | "plain_cup_markup_percent"
+            | "mini_pallet_price"
+            | "half_pallet_price"
+            | "full_pallet_price"
+    ) => {
+        e.preventDefault();
+        setLoading(true);
+        const value = parseFloat(
+            (e.currentTarget.querySelector(`#${attr}`) as HTMLInputElement).value as string
+        );
+        if (isNaN(value)) {
+            toast.warn("Wartość musi być liczbą");
+            setLoading(false);
+            return;
+        }
+        if (value <= 0) {
+            toast.warn("Wartość musi być większa od 0");
+            setLoading(false);
+            return;
+        }
+        const { error } = await supabase
+            .from("additional_values")
+            .update({ [attr]: value })
+            .eq("id", additionalValues.id);
+
+        if (error) {
+            toast.error("Wystąpił błąd");
+            setLoading(false);
+            return;
+        }
+
+        toast.success("Wartość została zmieniona");
+        setLoading(false);
+        return;
+    };
 
     const handleActication = async (user_id: string, e?: React.FormEvent<HTMLFormElement>) => {
         setLoading(true);
@@ -390,6 +441,14 @@ export const DashboardPages = ({
                         >
                             Cenniki
                         </button>
+                        <button
+                            className={`${
+                                chosenTab === "additionalValues" ? "bg-slate-400" : "bg-slate-300"
+                            } px-2 rounded-md`}
+                            onClick={() => setChosenTab("additionalValues")}
+                        >
+                            Dodatkowe wartości
+                        </button>
                     </>
                 )}
             </div>
@@ -398,7 +457,9 @@ export const DashboardPages = ({
             {chosenTab === "activationRequests" && (
                 <div>
                     <h2>Aktywacja klientów</h2>
-                    <ul className="overflow-x-auto">
+                    <hr />
+                    <br />
+                    <ul className="overflow-x-auto px-4 w-full">
                         <ul className="flex flex-row">
                             <li className="px-2 border border-black w-48 text-center">
                                 Imię i nazwisko
@@ -425,6 +486,7 @@ export const DashboardPages = ({
                             <li className="px-2 border border-black w-20 text-center">
                                 Cennik kolorów
                             </li>
+                            <li className="w-36" />
                         </ul>
                         {clients
                             ?.filter((client) => !client.activated)
@@ -513,7 +575,7 @@ export const DashboardPages = ({
                                     <button
                                         type="submit"
                                         disabled={loading}
-                                        className={`px-2 rounded-md ${
+                                        className={`px-2 w-20 rounded-md ${
                                             loading
                                                 ? "bg-slate-400"
                                                 : "bg-green-300 hover:bg-green-400"
@@ -525,7 +587,7 @@ export const DashboardPages = ({
                                         type="button"
                                         disabled={loading}
                                         onClick={() => handleDeleteUser(client.user_id)}
-                                        className={`px-2 rounded-md ${
+                                        className={`px-2 w-16 rounded-md ${
                                             loading ? "bg-slate-400" : "bg-red-300 hover:bg-red-400"
                                         }`}
                                     >
@@ -539,7 +601,9 @@ export const DashboardPages = ({
             {chosenTab === "clients" && (
                 <div>
                     <h2>Klienci</h2>
-                    <ul className="overflow-x-auto">
+                    <hr />
+                    <br />
+                    <ul className="overflow-x-auto px-4 w-full">
                         <ul className="flex flex-row">
                             <li className="px-2 border border-black w-48 text-center">
                                 Imię i nazwisko
@@ -659,7 +723,9 @@ export const DashboardPages = ({
                 chosenTab === "adminsAndSalesmen" && (
                     <div>
                         <h2>Administratorzy i handlowcy</h2>
-                        <ul className="overflow-x-auto">
+                        <hr />
+                        <br />
+                        <ul className="overflow-x-auto px-4">
                             <ul className="flex flex-row">
                                 <li className="px-2 border border-black w-64 text-center">Rola</li>
                                 <li className="px-2 border border-black w-80 text-center">Email</li>
@@ -801,7 +867,7 @@ export const DashboardPages = ({
                             ) : (
                                 <button
                                     onClick={() => setAddAdmin(true)}
-                                    className="px-2 rounded-md bg-green-300 hover:bg-green-400"
+                                    className="px-2 mt-4 rounded-md bg-green-300 hover:bg-green-400"
                                     disabled={loading}
                                 >
                                     Dodaj admina / sprzedawcę
@@ -811,67 +877,184 @@ export const DashboardPages = ({
                     </div>
                 )}
             {user?.role === "Admin" && chosenTab === "pricings" && (
-                <div>
+                <>
                     <h2>Aktualizuj/dodaj cennik</h2>
-                    <select
-                        id="cups_or_colors"
-                        defaultValue=""
-                        onChange={(e) => setCups_or_colors(e.target.value as "cups" | "colors")}
-                        disabled={loading}
-                    >
-                        <option value="" disabled>
-                            Kubki/kolory
-                        </option>
-                        <option value="cups">Kubki</option>
-                        <option value="colors">Kolory</option>
-                    </select>
-                    <select
-                        id="pricing_name"
-                        defaultValue=""
-                        disabled={!cups_or_colors || loading}
-                        onChange={(e) => setPricing_name(e.target.value as string)}
-                    >
-                        <option value="" disabled>
-                            Wybierz cennik
-                        </option>
-                        {cups_or_colors === "cups" &&
-                            available_cup_pricings.map((pricing) => (
-                                <option key={pricing} value={pricing}>
-                                    {pricing}
-                                </option>
-                            ))}
-                        {cups_or_colors === "colors" &&
-                            available_color_pricings.map((pricing) => (
-                                <option key={pricing} value={pricing}>
-                                    {pricing}
-                                </option>
-                            ))}
-                        <option value="new">Nowy cennik</option>
-                    </select>
-                    {newPricing && (
+                    <hr />
+                    <br />
+                    <div className="flex flex-row gap-4 px-4">
+                        <select
+                            id="cups_or_colors"
+                            defaultValue=""
+                            onChange={(e) => setCups_or_colors(e.target.value as "cups" | "colors")}
+                            disabled={loading}
+                            className="border border-black"
+                        >
+                            <option value="" disabled>
+                                Kubki/kolory
+                            </option>
+                            <option value="cups">Kubki</option>
+                            <option value="colors">Kolory</option>
+                        </select>
+                        <select
+                            id="pricing_name"
+                            defaultValue=""
+                            disabled={!cups_or_colors || loading}
+                            onChange={(e) => setPricing_name(e.target.value as string)}
+                            className="border border-black"
+                        >
+                            <option value="" disabled>
+                                Wybierz cennik
+                            </option>
+                            {cups_or_colors === "cups" &&
+                                available_cup_pricings.map((pricing) => (
+                                    <option key={pricing} value={pricing}>
+                                        {pricing}
+                                    </option>
+                                ))}
+                            {cups_or_colors === "colors" &&
+                                available_color_pricings.map((pricing) => (
+                                    <option key={pricing} value={pricing}>
+                                        {pricing}
+                                    </option>
+                                ))}
+                            <option value="new">Nowy cennik</option>
+                        </select>
+                        {newPricing && (
+                            <input
+                                type="text"
+                                id="new_pricing_name"
+                                placeholder="Nazwa nowego cennika"
+                                disabled={!cups_or_colors || loading}
+                                onChange={(e) => setPricing_name(e.target.value)}
+                                className="border border-black"
+                            />
+                        )}
                         <input
                             type="text"
-                            id="new_pricing_name"
-                            placeholder="Nazwa nowego cennika"
-                            disabled={!cups_or_colors || loading}
-                            onChange={(e) => setPricing_name(e.target.value)}
+                            id="sheet_url"
+                            disabled={!cups_or_colors || !pricing_name || loading}
+                            placeholder="Link do arkusza google"
+                            className="w-96 border border-black"
                         />
-                    )}
-                    <input
-                        type="text"
-                        id="sheet_url"
-                        disabled={!cups_or_colors || !pricing_name || loading}
-                        placeholder="Link do arkusza google"
-                    />
-                    <button
-                        onClick={() => handleAddPricing()}
-                        disabled={!cups_or_colors || !pricing_name || loading}
-                        className={`px-2 w-24 rounded-md ${
-                            loading ? "bg-slate-400" : "bg-green-300 hover:bg-green-400"
-                        }`}
-                    >
-                        Wyślij
-                    </button>
+                        <button
+                            onClick={() => handleAddPricing()}
+                            disabled={!cups_or_colors || !pricing_name || loading}
+                            className={`px-2 w-24 rounded-md ${
+                                loading ? "bg-slate-400" : "bg-green-300 hover:bg-green-400"
+                            }`}
+                        >
+                            Wyślij
+                        </button>
+                    </div>
+                </>
+            )}
+            {user?.role === "Admin" && chosenTab === "additionalValues" && (
+                <div>
+                    <h2>Dodatkowe wartości</h2>
+                    <hr />
+                    <br />
+                    <ul className="w-[25%] flex flex-col px-4 gap-4">
+                        <li className="flex flex-row gap-4 justify-between">
+                            <p>Narzut na kubki bez nadruku:</p>
+                            <form
+                                className="flex flex-row"
+                                onSubmit={(e) => {
+                                    changeAdditionalValue(e, "plain_cup_markup_percent");
+                                }}
+                            >
+                                <input
+                                    className="border border-black text-right"
+                                    placeholder={additionalValues?.plain_cup_markup_percent.toString()}
+                                    type="number"
+                                    id="plain_cup_markup_percent"
+                                />
+                                <p className="w-4">%</p>
+                                <button
+                                    className={`px-2 rounded-md ${
+                                        loading ? "bg-slate-400" : "bg-green-300 hover:bg-green-400"
+                                    } ml-4`}
+                                    type="submit"
+                                >
+                                    Zapisz
+                                </button>
+                            </form>
+                        </li>
+                        <li className="flex flex-row gap-4 justify-between">
+                            <p>Koszt wysyłki mini palety:</p>
+                            <form
+                                className="flex flex-row"
+                                onSubmit={(e) => {
+                                    changeAdditionalValue(e, "mini_pallet_price");
+                                }}
+                            >
+                                <input
+                                    className="border border-black text-right"
+                                    placeholder={additionalValues?.mini_pallet_price.toString()}
+                                    type="number"
+                                    id="mini_pallet_price"
+                                />
+                                <p className="w-4">zł</p>
+                                <button
+                                    className={`px-2 rounded-md ${
+                                        loading ? "bg-slate-400" : "bg-green-300 hover:bg-green-400"
+                                    } ml-4`}
+                                    type="submit"
+                                >
+                                    Zapisz
+                                </button>
+                            </form>
+                        </li>
+                        <li className="flex flex-row gap-4 justify-between">
+                            <p>Koszt wysyłki pół palety:</p>
+                            <form
+                                className="flex flex-row"
+                                onSubmit={(e) => {
+                                    changeAdditionalValue(e, "half_pallet_price");
+                                }}
+                            >
+                                <input
+                                    className="border border-black text-right"
+                                    placeholder={additionalValues?.half_pallet_price.toString()}
+                                    type="number"
+                                    id="half_pallet_price"
+                                />
+                                <p className="w-4">zł</p>
+                                <button
+                                    className={`px-2 rounded-md ${
+                                        loading ? "bg-slate-400" : "bg-green-300 hover:bg-green-400"
+                                    } ml-4`}
+                                    type="submit"
+                                >
+                                    Zapisz
+                                </button>
+                            </form>
+                        </li>
+                        <li className="flex flex-row gap-4 justify-between">
+                            <p>Koszt wysyłki pełnej palety:</p>
+                            <form
+                                className="flex flex-row"
+                                onSubmit={(e) => {
+                                    changeAdditionalValue(e, "full_pallet_price");
+                                }}
+                            >
+                                <input
+                                    className="border border-black text-right"
+                                    placeholder={additionalValues?.full_pallet_price.toString()}
+                                    type="number"
+                                    id="full_pallet_price"
+                                />
+                                <p className="w-4">zł</p>
+                                <button
+                                    className={`px-2 rounded-md ${
+                                        loading ? "bg-slate-400" : "bg-green-300 hover:bg-green-400"
+                                    } ml-4`}
+                                    type="submit"
+                                >
+                                    Zapisz
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
                 </div>
             )}
         </div>

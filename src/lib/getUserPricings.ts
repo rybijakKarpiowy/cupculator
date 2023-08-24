@@ -1,6 +1,8 @@
 "use server";
 
 import { supabase } from "@/database/supabase";
+import { ColorPricing } from "./colorPricingType";
+import { PostgrestError } from "@supabase/supabase-js";
 
 export const getUserPricings = async (authId: string, cupLink: string) => {
     // get user data
@@ -62,22 +64,12 @@ export const getUserPricings = async (authId: string, cupLink: string) => {
         };
     });
 
-    // const { data: cupPricingData, error: error3 } = await supabase.from("cup_pricings").select("*").eq("cup_id", cupData.id).eq("pricing_name", user.cup_pricing);
-    // if (error3) {
-    //     console.log(error3);
-    //     return null;
-    // }
-    // if (!cupPricingData || cupPricingData.length === 0) {
-    //     return null;
-    // }
-    // const cupPricing = cupPricingData[0];
-
     // get color pricing
-    const { data: colorPricing, error: error4 } = await supabase
+    const { data: colorPricing, error: error4 } = (await supabase
         .from("color_pricings")
         .select("*")
         .eq("pricing_name", user.color_pricing)
-        .single();
+        .single()) as { data: ColorPricing | null, error: PostgrestError | null}
     if (error4) {
         console.log(error4);
         return null;

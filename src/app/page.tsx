@@ -39,9 +39,20 @@ export default async function Home({
         );
     }
 
+    const { data: additionalValues, error: error2 } = await supabase.from("additional_values").select("*").single();
+    if (error2) {
+        console.log(error2);
+        return (
+            <div className="text-center text-2xl mt-72">
+                {lang === "1" ? "Wystąpił błąd" : "An error occured"}
+            </div>
+        );
+    }
+
     // If role is User, show calculator with his/her data
     // @ts-ignore
     if (userData.users_restricted.role === "User") {
+        // If account is not activated, show message
         // @ts-ignore
         if (!userData.users_restricted.activated) {
             return (
@@ -52,6 +63,7 @@ export default async function Home({
                 </div>
             );
         }
+
         const pricingsData = await getUserPricings(authId, cup);
         if (!pricingsData) {
             return (
@@ -68,6 +80,7 @@ export default async function Home({
                 colorPricing={colorPricing}
                 lang={lang}
                 clientPriceUnit={userData.eu ? "EUR" : "zł"}
+                additionalValues={additionalValues}
             />
         );
     }
@@ -94,7 +107,7 @@ export default async function Home({
         (await allUserDataRes.json()) as (Database["public"]["Tables"]["users"]["Row"] &
             pricingsInterface)[];
 
-    return <UserSelector allUsersData={allUsersData} cup={cup} lang={lang} />;
+    return <UserSelector allUsersData={allUsersData} cup={cup} lang={lang} additionalValues={additionalValues} />;
 }
 
 export interface pricingsInterface {

@@ -89,7 +89,11 @@ export default function Test({
         inputs: 1,
     });
     const [cupConfig, setCupConfig] = useState<CupConfigInterface>({
+        trend_color: "",
+        soft_touch: false,
+        pro_color: false,
         imprintType: "",
+        imprintColors: 0,
         nadruk_wewnatrz_na_sciance: 0,
         nadruk_na_uchu: false,
         nadruk_na_spodzie: false,
@@ -219,6 +223,10 @@ export default function Test({
                                 lang={lang}
                                 clientPriceUnit={clientPriceUnit}
                                 keep={amounts.inputs > 0}
+                                selectedCup={selectedCup}
+                                colorPricing={colorPricing}
+                                additionalValues={additionalValues}
+                                cupConfig={cupConfig}
                             />
                         </div>
                         <div className="absolute -right-[320px] flex flex-row">
@@ -227,6 +235,10 @@ export default function Test({
                                 lang={lang}
                                 clientPriceUnit={clientPriceUnit}
                                 keep={amounts.inputs > 1}
+                                selectedCup={selectedCup}
+                                colorPricing={colorPricing}
+                                additionalValues={additionalValues}
+                                cupConfig={cupConfig}
                             />
                         </div>
                         <div className="absolute -right-[512px] flex flex-row">
@@ -235,6 +247,10 @@ export default function Test({
                                 lang={lang}
                                 clientPriceUnit={clientPriceUnit}
                                 keep={amounts.inputs > 2}
+                                selectedCup={selectedCup}
+                                colorPricing={colorPricing}
+                                additionalValues={additionalValues}
+                                cupConfig={cupConfig}
                             />
                         </div>
                     </div>
@@ -342,7 +358,7 @@ export default function Test({
                 {selectedCup.trend_color && (
                     <div>
                         Trend Color:
-                        <select defaultValue="">
+                        <select defaultValue="" onChange={(e) => setCupConfig({...cupConfig, trend_color: e.target.value as CupConfigInterface["trend_color"]})}>
                             <option value="">
                                 {lang === "1" ? "Bez Trend Color" : "No Trend Color"}
                             </option>
@@ -364,18 +380,18 @@ export default function Test({
                 {selectedCup.soft_touch && (
                     <div>
                         Soft Touch:
-                        <select defaultValue="">
+                        <select defaultValue="" onChange={(e) => setCupConfig({...cupConfig, soft_touch: e.target.value ? true : false})}>
                             <option value="">
                                 {lang === "1" ? "Bez Soft Touch" : "No Soft Touch"}
                             </option>
-                            <option value="soft_touch">Soft Touch</option>
+                            <option value="soft_touch">{lang === "1" ? "Zewnątrz" : "Outside"}</option>
                         </select>
                     </div>
                 )}
                 {selectedCup.pro_color && (
                     <div>
                         Pro Color:
-                        <select defaultValue="">
+                        <select defaultValue="" onChange={(e) => setCupConfig({...cupConfig, pro_color: e.target.value ? true : false})}>
                             <option value="">
                                 {lang === "1" ? "Bez Pro Color" : "No Pro Color"}
                             </option>
@@ -469,6 +485,13 @@ export default function Test({
                         disabled={
                             !cupConfig.imprintType || cupConfig.imprintType === "digital_print"
                         }
+                        onChange={(e) => {
+                            const imprintColors = parseInt(e.target.value) || 0;
+                            setCupConfig({
+                                ...cupConfig,
+                                imprintColors,
+                            })
+                        }}
                     >
                         <option value="" disabled hidden>
                             {cupConfig.imprintType !== "digital_print"
@@ -927,6 +950,9 @@ export default function Test({
 }
 
 export interface CupConfigInterface {
+    trend_color: "" | "inside" | "outside" | "both" | "lowered_edge";
+    soft_touch: boolean;
+    pro_color: boolean;
     imprintType:
         | ""
         | "direct_print"
@@ -941,6 +967,7 @@ export interface CupConfigInterface {
         | "deep_effect_plus_1"
         | "deep_effect_plus_2"
         | "digital_print";
+    imprintColors: number;
     nadruk_wewnatrz_na_sciance: 0 | 1 | 2 | 3 | 4;
     nadruk_na_uchu: boolean;
     nadruk_na_spodzie: boolean;

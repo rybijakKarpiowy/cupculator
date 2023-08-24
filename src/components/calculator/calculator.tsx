@@ -6,17 +6,20 @@ import { useEffect, useState } from "react";
 import { Database } from "@/database/types";
 import { toast } from "react-toastify";
 import noImage from "@/../public/noimage.png";
+import { ColorPricing } from "@/lib/colorPricingType";
 
 export const Calculator = ({
     cupData,
     colorPricing,
     lang,
     clientPriceUnit,
+    additionalValues,
 }: {
     cupData: Cup[];
-    colorPricing: Database["public"]["Tables"]["color_pricings"]["Row"];
+    colorPricing: ColorPricing;
     lang: string;
     clientPriceUnit: "zł" | "EUR";
+    additionalValues: Database["public"]["Tables"]["additional_values"]["Row"];
 }) => {
     const [selectedCup, setSelectedCup] = useState(cupData[0]);
     const [amount, setAmount] = useState<number>();

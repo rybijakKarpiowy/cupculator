@@ -1,19 +1,35 @@
+import { Cup } from "@/app/api/updatecups/route";
+import { CupConfigInterface } from "@/app/test/page";
+import { Database } from "@/database/types";
 import { calculatePrices } from "@/lib/calculatePrices";
+import { ColorPricing } from "@/lib/colorPricingType";
+import { toast } from "react-toastify";
 
 export const PricesDisplay = ({
     amount,
     lang,
     clientPriceUnit,
     keep,
+    selectedCup,
+    colorPricing,
+    additionalValues,
+    cupConfig,
 }: {
     amount: number | null;
     lang: "1" | "2";
     clientPriceUnit: "zł" | "EUR";
     keep?: boolean;
+    selectedCup: Cup;
+    colorPricing: ColorPricing;
+    additionalValues: Database["public"]["Tables"]["additional_values"]["Row"];
+    cupConfig: CupConfigInterface;
 }) => {
     if (!amount && !keep) return <></>;
 
-    const calculatedPrices = calculatePrices(amount)
+    const {data: calculatedPrices, error} = calculatePrices({amount, selectedCup, colorPricing, additionalValues, cupConfig, lang})
+    if (error) {
+        toast.warn(error)
+    }
 
     return (
         <div className="flex flex-col text-right">

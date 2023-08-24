@@ -6,15 +6,18 @@ import { Database } from "@/database/types";
 import { getUserPricings } from "@/lib/getUserPricings";
 import { ChangeEvent, useState } from "react";
 import { Calculator } from "./calculator";
+import { ColorPricing } from "@/lib/colorPricingType";
 
 export const UserSelector = ({
     allUsersData,
     cup,
     lang,
+    additionalValues,
 }: {
     allUsersData: (Database["public"]["Tables"]["users"]["Row"] & pricingsInterface)[];
     cup: string;
     lang: string;
+    additionalValues: Database["public"]["Tables"]["additional_values"]["Row"];
 }) => {
     const [selectedPricingsData, setSelectedPricingsData] = useState<selectedPricingsDataInterface>(
         { cupData: [], colorPricing: null }
@@ -77,6 +80,7 @@ export const UserSelector = ({
                         colorPricing={selectedPricingsData.colorPricing}
                         lang={lang}
                         clientPriceUnit={selectedUserUnit}
+                        additionalValues={additionalValues}
                     />
                 )}
         </>
@@ -85,5 +89,5 @@ export const UserSelector = ({
 
 interface selectedPricingsDataInterface {
     cupData: Cup[];
-    colorPricing: Database["public"]["Tables"]["color_pricings"]["Row"] | null;
+    colorPricing: ColorPricing | null;
 }

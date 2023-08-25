@@ -2,10 +2,19 @@
 
 import { Database } from "@/database/types";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
+import plImage from "@/../public/pl.jpg";
+import enImage from "@/../public/en.jpg";
+import homeImage from "@/../public/home.png";
+import logo20years from "@/../public/logo-20lat.png";
 
-export const Navbar = ({ authUser }: { authUser: Database["public"]["Tables"]["users_restricted"]["Row"] | null }) => {
+export const Navbar = ({
+    authUser,
+}: {
+    authUser: Database["public"]["Tables"]["users_restricted"]["Row"] | null;
+}) => {
     const searchParams = useSearchParams();
     const lang = searchParams.get("lang") || "1";
     const cup = searchParams.get("cup") || "";
@@ -46,13 +55,14 @@ export const Navbar = ({ authUser }: { authUser: Database["public"]["Tables"]["u
                         <span className="block w-[22px] h-[2px] rounded-[1px]"></span>
                     </button>
                     <Link
-                        className="lg:-ml-[15px] drop-shadow float-left p-[15px] text-lg leading-5 h-[50px]"
+                        className="lg:-ml-[15px] float-left p-[15px] text-lg leading-5 h-[50px]"
                         href={`https://kubki.com.pl/?lang=${lang}`}
                     >
-                        <img
+                        <Image
                             className="h-[80px] w-auto"
-                            src="https://kubki.com.pl/img/logo-20lat.png"
+                            src={logo20years}
                             alt="Kubki.com.pl"
+                            unoptimized
                         />
                     </Link>
                 </div>
@@ -65,16 +75,17 @@ export const Navbar = ({ authUser }: { authUser: Database["public"]["Tables"]["u
                         <ul className="mt-[18px] pl-0 -ml-[5px] mb-[10px] flex gap-1">
                             <li className="px-[5px]">
                                 <Link href={`?cup=${cup}&lang=1`}>
-                                    <img
+                                    <Image
                                         className="align-middle overflow-clip"
-                                        src="https://kubki.com.pl/img/pl.jpg"
+                                        src={plImage}
                                         alt="pl"
+                                        unoptimized
                                     />
                                 </Link>
                             </li>
                             <li className="px-[5px]">
                                 <Link href={`?cup=${cup}&lang=2`}>
-                                    <img src="https://kubki.com.pl/img/en.jpg" alt="en" />
+                                    <Image src={enImage} alt="en" unoptimized />
                                 </Link>
                             </li>
                         </ul>
@@ -90,13 +101,20 @@ export const Navbar = ({ authUser }: { authUser: Database["public"]["Tables"]["u
                         </form>
                     </div>
                     <ul className="lg:float-right ml-[59px] mr-0 mt-[47px] mb-0 pl-0 leading-[22.4px] text-[14px]">
-                        <li className={`lg:float-left relative block box-border ${lang === "1" ? "mr-[15px]" : "mr-[14px]"}`}>
+                        <li
+                            className={`lg:float-left relative block box-border ${
+                                lang === "1" ? "mr-[15px]" : "mr-[14px]"
+                            }`}
+                        >
                             <Link href={`https://kubki.com.pl/?lang=${lang}`}>
-                                <img src="https://kubki.com.pl/img/home.png" alt="" />
+                                <Image src={homeImage} alt="" unoptimized />
                             </Link>
                         </li>
                         <li className="lg:float-left relative block">
-                            <Link href={`https://kubki.com.pl/blog.html?lang=${lang}`} className="tab">
+                            <Link
+                                href={`https://kubki.com.pl/blog.html?lang=${lang}`}
+                                className="tab"
+                            >
                                 Blog
                             </Link>
                         </li>
@@ -117,7 +135,10 @@ export const Navbar = ({ authUser }: { authUser: Database["public"]["Tables"]["u
                             </Link>
                         </li>
                         <li className="lg:float-left relative block">
-                            <Link href={`https://kubki.com.pl/ECO.html?lang=${lang}`} className="tab">
+                            <Link
+                                href={`https://kubki.com.pl/ECO.html?lang=${lang}`}
+                                className="tab"
+                            >
                                 ECO
                             </Link>
                         </li>

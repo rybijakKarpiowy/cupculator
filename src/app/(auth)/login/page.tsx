@@ -34,8 +34,8 @@ export default function Login() {
         }
 
         if (data) {
-            toast.success(lang === "1" ? "Zalogowano!": "Signed in!", { autoClose: 3000 });
-            setTimeout(()=>window.location.href = `/?cup=${cup}&lang=${lang}`, 3000);
+            toast.success(lang === "1" ? "Zalogowano!": "Signed in!", { autoClose: 1000 });
+            setTimeout(()=>window.location.href = `/?cup=${cup}&lang=${lang}`, 1000);
             setLoading(false);
         }
     };

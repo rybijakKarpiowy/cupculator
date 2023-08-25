@@ -96,6 +96,12 @@ export default async function Dashboard({
         redirect(`/?lang=${lang}&cup=${cup}`);
     }
 
+    const { data: restrictions, error: error2 } = await supabase.from("restrictions").select("*")
+    if (error2) {
+        console.log(error2);
+        redirect(`/?lang=${lang}&cup=${cup}`);
+    }
+
     return (
         <DashboardPages
             user={user}
@@ -104,6 +110,7 @@ export default async function Dashboard({
             available_color_pricings={available_color_pricings}
             available_cup_pricings={available_cup_pricings}
             additionalValues={additionalValues}
+            restrictions={restrictions}
         />
     );
 }

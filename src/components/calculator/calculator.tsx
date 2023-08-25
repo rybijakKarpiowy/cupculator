@@ -94,7 +94,7 @@ export const Calculator = ({
             );
             return;
         }
-    }, [amount]);
+    }, [amount, lang]);
 
     return (
         <div>
@@ -177,16 +177,16 @@ export const Calculator = ({
                 </div>
                 {(selectedCup.trend_color || selectedCup.soft_touch) && (
                     <div>
-                        "Hydrocolor / Soft Touch: "
+                        Hydrocolor / Soft Touch:
                         <select defaultValue="">
                             <option value="">
                                 {lang === "1" ? "Bez hydrokoloru" : "No hydrocolor"}
                             </option>
                             {selectedCup.trend_color && (
-                                <option value="trend_color">"Trend Color"</option>
+                                <option value="trend_color">Trend Color</option>
                             )}
                             {selectedCup.soft_touch && (
-                                <option value="soft_touch">"Soft Touch"</option>
+                                <option value="soft_touch">Soft Touch</option>
                             )}
                         </select>
                     </div>
@@ -198,7 +198,7 @@ export const Calculator = ({
                             <option value="">
                                 {lang === "1" ? "Bez Pro Color" : "No Pro Color"}
                             </option>
-                            <option value="pro_color">"Pro Color"</option>
+                            <option value="pro_color">Pro Color</option>
                         </select>
                     </div>
                 )}

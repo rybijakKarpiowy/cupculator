@@ -20,9 +20,9 @@ export default function AccountDetails() {
                 lang === "1"
                     ? "Sesja wygasła! Zarejestruj się ponownie"
                     : "Session expired! Sign up again"
-            }`
+            }`, { autoClose: 3000 }
         );
-        setTimeout(() => (window.location.href = `/register?cup=${cup}&lang=${lang}`), 5000);
+        setTimeout(() => (window.location.href = `/register?cup=${cup}&lang=${lang}`), 3000);
     }
 
     const supabase = createClientComponentClient<Database>();
@@ -73,8 +73,8 @@ export default function AccountDetails() {
         } = await supabase.auth.getUser();
 
         if (!user) {
-            toast.error(`${lang === "1" ? "Nie jesteś zalogowany!" : "You are not logged in!"}`);
-            setTimeout(() => (window.location.href = `/login?cup=${cup}&lang=${lang}`), 5000);
+            toast.error(`${lang === "1" ? "Nie jesteś zalogowany!" : "You are not logged in!"}`, {autoClose: 1000});
+            setTimeout(() => (window.location.href = `/login?cup=${cup}&lang=${lang}`), 1000);
             setLoading(false);
             return;
         }
@@ -173,9 +173,9 @@ export default function AccountDetails() {
                     lang === "1"
                         ? "Dane zostały już uzupełnione!"
                         : "Data has already been completed!"
-                }`
+                }`, {autoClose: 3000}
             );
-            setTimeout(() => (window.location.href = `/?cup=${cup}&lang=${lang}`), 5000);
+            setTimeout(() => (window.location.href = `/?cup=${cup}&lang=${lang}`), 3000);
             setLoading(false);
             return;
         }
@@ -233,8 +233,8 @@ export default function AccountDetails() {
             return;
         }
 
-        toast.success(`${lang === "1" ? "Wprowadzono dane!" : "Data entered!"}`);
-        setTimeout(() => window.location.href = `/?cup=${cup}&lang=${lang}`, 5000);
+        toast.success(`${lang === "1" ? "Wprowadzono dane!" : "Data entered!"}`, {autoClose: 3000});
+        setTimeout(() => window.location.href = `/?cup=${cup}&lang=${lang}`, 3000);
         setLoading(false);
     };
 

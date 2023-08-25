@@ -13,6 +13,7 @@ export const DashboardPages = ({
     available_cup_pricings,
     available_color_pricings,
     additionalValues,
+    restrictions,
 }: {
     clientsInput?: Client[];
     adminsAndSalesmenInput?: Client[];
@@ -26,9 +27,15 @@ export const DashboardPages = ({
         full_pallet_price: number;
         id: number;
     };
+    restrictions: Database["public"]["Tables"]["restrictions"]["Row"][];
 }) => {
     const [chosenTab, setChosenTab] = useState<
-        "activationRequests" | "clients" | "adminsAndSalesmen" | "pricings" | "additionalValues"
+        | "activationRequests"
+        | "clients"
+        | "adminsAndSalesmen"
+        | "pricings"
+        | "additionalValues"
+        | "restrictions"
     >("activationRequests");
     const [loading, setLoading] = useState(false);
     const [addAdmin, setAddAdmin] = useState(false);
@@ -37,6 +44,8 @@ export const DashboardPages = ({
     const [cups_or_colors, setCups_or_colors] = useState<"cups" | "colors" | "">("");
     const [pricing_name, setPricing_name] = useState("");
     const [newPricing, setNewPricing] = useState(false);
+    const [additionalValuesState, setAdditionalValuesState] = useState(additionalValues);
+    const [restrictionsState, setRestrictionsState] = useState(restrictions);
 
     const supabase = createClientComponentClient<Database>();
 
@@ -84,6 +93,7 @@ export const DashboardPages = ({
         }
 
         toast.success("Wartość została zmieniona");
+        setAdditionalValuesState({ ...additionalValuesState, [attr]: value });
         setLoading(false);
         return;
     };
@@ -448,6 +458,14 @@ export const DashboardPages = ({
                             onClick={() => setChosenTab("additionalValues")}
                         >
                             Dodatkowe wartości
+                        </button>
+                        <button
+                            className={`${
+                                chosenTab === "restrictions" ? "bg-slate-400" : "bg-slate-300"
+                            } px-2 rounded-md`}
+                            onClick={() => setChosenTab("restrictions")}
+                        >
+                            Wykluczenia
                         </button>
                     </>
                 )}
@@ -964,7 +982,7 @@ export const DashboardPages = ({
                             >
                                 <input
                                     className="border border-black text-right"
-                                    placeholder={additionalValues?.plain_cup_markup_percent.toString()}
+                                    placeholder={additionalValuesState?.plain_cup_markup_percent.toString()}
                                     type="number"
                                     id="plain_cup_markup_percent"
                                 />
@@ -974,6 +992,7 @@ export const DashboardPages = ({
                                         loading ? "bg-slate-400" : "bg-green-300 hover:bg-green-400"
                                     } ml-4`}
                                     type="submit"
+                                    disabled={loading}
                                 >
                                     Zapisz
                                 </button>
@@ -989,7 +1008,7 @@ export const DashboardPages = ({
                             >
                                 <input
                                     className="border border-black text-right"
-                                    placeholder={additionalValues?.mini_pallet_price.toString()}
+                                    placeholder={additionalValuesState?.mini_pallet_price.toString()}
                                     type="number"
                                     id="mini_pallet_price"
                                 />
@@ -999,6 +1018,7 @@ export const DashboardPages = ({
                                         loading ? "bg-slate-400" : "bg-green-300 hover:bg-green-400"
                                     } ml-4`}
                                     type="submit"
+                                    disabled={loading}
                                 >
                                     Zapisz
                                 </button>
@@ -1014,7 +1034,7 @@ export const DashboardPages = ({
                             >
                                 <input
                                     className="border border-black text-right"
-                                    placeholder={additionalValues?.half_pallet_price.toString()}
+                                    placeholder={additionalValuesState?.half_pallet_price.toString()}
                                     type="number"
                                     id="half_pallet_price"
                                 />
@@ -1024,6 +1044,7 @@ export const DashboardPages = ({
                                         loading ? "bg-slate-400" : "bg-green-300 hover:bg-green-400"
                                     } ml-4`}
                                     type="submit"
+                                    disabled={loading}
                                 >
                                     Zapisz
                                 </button>
@@ -1039,7 +1060,7 @@ export const DashboardPages = ({
                             >
                                 <input
                                     className="border border-black text-right"
-                                    placeholder={additionalValues?.full_pallet_price.toString()}
+                                    placeholder={additionalValuesState?.full_pallet_price.toString()}
                                     type="number"
                                     id="full_pallet_price"
                                 />
@@ -1049,8 +1070,176 @@ export const DashboardPages = ({
                                         loading ? "bg-slate-400" : "bg-green-300 hover:bg-green-400"
                                     } ml-4`}
                                     type="submit"
+                                    disabled={loading}
                                 >
                                     Zapisz
+                                </button>
+                            </form>
+                        </li>
+                    </ul>
+                </div>
+            )}
+            {user?.role === "Admin" && chosenTab === "restrictions" && (
+                <div className="pb-32">
+                    <h2>Wykluczenia</h2>
+                    <hr />
+                    <br />
+                    <ul className="flex flex-col px-4 gap-4">
+                        {restrictionsState &&
+                            restrictionsState.map((restriction) => (
+                                <li key={restriction.id} className="flex flex-row gap-4">
+                                    <input
+                                        type="text"
+                                        disabled
+                                        placeholder={restriction.imprintType}
+                                    />
+                                    <input
+                                        type="text"
+                                        disabled
+                                        placeholder={restriction.anotherValue}
+                                        className="w-64"
+                                    />
+                                    <button
+                                        className={`px-2 rounded-md ${
+                                            loading ? "bg-slate-400" : "bg-red-300 hover:bg-red-400"
+                                        }`}
+                                        onClick={async () => {
+                                            setLoading(true);
+                                            const { error } = await supabase
+                                                .from("restrictions")
+                                                .delete()
+                                                .match({ id: restriction.id });
+                                            if (error) {
+                                                toast.error("Wystąpił błąd");
+                                                setLoading(false);
+                                                return;
+                                            }
+                                            setRestrictionsState(
+                                                restrictionsState.filter(
+                                                    (r) => r.id !== restriction.id
+                                                )
+                                            );
+                                            toast.success("Usunięto wykluczenie");
+                                            setLoading(false);
+                                        }}
+                                        disabled={loading}
+                                    >
+                                        Usuń
+                                    </button>
+                                </li>
+                            ))}
+                        <li>
+                            <form
+                                className="flex flex-row gap-4"
+                                onSubmit={async (e) => {
+                                    e.preventDefault();
+                                    setLoading(true);
+                                    const { error } = await supabase.from("restrictions").insert({
+                                        imprintType: (
+                                            document.getElementById(
+                                                "imprintType"
+                                            ) as HTMLInputElement
+                                        ).value,
+                                        anotherValue: (
+                                            document.getElementById(
+                                                "anotherValue"
+                                            ) as HTMLInputElement
+                                        ).value,
+                                    });
+                                    if (error) {
+                                        toast.error("Wystąpił błąd");
+                                        setLoading(false);
+                                        return;
+                                    }
+                                    setRestrictionsState([
+                                        ...restrictionsState,
+                                        {
+                                            id: restrictionsState.length + 1,
+                                            imprintType: (
+                                                document.getElementById(
+                                                    "imprintType"
+                                                ) as HTMLInputElement
+                                            ).value,
+                                            anotherValue: (
+                                                document.getElementById(
+                                                    "anotherValue"
+                                                ) as HTMLInputElement
+                                            ).value,
+                                        },
+                                    ]);
+                                    toast.success("Dodano wykluczenie");
+                                    setLoading(false);
+                                }}
+                            >
+                                <select
+                                    disabled={loading}
+                                    id="imprintType"
+                                    defaultValue=""
+                                    className="text-center border border-black"
+                                >
+                                    <option value="" disabled hidden>
+                                        Wybierz rodzaj nadruku
+                                    </option>
+                                    {[
+                                        "direct_print",
+                                        "transfer_plus",
+                                        "polylux",
+                                        "deep_effect",
+                                        "deep_effect_plus",
+                                        "digital_print",
+                                    ].map((iT) => (
+                                        <option key={iT} value={iT}>
+                                            {iT}
+                                        </option>
+                                    ))}
+                                </select>
+                                <select
+                                    disabled={loading}
+                                    id="anotherValue"
+                                    defaultValue=""
+                                    className="text-center border border-black"
+                                >
+                                    <option value="" disabled hidden>
+                                        Wybierz zdobienie
+                                    </option>
+                                    {[
+                                        "trend_color_inside",
+                                        "trend_color_outside",
+                                        "trend_color_both",
+                                        "trend_color_lowered_edge",
+                                        "soft_touch",
+                                        "pro_color",
+                                        "nadruk_wewnatrz_na_sciance",
+                                        "nadruk_na_uchu",
+                                        "nadruk_na_spodzie",
+                                        "nadruk_na_dnie",
+                                        "nadruk_przez_rant",
+                                        "nadruk_apla",
+                                        "nadruk_dookola_pod_uchem",
+                                        "nadruk_zlotem_25",
+                                        "nadruk_zlotem_50",
+                                        "personalizacja",
+                                        "zdobienie_paskiem_bez_laczenia",
+                                        "zdobienie_paskiem_z_laczeniem",
+                                        "nadruk_na_powloce_magicznej_1_kolor",
+                                        "zdobienie_tapeta_na_barylce_I_stopien",
+                                        "zdobienie_tapeta_na_barylce_II_stopien",
+                                        "naklejka_papierowa_z_nadrukiem",
+                                        "wkladanie_ulotek_do_kubka",
+                                    ].map((aV) => (
+                                        <option key={aV} value={aV}>
+                                            {aV}
+                                        </option>
+                                    ))}
+                                </select>
+                                <button
+                                    className={`px-2 rounded-md ${
+                                        loading ? "bg-slate-400" : "bg-green-300 hover:bg-green-400"
+                                    }`}
+                                    type="submit"
+                                    disabled={loading}
+                                >
+                                    Dodaj
                                 </button>
                             </form>
                         </li>

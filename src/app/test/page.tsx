@@ -108,7 +108,7 @@ export default function Test({
         nadruk_na_powloce_magicznej_1_kolor: false,
         naklejka_papierowa_z_nadrukiem: false,
         wkladanie_ulotek_do_kubka: false,
-        cardboard: ""
+        cardboard: "",
     });
 
     const amountAlerts = (amount: number | null, inputId: number) => {
@@ -197,18 +197,21 @@ export default function Test({
         }
     };
     return (
-        <div className="flex flex-col items-start">
-            <h1 className="w-full text-center">{lang === "1" ? "Kalkulator" : "Calculator"}</h1>
-            <div className="flex flex-row pr-[400px] w-full items-center justify-center">
+        <div className="flex flex-col items-start pt-12">
+            {/* <h1 className="w-full text-center">{lang === "1" ? "Kalkulator" : "Calculator"}</h1> */}
+            <div className="flex flex-row pr-[400px] w-full items-center justify-center gap-8">
                 {selectedCup.icon ? (
                     <Image src={selectedCup.icon} alt={""} />
                 ) : (
                     <Image src={noImage} alt={""} width={200} />
                 )}
                 <div className="flex flex-col">
-                    <p>{selectedCup.code}</p>
-                    <p>{selectedCup.name}</p>
-                    <p>{selectedCup.volume}</p>
+                    <div className="border border-[#c00418] pl-2 pr-8 py-2 w-max rounded-md">
+                        <p>{selectedCup.code}</p>
+                        <p>{selectedCup.name}</p>
+                        <p>{selectedCup.volume}</p>
+                    </div>
+                    <br />
                     <div className="flex flex-col relative w-80">
                         <p>{lang === "1" ? "Ilość: " : "Amount: "}</p>
                         <p>{lang === "1" ? "Jednostkowa cena produktu: " : "Price per unit: "}</p>
@@ -224,8 +227,8 @@ export default function Test({
                                 clientPriceUnit={clientPriceUnit}
                                 keep={amounts.inputs > 0}
                                 selectedCup={selectedCup}
-                                colorPricing={colorPricing}
-                                additionalValues={additionalValues}
+                                colorPricing={{}}
+                                additionalValues={{}}
                                 cupConfig={cupConfig}
                             />
                         </div>
@@ -236,8 +239,8 @@ export default function Test({
                                 clientPriceUnit={clientPriceUnit}
                                 keep={amounts.inputs > 1}
                                 selectedCup={selectedCup}
-                                colorPricing={colorPricing}
-                                additionalValues={additionalValues}
+                                colorPricing={{}}
+                                additionalValues={{}}
                                 cupConfig={cupConfig}
                             />
                         </div>
@@ -248,24 +251,48 @@ export default function Test({
                                 clientPriceUnit={clientPriceUnit}
                                 keep={amounts.inputs > 2}
                                 selectedCup={selectedCup}
-                                colorPricing={colorPricing}
-                                additionalValues={additionalValues}
+                                colorPricing={{}}
+                                additionalValues={{}}
                                 cupConfig={cupConfig}
                             />
                         </div>
                     </div>
                 </div>
             </div>
-            <div className="ml-[40%]">
+            <div className="ml-[40%] flex flex-col gap-1">
                 <div>
                     {lang == "1" ? "Wybierz kolor: " : "Select color: "}
                     <select
                         onChange={(e) => {
+                            if (e.target.value === selectedCup.code) return;
+                            setCupConfig({
+                                trend_color: "",
+                                soft_touch: false,
+                                pro_color: false,
+                                imprintType: "",
+                                imprintColors: 0,
+                                nadruk_wewnatrz_na_sciance: 0,
+                                nadruk_na_uchu: false,
+                                nadruk_na_spodzie: false,
+                                nadruk_na_dnie: false,
+                                nadruk_przez_rant: false,
+                                nadruk_apla: false,
+                                nadruk_dookola_pod_uchem: false,
+                                nadruk_zlotem: false,
+                                personalizacja: false,
+                                zdobienie_paskiem: false,
+                                zdobienie_tapeta_na_barylce: false,
+                                nadruk_na_powloce_magicznej_1_kolor: false,
+                                naklejka_papierowa_z_nadrukiem: false,
+                                wkladanie_ulotek_do_kubka: false,
+                                cardboard: "",
+                            });
                             setSelectedCup(
                                 cupData.find((cup) => cup.code === e.target.value) as Cup
                             );
                         }}
                         defaultValue={cupData[0].code}
+                        className="w-max text-right border border-[#2F4858] rounded-full px-2 py-[2px] bg-white ml-4"
                     >
                         {cupData.map((cup) => (
                             <option key={cup.code} value={cup.code}>
@@ -276,89 +303,151 @@ export default function Test({
                 </div>
                 <div className="relative">
                     {lang === "1" ? "Ilość: " : "Amount: "}
-                    <div className="flex flex-row absolute ml-[16px] top-0 left-[10vw] gap-[40px]">
-                    <input
-                        type="number"
-                        min="1"
-                        className="text-right border"
-                        onBlur={(e) => {
-                            e.target.value ? setAmounts({ ...amounts, amount1: parseInt(e.target.value) }) : setAmounts({ ...amounts, amount1: null });
-                            amountAlerts(parseInt(e.target.value), 1);
-                        }}
-                        onKeyUp={(e) => {
-                            if (e.key === "Enter" || e.key === "Escape") {
-                                (e.target as HTMLInputElement).blur();
-                            }
-                        }}
-                    />
-                    {amounts.inputs > 1 && (
-                        <input
-                            type="number"
-                            min="1"
-                            className="text-right border"
-                            onBlur={(e) => {
-                                e.target.value ? setAmounts({ ...amounts, amount2: parseInt(e.target.value) }) : setAmounts({ ...amounts, amount2: null });
-                                amountAlerts(parseInt(e.target.value), 2);
-                            }}
-                            onKeyUp={(e) => {
-                                if (e.key === "Enter" || e.key === "Escape") {
-                                    (e.target as HTMLInputElement).blur();
-                                }
-                            }}
-                        />
-                    )}
-                    {amounts.inputs > 2 && (
-                        <input
-                            type="number"
-                            min="1"
-                            className="text-right border"
-                            onBlur={(e) => {
-                                e.target.value ? setAmounts({ ...amounts, amount3: parseInt(e.target.value) }) : setAmounts({ ...amounts, amount3: null });
-                                amountAlerts(parseInt(e.target.value), 3);
-                            }}
-                            onKeyUp={(e) => {
-                                if (e.key === "Enter" || e.key === "Escape") {
-                                    (e.target as HTMLInputElement).blur();
-                                }
-                            }}
-                        />
-                    )}
-                    <div className="flex flex-row">
-                    {amounts.inputs < 3 && (
-                        <button
-                            onClick={() => setAmounts({ ...amounts, inputs: amounts.inputs + 1 })}
-                        >
-                            +
-                        </button>
-                    )}
-                    {amounts.inputs > 1 && (
-                        <button
-                            onClick={() => {
-                                if (amounts.inputs === 3) {
-                                    setAmounts({
-                                        ...amounts,
-                                        amount3: null,
-                                        inputs: amounts.inputs - 1,
-                                    });
-                                } else if (amounts.inputs === 2) {
-                                    setAmounts({
-                                        ...amounts,
-                                        amount2: null,
-                                        inputs: amounts.inputs - 1,
-                                    });
-                                }
-                            }}
-                        >
-                            x
-                        </button>
-                    )}
-                    </div>
+                    <div className="flex flex-row absolute ml-[12px] top-0 left-[11vw]">
+                        <div className="flex flex-row gap-[32px]">
+                            <input
+                                type="number"
+                                min="1"
+                                className="text-right border border-[#2F4858] rounded-full px-1 bg-white"
+                                onBlur={(e) => {
+                                    e.target.value
+                                        ? setAmounts({
+                                              ...amounts,
+                                              amount1: parseInt(e.target.value),
+                                          })
+                                        : setAmounts({ ...amounts, amount1: null });
+                                    amountAlerts(parseInt(e.target.value), 1);
+                                }}
+                                onKeyUp={(e) => {
+                                    if (e.key === "Enter" || e.key === "Escape") {
+                                        (e.target as HTMLInputElement).blur();
+                                    }
+                                }}
+                            />
+                            {amounts.inputs > 1 && (
+                                <input
+                                    type="number"
+                                    min="1"
+                                    className="text-right border border-[#2F4858] rounded-full px-1 bg-white"
+                                    onBlur={(e) => {
+                                        e.target.value
+                                            ? setAmounts({
+                                                  ...amounts,
+                                                  amount2: parseInt(e.target.value),
+                                              })
+                                            : setAmounts({ ...amounts, amount2: null });
+                                        amountAlerts(parseInt(e.target.value), 2);
+                                    }}
+                                    onKeyUp={(e) => {
+                                        if (e.key === "Enter" || e.key === "Escape") {
+                                            (e.target as HTMLInputElement).blur();
+                                        }
+                                    }}
+                                />
+                            )}
+                            {amounts.inputs > 2 && (
+                                <input
+                                    type="number"
+                                    min="1"
+                                    className="text-right border border-[#2F4858] rounded-full px-1 bg-white"
+                                    onBlur={(e) => {
+                                        e.target.value
+                                            ? setAmounts({
+                                                  ...amounts,
+                                                  amount3: parseInt(e.target.value),
+                                              })
+                                            : setAmounts({ ...amounts, amount3: null });
+                                        amountAlerts(parseInt(e.target.value), 3);
+                                    }}
+                                    onKeyUp={(e) => {
+                                        if (e.key === "Enter" || e.key === "Escape") {
+                                            (e.target as HTMLInputElement).blur();
+                                        }
+                                    }}
+                                />
+                            )}
+                        </div>
+                        <div className="flex flex-row ml-2 gap-1">
+                            {amounts.inputs < 3 && (
+                                <button
+                                    onClick={() =>
+                                        setAmounts({ ...amounts, inputs: amounts.inputs + 1 })
+                                    }
+                                    className="w-[24px] h-[24px] rounded-md bg-green-300 hover:bg-green-400 flex items-center justify-center"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 20 20"
+                                        fill="currentColor"
+                                        className="w-5 h-5"
+                                    >
+                                        <path d="M10.75 4.75a.75.75 0 00-1.5 0v4.5h-4.5a.75.75 0 000 1.5h4.5v4.5a.75.75 0 001.5 0v-4.5h4.5a.75.75 0 000-1.5h-4.5v-4.5z" />
+                                    </svg>
+                                </button>
+                            )}
+                            {amounts.inputs > 1 && (
+                                <button
+                                    onClick={() => {
+                                        if (amounts.inputs === 3) {
+                                            setAmounts({
+                                                ...amounts,
+                                                amount3: null,
+                                                inputs: amounts.inputs - 1,
+                                            });
+                                        } else if (amounts.inputs === 2) {
+                                            setAmounts({
+                                                ...amounts,
+                                                amount2: null,
+                                                inputs: amounts.inputs - 1,
+                                            });
+                                        }
+                                    }}
+                                    className="w-[24px] h-[24px] rounded-md bg-red-300 hover:bg-red-400 flex items-center justify-center"
+                                >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        viewBox="0 0 20 20"
+                                        fill="currentColor"
+                                        className="w-5 h-5"
+                                    >
+                                        <path d="M6.28 5.22a.75.75 0 00-1.06 1.06L8.94 10l-3.72 3.72a.75.75 0 101.06 1.06L10 11.06l3.72 3.72a.75.75 0 101.06-1.06L11.06 10l3.72-3.72a.75.75 0 00-1.06-1.06L10 8.94 6.28 5.22z" />
+                                    </svg>
+                                </button>
+                            )}
+                        </div>
                     </div>
                 </div>
                 {selectedCup.trend_color && (
                     <div>
                         Trend Color:
-                        <select defaultValue="" onChange={(e) => setCupConfig({...cupConfig, trend_color: e.target.value as CupConfigInterface["trend_color"]})}>
+                        <select
+                            defaultValue=""
+                            onChange={(e) => {
+                                if (e.target.value === cupConfig.trend_color) return;
+                                setCupConfig({
+                                    ...cupConfig,
+                                    trend_color: e.target
+                                        .value as CupConfigInterface["trend_color"],
+                                    imprintType: "",
+                                    imprintColors: 0,
+                                    nadruk_wewnatrz_na_sciance: 0,
+                                    nadruk_na_uchu: false,
+                                    nadruk_na_spodzie: false,
+                                    nadruk_na_dnie: false,
+                                    nadruk_przez_rant: false,
+                                    nadruk_apla: false,
+                                    nadruk_dookola_pod_uchem: false,
+                                    nadruk_zlotem: false,
+                                    personalizacja: false,
+                                    zdobienie_paskiem: false,
+                                    zdobienie_tapeta_na_barylce: false,
+                                    nadruk_na_powloce_magicznej_1_kolor: false,
+                                    naklejka_papierowa_z_nadrukiem: false,
+                                    wkladanie_ulotek_do_kubka: false,
+                                });
+                            }}
+                            className="w-max text-right border border-[#2F4858] rounded-full px-2 py-[2px] bg-white ml-4"
+                        >
                             <option value="">
                                 {lang === "1" ? "Bez Trend Color" : "No Trend Color"}
                             </option>
@@ -380,18 +469,70 @@ export default function Test({
                 {selectedCup.soft_touch && (
                     <div>
                         Soft Touch:
-                        <select defaultValue="" onChange={(e) => setCupConfig({...cupConfig, soft_touch: e.target.value ? true : false})}>
+                        <select
+                            defaultValue=""
+                            onChange={(e) =>
+                                setCupConfig({
+                                    ...cupConfig,
+                                    soft_touch: e.target.value ? true : false,
+                                    imprintType: "",
+                                    imprintColors: 0,
+                                    nadruk_wewnatrz_na_sciance: 0,
+                                    nadruk_na_uchu: false,
+                                    nadruk_na_spodzie: false,
+                                    nadruk_na_dnie: false,
+                                    nadruk_przez_rant: false,
+                                    nadruk_apla: false,
+                                    nadruk_dookola_pod_uchem: false,
+                                    nadruk_zlotem: false,
+                                    personalizacja: false,
+                                    zdobienie_paskiem: false,
+                                    zdobienie_tapeta_na_barylce: false,
+                                    nadruk_na_powloce_magicznej_1_kolor: false,
+                                    naklejka_papierowa_z_nadrukiem: false,
+                                    wkladanie_ulotek_do_kubka: false,
+                                })
+                            }
+                            className="w-max text-right border border-[#2F4858] rounded-full px-2 py-[2px] bg-white ml-4"
+                        >
                             <option value="">
                                 {lang === "1" ? "Bez Soft Touch" : "No Soft Touch"}
                             </option>
-                            <option value="soft_touch">{lang === "1" ? "Zewnątrz" : "Outside"}</option>
+                            <option value="soft_touch">
+                                {lang === "1" ? "Zewnątrz" : "Outside"}
+                            </option>
                         </select>
                     </div>
                 )}
                 {selectedCup.pro_color && (
                     <div>
                         Pro Color:
-                        <select defaultValue="" onChange={(e) => setCupConfig({...cupConfig, pro_color: e.target.value ? true : false})}>
+                        <select
+                            defaultValue=""
+                            onChange={(e) =>
+                                setCupConfig({
+                                    ...cupConfig,
+                                    pro_color: e.target.value ? true : false,
+                                    imprintType: "",
+                                    imprintColors: 0,
+                                    nadruk_wewnatrz_na_sciance: 0,
+                                    nadruk_na_uchu: false,
+                                    nadruk_na_spodzie: false,
+                                    nadruk_na_dnie: false,
+                                    nadruk_przez_rant: false,
+                                    nadruk_apla: false,
+                                    nadruk_dookola_pod_uchem: false,
+                                    nadruk_zlotem: false,
+                                    personalizacja: false,
+                                    zdobienie_paskiem: false,
+                                    zdobienie_tapeta_na_barylce: false,
+                                    nadruk_na_powloce_magicznej_1_kolor: false,
+                                    naklejka_papierowa_z_nadrukiem: false,
+                                    wkladanie_ulotek_do_kubka: false,
+                                })
+                            }
+                            className="w-max text-right border border-[#2F4858] rounded-full px-2 py-[2px] bg-white ml-4"
+                        >
                             <option value="">
                                 {lang === "1" ? "Bez Pro Color" : "No Pro Color"}
                             </option>
@@ -405,12 +546,29 @@ export default function Test({
                     {lang === "1" ? "Wybierz nadruk: " : "Select print type: "}
                     <select
                         defaultValue=""
-                        onChange={(e) =>
+                        onChange={(e) => {
+                            if (e.target.value === cupConfig.imprintType) return;
                             setCupConfig({
                                 ...cupConfig,
                                 imprintType: e.target.value as CupConfigInterface["imprintType"],
-                            })
-                        }
+                                imprintColors: 0,
+                                nadruk_wewnatrz_na_sciance: 0,
+                                nadruk_na_uchu: false,
+                                nadruk_na_spodzie: false,
+                                nadruk_na_dnie: false,
+                                nadruk_przez_rant: false,
+                                nadruk_apla: false,
+                                nadruk_dookola_pod_uchem: false,
+                                nadruk_zlotem: false,
+                                personalizacja: false,
+                                zdobienie_paskiem: false,
+                                zdobienie_tapeta_na_barylce: false,
+                                nadruk_na_powloce_magicznej_1_kolor: false,
+                                naklejka_papierowa_z_nadrukiem: false,
+                                wkladanie_ulotek_do_kubka: false,
+                            });
+                        }}
+                        className="w-max text-right border border-[#2F4858] rounded-full px-2 py-[2px] bg-white ml-4"
                     >
                         <option value="">{lang === "1" ? "Brak" : "None"}</option>
                         {/* tutaj trzeba dolozyc troche +20% np do wpisania w panelu */}
@@ -490,8 +648,9 @@ export default function Test({
                             setCupConfig({
                                 ...cupConfig,
                                 imprintColors,
-                            })
+                            });
                         }}
+                        className="w-max text-right border border-[#2F4858] rounded-full px-2 py-[2px] bg-white ml-4"
                     >
                         <option value="" disabled hidden>
                             {cupConfig.imprintType !== "digital_print"
@@ -574,7 +733,7 @@ export default function Test({
                                     ? "Nadruk wewnątrz na ściance"
                                     : "Print on the inside"}
                             </p>
-                            {cupConfig.nadruk_wewnatrz_na_sciance && (
+                            {cupConfig.nadruk_wewnatrz_na_sciance ? (
                                 <>
                                     <select
                                         defaultValue="1"
@@ -586,15 +745,28 @@ export default function Test({
                                                 ) as 1 | 2 | 3 | 4,
                                             })
                                         }
+                                        className="w-max text-right border border-[#2F4858] rounded-full px-2 py-[2px] bg-white mx-4"
                                     >
                                         <option value="1">1</option>
                                         <option value="2">2</option>
                                         <option value="3">3</option>
                                         <option value="4">4</option>
                                     </select>
-                                    <p>{lang === "1" ? "nadruków" : "prints"}</p>
+                                    <p>
+                                        {lang === "1"
+                                            ? `nadruk${
+                                                  cupConfig.nadruk_wewnatrz_na_sciance === 1
+                                                      ? ""
+                                                      : "i"
+                                              }`
+                                            : `print${
+                                                  cupConfig.nadruk_wewnatrz_na_sciance === 1
+                                                      ? ""
+                                                      : "s"
+                                              }`}
+                                    </p>
                                 </>
-                            )}
+                            ) : null}
                         </div>
                     )}
                     {selectedCup.nadruk_na_uchu && (
@@ -702,6 +874,7 @@ export default function Test({
                                             nadruk_zlotem: e.target.value as "25" | "50",
                                         });
                                     }}
+                                    className="w-max text-right border border-[#2F4858] rounded-full px-2 py-[2px] bg-white ml-4"
                                 >
                                     <option value="" disabled hidden>
                                         {lang === "1" ? "Brak" : "None"}
@@ -751,6 +924,7 @@ export default function Test({
                                                 | "z_laczeniem",
                                         });
                                     }}
+                                    className="w-max text-right border border-[#2F4858] rounded-full px-2 py-[2px] bg-white ml-4"
                                 >
                                     <option value="" disabled hidden>
                                         {lang === "1" ? "Brak" : "None"}
@@ -820,6 +994,7 @@ export default function Test({
                                                 | "II_stopien",
                                         });
                                     }}
+                                    className="w-max text-right border border-[#2F4858] rounded-full px-2 py-[2px] bg-white ml-4"
                                 >
                                     <option value="" disabled hidden>
                                         {lang === "1" ? "Brak" : "None"}
@@ -892,6 +1067,7 @@ export default function Test({
             </div>
             <div className="ml-[40%] w-[60%]">
                 <div className="flex flex-row">
+                    <p>{lang === "1" ? "Opakowanie: " : "Packaging: "}</p>
                     <select
                         defaultValue=""
                         onChange={(e) =>
@@ -900,6 +1076,7 @@ export default function Test({
                                 cardboard: e.target.value as CupConfigInterface["cardboard"],
                             })
                         }
+                        className="w-max text-right border border-[#2F4858] rounded-full px-2 py-[2px] bg-white ml-4"
                     >
                         <option value="">
                             {lang === "1" ? "Opakowanie zbiorcze" : "Bulk packaging"}
@@ -920,7 +1097,7 @@ export default function Test({
                     </select>
                 </div>
                 {/* transport tylko w polsce (dla klientow PL) */}
-                <div className="flex flex-row ml-56 gap-[24px]">
+                <div className="flex flex-row ml-60 gap-[28px]">
                     <PalletQuantities
                         lang={lang}
                         selectedCardboard={cupConfig.cardboard}

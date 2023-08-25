@@ -19,18 +19,29 @@ export default function Register() {
     const handleSubmit = async (event: React.FormEvent<HTMLButtonElement>) => {
         setLoading(true);
         event.preventDefault();
-        const { email, password, passwordRepeat } = document.getElementById(
+        const { email, password, passwordRepeat, check1, check2, check3 } = document.getElementById(
             "form"
         ) as HTMLFormElement;
         const userData = {
             email: email.value as string,
             password: password.value as string,
             passwordRepeat: passwordRepeat.value as string,
-        } as Record<string, string>;
+            check1: check1.checked as boolean,
+            check2: check2.checked as boolean,
+            check3: check3.checked as boolean,
+        } as {
+            email: string;
+            password: string;
+            passwordRepeat: string;
+            check1: boolean;
+            check2: boolean;
+            check3: boolean;
+        };
 
         for (const key in userData) {
+            // @ts-ignore
             if (userData[key] == "") {
-                toast.warn(`${lang === "1" ? "Wypełnij wszystkie pola!" : "Fill in all fields!"}`);
+                toast.warn(`${lang === "1" ? "Wypełnij wszystkie pola" : "Fill in all fields"}`);
                 setLoading(false);
                 return;
             }
@@ -38,26 +49,38 @@ export default function Register() {
 
         if (userData.password != userData.passwordRepeat) {
             toast.warn(
-                `${lang === "1" ? "Hasła nie są takie same!" : "Passwords are not the same!"}`
+                `${lang === "1" ? "Hasła nie są takie same" : "Passwords are not the same"}`
             );
             setLoading(false);
             return;
         }
 
         if (userData.password.length < 8) {
-            toast.warn(`${lang === "1" ? "Hasło jest za krótkie!" : "The password is too short!"}`);
+            toast.warn(`${lang === "1" ? "Hasło jest za krótkie" : "The password is too short"}`);
             setLoading(false);
             return;
         }
 
         if (userData.password.length > 64) {
-            toast.warn(`${lang === "1" ? "Hasło jest za długie!" : "The password is too long!"}`);
+            toast.warn(`${lang === "1" ? "Hasło jest za długie" : "The password is too long"}`);
             setLoading(false);
             return;
         }
 
         if (!userData.email.includes("@")) {
-            toast.warn(`${lang === "1" ? "Email jest niepoprawny!" : "The email is incorrect!"}`);
+            toast.warn(`${lang === "1" ? "Email jest niepoprawny" : "The email is incorrect"}`);
+            setLoading(false);
+            return;
+        }
+
+        if (!userData.check1 || !userData.check2 || !userData.check3) {
+            toast.warn(
+                `${
+                    lang === "1"
+                        ? "Musisz zaakceptować politykę prywatności (wszystkie zgody)"
+                        : "You must accept the privacy policy (all consents)"
+                }`
+            );
             setLoading(false);
             return;
         }
@@ -106,6 +129,7 @@ export default function Register() {
                     </label>
                     <input
                         id="email"
+                        name= "email"
                         type="email"
                         className="border border-[#bbb] bg-slate-50 text-black px-2 py-1 w-80 rounded-md"
                         disabled={loading}
@@ -117,6 +141,7 @@ export default function Register() {
                     </label>
                     <input
                         id="password"
+                        name="password"
                         type="password"
                         className="border border-[#bbb] bg-slate-50 text-black px-2 py-1 w-80 rounded-md"
                         disabled={loading}
@@ -128,10 +153,58 @@ export default function Register() {
                     </label>
                     <input
                         id="passwordRepeat"
+                        name="passwordRepeat"
                         type="password"
                         className="border border-[#bbb] bg-slate-50 text-black px-2 py-1 w-80 rounded-md"
                         disabled={loading}
                     />
+                </div>
+                <div className="flex flex-row justify-start px-[30%] items-center gap-4">
+                    <input
+                        id="ckeck1"
+                        name="check1"
+                        type="checkbox"
+                        className="border border-[#bbb] bg-slate-50 text-black"
+                        disabled={loading}
+                    />
+                    <label htmlFor="ckeck1" className="text-md">
+                        {lang === "1"
+                            ? "Zgodnie z art. 6 ust. 1 lit. a oraz art. 9 ust.2 lit. a ogólnego rozporządzenia o ochronie danych osobowych z dnia 27 kwietnia 2016r. Parlamentu Europejskiego i Rady (UE) 2016/679 wyrażam zgodę, na przetwarzanie moich danych osobowych, w celu korzystania z kalkulatora podłączonego do platformy internetowej www.kubki.com.pl."
+                            : "According to Art. 6 sec. 1 lit. a and art. 9 section 2 lit. a of the general regulation on the protection of personal data of April 27, 2016. European Parliament and of the Council (EU) 2016/679, I consent to the processing of my personal data in order to use the calculator connected to the internet platform www.kubki.com.pl."}
+                    </label>
+                </div>
+                <div className="flex flex-row justify-start px-[30%] items-center gap-4">
+                    <input
+                        id="ckeck2"
+                        name="check2"
+                        type="checkbox"
+                        className="border border-[#bbb] bg-slate-50 text-black"
+                        disabled={loading}
+                    />
+                    <label htmlFor="ckeck2" className="text-md">
+                        {lang === "1"
+                            ? "Zgodnie z ustawą z dnia 18 lipca 2002 r. o świadczeniu usług drogą elektroniczną wyrażam zgodę na przesyłanie informacji handlowych środkami komunikacji elektronicznej."
+                            : "In accordance with the Act of July 18, 2002 on the provision of electronic services, I consent to the sending of commercial information by electronic means."}
+                    </label>
+                </div>
+                <div className="flex flex-row justify-start px-[30%] items-center gap-4">
+                    <input
+                        id="ckeck3"
+                        name="check3"
+                        type="checkbox"
+                        className="border border-[#bbb] bg-slate-50 text-black"
+                        disabled={loading}
+                    />
+                    <label htmlFor="ckeck3" className="text-md gap-1">
+                        {lang === "1"
+                            ? "Akceptuję " : "I accept "}
+                        <Link
+                            href={`/regulations?cup=${cup}&lang=${lang}`}
+                            className="font-semibold text-black hover:text-[#c00418]"
+                        >
+                            {lang === "1" ? "Warunki Współpracy dla Agencji Reklamowych" : "Terms of Cooperation for Advertising Agencies"}
+                        </Link>
+                    </label>
                 </div>
                 <div className="flex flex-row justify-center items-center mt-2">
                     <button

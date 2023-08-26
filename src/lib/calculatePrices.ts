@@ -1,7 +1,7 @@
 import { Cup } from "@/app/api/updatecups/route";
 import { Database } from "@/database/types";
 import { ColorPricing } from "./colorPricingType";
-import { CupConfigInterface } from "@/app/test/page";
+import { CupConfigInterface } from "@/components/calculator/calculator";
 
 export const calculatePrices = ({
     amount,

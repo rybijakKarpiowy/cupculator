@@ -22,11 +22,19 @@ export default function Recovery() {
         const email = (document.getElementById("email") as HTMLInputElement).value;
 
         const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-            redirectTo: `${baseUrl}resetpassword?cup=${cup}&lang=${lang}`,
+            redirectTo: `${baseUrl}/resetpassword?cup=${cup}&lang=${lang}`,
         });
 
         if (error) {
-            console.log(error);
+            if (error.message.includes("Email rate limit exceeded")) {
+                toast.error(
+                    lang === "1"
+                        ? "Przekroczono limit wysyłania emaili, spróbuj ponownie później"
+                        : "Email rate limit exceeded, try again later"
+                );
+                setLoading(false);
+                return;
+            }
             toast.error(lang === "1" ? "Błędny email" : "Incorrect email");
             setLoading(false);
             return;

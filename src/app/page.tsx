@@ -1,9 +1,11 @@
 import { Calculator } from "@/components/calculator/calculator";
 import { UserSelector } from "@/components/calculator/userSelector";
 import { Database } from "@/database/types";
+import { Restriction } from "@/lib/checkRestriction";
 import { getUserPricings } from "@/lib/getUserPricings";
 import { baseUrl } from "@/middleware";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
+import { PostgrestError } from "@supabase/supabase-js";
 import { cookies } from "next/dist/client/components/headers";
 
 export default async function Home({
@@ -11,7 +13,7 @@ export default async function Home({
 }: {
     searchParams: { cup: string; lang: string };
 }) {
-    const lang = searchParams.lang || "1";
+    const lang = (searchParams.lang || "1") as "1" | "2";
     const cup = searchParams.cup as string;
 
     const supabase = createServerComponentClient<Database>({ cookies });
@@ -39,9 +41,24 @@ export default async function Home({
         );
     }
 
-    const { data: additionalValues, error: error2 } = await supabase.from("additional_values").select("*").single();
+    const { data: additionalValues, error: error2 } = await supabase
+        .from("additional_values")
+        .select("*")
+        .single();
     if (error2) {
         console.log(error2);
+        return (
+            <div className="text-center text-2xl mt-72">
+                {lang === "1" ? "Wystąpił błąd" : "An error occured"}
+            </div>
+        );
+    }
+
+    const { data: restrictions, error: error3 } = (await supabase
+        .from("restrictions")
+        .select("*")) as { data: Restriction[] | null; error: PostgrestError | null };
+    if (error3 || !restrictions) {
+        console.log(error3);
         return (
             <div className="text-center text-2xl mt-72">
                 {lang === "1" ? "Wystąpił błąd" : "An error occured"}
@@ -81,6 +98,7 @@ export default async function Home({
                 lang={lang}
                 clientPriceUnit={userData.eu ? "EUR" : "zł"}
                 additionalValues={additionalValues}
+                restrictions={restrictions}
             />
         );
     }
@@ -107,7 +125,15 @@ export default async function Home({
         (await allUserDataRes.json()) as (Database["public"]["Tables"]["users"]["Row"] &
             pricingsInterface)[];
 
-    return <UserSelector allUsersData={allUsersData} cup={cup} lang={lang} additionalValues={additionalValues} />;
+    return (
+        <UserSelector
+            allUsersData={allUsersData}
+            cup={cup}
+            lang={lang}
+            additionalValues={additionalValues}
+            restrictions={restrictions}
+        />
+    );
 }
 
 export interface pricingsInterface {

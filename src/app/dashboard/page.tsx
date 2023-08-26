@@ -2,9 +2,11 @@ import { DashboardPages } from "@/components/dashboardPages";
 import { Database } from "@/database/types";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/dist/client/components/headers";
-import { User as AuthUser } from "@supabase/supabase-js";
+import { User as AuthUser, PostgrestError } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
 import { baseUrl } from "@/middleware";
+import { Restriction } from "@/lib/checkRestriction";
+import { toast } from "react-toastify";
 
 const getUserData = async (authUser: AuthUser, lang: string, cup: string) => {
     const res = await fetch(`${baseUrl}api/dashboard`, {
@@ -61,7 +63,6 @@ const getPricings = async (authUser: AuthUser) => {
     return { available_cup_pricings, available_color_pricings };
 };
 
-
 export default async function Dashboard({
     searchParams,
 }: {
@@ -90,15 +91,32 @@ export default async function Dashboard({
     const pricings = await getPricings(authUser);
     const { available_color_pricings, available_cup_pricings } = pricings;
 
-    const { data: additionalValues, error } = await supabase.from("additional_values").select("*").single();
+    const { data: additionalValues, error } = await supabase
+        .from("additional_values")
+        .select("*")
+        .single();
     if (error) {
         console.log(error);
         redirect(`/?lang=${lang}&cup=${cup}`);
     }
 
-    const { data: restrictions, error: error2 } = await supabase.from("restrictions").select("*")
+    const { data: restrictions, error: error2 } = (await supabase
+        .from("restrictions")
+        .select("*")) as {
+        data: Restriction[] | null;
+        error: PostgrestError | null;
+    };
     if (error2) {
-        console.log(error2);
+        toast.error("Coś poszło nie tak (brak wykluczeń)", {
+            autoClose: 3000,
+        });
+        setTimeout(() => {
+        redirect(`/?lang=${lang}&cup=${cup}`)}, 3000);
+    }
+    if (!restrictions) {
+        toast.error("Coś poszło nie tak (brak wykluczeń)", {
+            autoClose: 3000,
+        });
         redirect(`/?lang=${lang}&cup=${cup}`);
     }
 

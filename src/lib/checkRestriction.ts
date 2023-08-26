@@ -1,4 +1,4 @@
-import { CupConfigInterface } from "@/app/test/page";
+import { CupConfigInterface } from "@/components/calculator/calculator";
 
 export const checkRestriction = ({
     cupConfig,
@@ -60,19 +60,37 @@ export const checkRestriction = ({
             const restr = element.imprintType;
             switch (restr) {
                 case "deep_effect":
-                    if (cupConfig.imprintType === "deep_effect_1" || cupConfig.imprintType === "deep_effect_2") return false;
+                    if (
+                        cupConfig.imprintType === "deep_effect_1" ||
+                        cupConfig.imprintType === "deep_effect_2"
+                    )
+                        return false;
                     break;
                 case "deep_effect_plus":
-                    if (cupConfig.imprintType === "deep_effect_1" || cupConfig.imprintType === "deep_effect_2") return false;
+                    if (
+                        cupConfig.imprintType === "deep_effect_1" ||
+                        cupConfig.imprintType === "deep_effect_2"
+                    )
+                        return false;
                     break;
                 case "digital_print":
                     if (cupConfig.imprintType === "digital_print") return false;
                     break;
                 case "polylux":
-                    if (cupConfig.imprintType === "polylux_1" || cupConfig.imprintType === "polylux_2" || cupConfig.imprintType === "polylux_round") return false;
+                    if (
+                        cupConfig.imprintType === "polylux_1" ||
+                        cupConfig.imprintType === "polylux_2" ||
+                        cupConfig.imprintType === "polylux_round"
+                    )
+                        return false;
                     break;
                 case "transfer_plus":
-                    if (cupConfig.imprintType === "transfer_plus_1" || cupConfig.imprintType === "transfer_plus_2" || cupConfig.imprintType === "transfer_plus_round") return false;
+                    if (
+                        cupConfig.imprintType === "transfer_plus_1" ||
+                        cupConfig.imprintType === "transfer_plus_2" ||
+                        cupConfig.imprintType === "transfer_plus_round"
+                    )
+                        return false;
                     break;
                 case "direct_print":
                     if (cupConfig.imprintType === "direct_print") return false;
@@ -87,6 +105,7 @@ export const checkRestriction = ({
 };
 
 export interface Restriction {
+    id: number;
     imprintType:
         | "direct_print"
         | "transfer_plus"

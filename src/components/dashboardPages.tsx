@@ -2,6 +2,7 @@
 
 import { Client, User } from "@/app/dashboard/page";
 import { Database } from "@/database/types";
+import { Restriction } from "@/lib/checkRestriction";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -27,7 +28,7 @@ export const DashboardPages = ({
         full_pallet_price: number;
         id: number;
     };
-    restrictions: Database["public"]["Tables"]["restrictions"]["Row"][];
+    restrictions: Restriction[];
 }) => {
     const [chosenTab, setChosenTab] = useState<
         | "activationRequests"
@@ -45,7 +46,7 @@ export const DashboardPages = ({
     const [pricing_name, setPricing_name] = useState("");
     const [newPricing, setNewPricing] = useState(false);
     const [additionalValuesState, setAdditionalValuesState] = useState(additionalValues);
-    const [restrictionsState, setRestrictionsState] = useState(restrictions);
+    const [restrictionsState, setRestrictionsState] = useState<Restriction[]>(restrictions);
 
     const supabase = createClientComponentClient<Database>();
 
@@ -441,7 +442,7 @@ export const DashboardPages = ({
                             } px-2 rounded-md`}
                             onClick={() => setChosenTab("adminsAndSalesmen")}
                         >
-                            Admini i sprzedawcy
+                            Admini i handlowcy
                         </button>
                         <button
                             className={`${
@@ -495,7 +496,7 @@ export const DashboardPages = ({
                             </li>
                             <li className="px-2 border border-black w-48 text-center">Telefon</li>
                             <li className="px-2 border border-black w-48 text-center">NIP</li>
-                            <li className="px-2 border border-black w-16 text-center">EU?</li>
+                            <li className="px-2 border border-black w-12 text-center">EU?</li>
                             <li className="px-2 border border-black w-32 text-center">Kraj</li>
                             <li className="px-2 border border-black w-64 text-center">Email</li>
                             <li className="px-2 border border-black w-20 text-center">
@@ -504,7 +505,6 @@ export const DashboardPages = ({
                             <li className="px-2 border border-black w-20 text-center">
                                 Cennik kolorów
                             </li>
-                            <li className="w-36" />
                         </ul>
                         {clients
                             ?.filter((client) => !client.activated)
@@ -888,7 +888,7 @@ export const DashboardPages = ({
                                     className="px-2 mt-4 rounded-md bg-green-300 hover:bg-green-400"
                                     disabled={loading}
                                 >
-                                    Dodaj admina / sprzedawcę
+                                    Dodaj admina / handlowca
                                 </button>
                             )}
                         </ul>
@@ -1159,12 +1159,12 @@ export const DashboardPages = ({
                                                 document.getElementById(
                                                     "imprintType"
                                                 ) as HTMLInputElement
-                                            ).value,
+                                            ).value as Restriction["imprintType"],
                                             anotherValue: (
                                                 document.getElementById(
                                                     "anotherValue"
                                                 ) as HTMLInputElement
-                                            ).value,
+                                            ).value as Restriction["anotherValue"],
                                         },
                                     ]);
                                     toast.success("Dodano wykluczenie");

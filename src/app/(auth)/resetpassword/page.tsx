@@ -12,6 +12,18 @@ export default function ResetPassword() {
     const searchParams = useSearchParams();
     const lang = searchParams.get("lang") || "1";
     const cup = searchParams.get("cup");
+    const error_description = searchParams.get("error_description");
+
+    if (error_description === "Email link is invalid or has expired") {
+        toast.error(
+            `${
+                lang === "1"
+                    ? "Link do zmiany hasła wygasł lub został użyty! Podaj ponownie adres email"
+                    : "The password change link has expired or has been already used! Enter your email address again"
+            }`
+        );
+        setTimeout(() => (window.location.href = `/recovery?cup=${cup}&lang=${lang}`), 5000);
+    }
 
     const supabase = createClientComponentClient<Database>();
 

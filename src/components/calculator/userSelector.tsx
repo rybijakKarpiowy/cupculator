@@ -7,17 +7,20 @@ import { getUserPricings } from "@/lib/getUserPricings";
 import { ChangeEvent, useState } from "react";
 import { Calculator } from "./calculator";
 import { ColorPricing } from "@/lib/colorPricingType";
+import { Restriction } from "@/lib/checkRestriction";
 
 export const UserSelector = ({
     allUsersData,
     cup,
     lang,
     additionalValues,
+    restrictions,
 }: {
     allUsersData: (Database["public"]["Tables"]["users"]["Row"] & pricingsInterface)[];
     cup: string;
-    lang: string;
+    lang: "1" | "2";
     additionalValues: Database["public"]["Tables"]["additional_values"]["Row"];
+    restrictions: Restriction[];
 }) => {
     const [selectedPricingsData, setSelectedPricingsData] = useState<selectedPricingsDataInterface>(
         { cupData: [], colorPricing: null }
@@ -81,6 +84,7 @@ export const UserSelector = ({
                         lang={lang}
                         clientPriceUnit={selectedUserUnit}
                         additionalValues={additionalValues}
+                        restrictions={restrictions}
                     />
                 )}
         </>

@@ -1,9 +1,9 @@
 import { Cup } from "@/app/api/updatecups/route";
-import { CupConfigInterface } from "@/app/test/page";
 import { Database } from "@/database/types";
 import { calculatePrices } from "@/lib/calculatePrices";
 import { ColorPricing } from "@/lib/colorPricingType";
 import { toast } from "react-toastify";
+import { CupConfigInterface } from "./calculator";
 
 export const PricesDisplay = ({
     amount,
@@ -26,9 +26,17 @@ export const PricesDisplay = ({
 }) => {
     if (!amount && !keep) return <></>;
 
-    const {data: calculatedPrices, error} = calculatePrices({amount, selectedCup, colorPricing, additionalValues, cupConfig, lang, clientPriceUnit})
+    const { data: calculatedPrices, error } = calculatePrices({
+        amount,
+        selectedCup,
+        colorPricing,
+        additionalValues,
+        cupConfig,
+        lang,
+        clientPriceUnit,
+    });
     if (error) {
-        toast.warn(error)
+        toast.warn(error);
     }
 
     return (

@@ -55,10 +55,6 @@ export async function middleware(req: NextRequest) {
             );
         }
 
-        if (data.eu) {
-            lang = "2";
-        }
-
         // @ts-ignore
         if (!data.users_restricted.role) {
             console.log("No users_restricted entry");
@@ -67,12 +63,15 @@ export async function middleware(req: NextRequest) {
             );
         }
 
-        for (const key in data) {
-            // @ts-ignore
-            if (data[key] === null || data[key] === undefined || data[key] === "") {
-                return NextResponse.redirect(
-                    new URL(`/account/details?cup=${cup}&lang=${lang}`, baseUrl)
-                );
+        // @ts-ignore
+        if (data.users_restricted.role === "User") {
+            for (const key in data) {
+                // @ts-ignore
+                if (data[key] === null || data[key] === undefined || data[key] === "") {
+                    return NextResponse.redirect(
+                        new URL(`/account/details?cup=${cup}&lang=${lang}`, baseUrl)
+                    );
+                }
             }
         }
 
@@ -87,13 +86,16 @@ export async function middleware(req: NextRequest) {
         }
 
         if (setBaseParams) {
+            if (data.eu) {
+                lang = "2";
+            }
             return NextResponse.redirect(new URL(`?cup=${cup}&lang=${lang}`, req.url));
         }
 
         return NextResponse.next();
     }
 
-    if (!["/login", "/recovery", "/register"].includes(req.nextUrl.pathname)) {
+    if (!["/login", "/recovery", "/register", "/resetpassword"].includes(req.nextUrl.pathname)) {
         return NextResponse.redirect(new URL(`/login?cup=${cup}&lang=${lang}`, baseUrl));
     }
 

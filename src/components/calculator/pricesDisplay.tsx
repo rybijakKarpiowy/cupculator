@@ -26,7 +26,7 @@ export const PricesDisplay = ({
 }) => {
     if (!amount && !keep) return <></>;
 
-    const {data: calculatedPrices, error} = calculatePrices({amount, selectedCup, colorPricing, additionalValues, cupConfig, lang})
+    const {data: calculatedPrices, error} = calculatePrices({amount, selectedCup, colorPricing, additionalValues, cupConfig, lang, clientPriceUnit})
     if (error) {
         toast.warn(error)
     }

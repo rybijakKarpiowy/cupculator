@@ -10,6 +10,7 @@ export const calculatePrices = ({
     additionalValues,
     cupConfig,
     lang,
+    clientPriceUnit,
 }: {
     amount: number | null;
     selectedCup: Cup;
@@ -17,6 +18,7 @@ export const calculatePrices = ({
     additionalValues: Database["public"]["Tables"]["additional_values"]["Row"];
     cupConfig: CupConfigInterface;
     lang: "1" | "2";
+    clientPriceUnit: "zł" | "EUR";
 }) => {
     if (!amount) return { data: { unit: null, prep: null, transport: null } };
 
@@ -90,8 +92,8 @@ export const calculatePrices = ({
                 return {
                     error:
                         lang === "1"
-                            ? "Druk bezpośredni jest niedostępny dla zamówień poniżej 216 sztuk"
-                            : "Direct print is not available for orders of less than 216 cups",
+                            ? "Druk bezpośredni powyżej jednego koloru jest niedostępny dla zamówień poniżej 216 sztuk"
+                            : "Direct print with more that one color is not available for orders of less than 216 cups",
                     data: { unit: null, prep: null, transport: null },
                 };
             }
@@ -469,9 +471,10 @@ export const calculatePrices = ({
 
     const unitCost = cupCost + imprintCost + trendProSoftCost + additionalCosts;
     // prepCost is declared earlier
-    const transportCost = Math.min(
-        ...(Object.values(palletsCosts).filter((item) => item !== null) as number[])
-    );
+    const transportCost =
+        clientPriceUnit === "zł"
+            ? Math.min(...(Object.values(palletsCosts).filter((item) => item !== null) as number[]))
+            : 0;
 
     return {
         data: {

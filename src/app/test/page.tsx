@@ -204,13 +204,13 @@ export default function Test({
         }
     };
     return (
-        <div className="flex flex-col items-start pt-12">
+        <div className="flex flex-col items-start pt-12 pb-16">
             {/* <h1 className="w-full text-center">{lang === "1" ? "Kalkulator" : "Calculator"}</h1> */}
             <div className="flex flex-row pr-[400px] w-full items-center justify-center gap-8">
                 {selectedCup.icon ? (
-                    <Image src={selectedCup.icon} alt={""} />
+                    <Image src={selectedCup.icon} alt={""} width={200} height={250} />
                 ) : (
-                    <Image src={noImage} alt={""} width={200} />
+                    <Image src={noImage} alt={""} width={200} height={250} />
                 )}
                 <div className="flex flex-col">
                     <div className="border border-[#c00418] pl-2 pr-8 py-2 w-max rounded-md">
@@ -266,8 +266,8 @@ export default function Test({
                     </div>
                 </div>
             </div>
-            <div className="ml-[40%] flex flex-col gap-1">
-                <div>
+            <div className="ml-[40%] flex flex-col gap-4">
+                <div className="absolute right-[62vw] mr-4 mt-4 flex flex-row gap-2 items-center">
                     {lang == "1" ? "Wybierz kolor: " : "Select color: "}
                     <select
                         onChange={(e) => {
@@ -299,7 +299,7 @@ export default function Test({
                             );
                         }}
                         defaultValue={cupData[0].code}
-                        className="w-max text-right border border-[#2F4858] rounded-full px-2 py-[2px] bg-white ml-4"
+                        className="border w-max border-[#bbb] bg-slate-50 text-black px-2 py-[2px] rounded-md"
                     >
                         {cupData.map((cup) => (
                             <option key={cup.code} value={cup.code}>
@@ -310,12 +310,12 @@ export default function Test({
                 </div>
                 <div className="relative">
                     {lang === "1" ? "Ilość: " : "Amount: "}
-                    <div className="flex flex-row absolute ml-[12px] top-0 left-[11vw]">
-                        <div className="flex flex-row gap-[32px]">
+                    <div className="flex flex-row absolute ml-2 top-0 left-[11vw] ">
+                        <div className="flex flex-row gap-[24px]">
                             <input
                                 type="number"
                                 min="1"
-                                className="text-right border border-[#2F4858] rounded-full px-1 bg-white"
+                                className="text-right border border-[#bbb] bg-slate-50 text-black px-2 rounded-md"
                                 onBlur={(e) => {
                                     e.target.value
                                         ? setAmounts({
@@ -335,7 +335,7 @@ export default function Test({
                                 <input
                                     type="number"
                                     min="1"
-                                    className="text-right border border-[#2F4858] rounded-full px-1 bg-white"
+                                    className="text-right border border-[#bbb] bg-slate-50 text-black px-2 rounded-md"
                                     onBlur={(e) => {
                                         e.target.value
                                             ? setAmounts({
@@ -356,7 +356,7 @@ export default function Test({
                                 <input
                                     type="number"
                                     min="1"
-                                    className="text-right border border-[#2F4858] rounded-full px-1 bg-white"
+                                    className="text-right border border-[#bbb] bg-slate-50 text-black px-2 rounded-md"
                                     onBlur={(e) => {
                                         e.target.value
                                             ? setAmounts({
@@ -424,18 +424,146 @@ export default function Test({
                         </div>
                     </div>
                 </div>
-                {selectedCup.trend_color && (
-                    <div>
-                        Trend Color:
+                <div className="flex flex-col gap-2 w-[386px] bg-slate-100 p-4">
+                    {selectedCup.trend_color && (
+                        <div className="flex flex-row justify-between items-center">
+                            Trend Color:
+                            <select
+                                defaultValue=""
+                                onChange={(e) => {
+                                    if (e.target.value === cupConfig.trend_color) return;
+                                    setCupConfig({
+                                        ...cupConfig,
+                                        trend_color: e.target
+                                            .value as CupConfigInterface["trend_color"],
+                                        imprintType: "",
+                                        imprintColors: 0,
+                                        nadruk_wewnatrz_na_sciance: 0,
+                                        nadruk_na_uchu: false,
+                                        nadruk_na_spodzie: false,
+                                        nadruk_na_dnie: false,
+                                        nadruk_przez_rant: false,
+                                        nadruk_apla: false,
+                                        nadruk_dookola_pod_uchem: false,
+                                        nadruk_zlotem: false,
+                                        personalizacja: false,
+                                        zdobienie_paskiem: false,
+                                        zdobienie_tapeta_na_barylce: false,
+                                        nadruk_na_powloce_magicznej_1_kolor: false,
+                                        naklejka_papierowa_z_nadrukiem: false,
+                                        wkladanie_ulotek_do_kubka: false,
+                                    });
+                                }}
+                                className="border w-max border-[#bbb] bg-slate-50 text-black px-2 py-[2px] rounded-md"
+                            >
+                                <option value="">
+                                    {lang === "1" ? "Bez Trend Color" : "No Trend Color"}
+                                </option>
+                                <option value="inside">
+                                    {lang === "1" ? "Wewnątrz" : "Inside"}
+                                </option>
+                                <option value="outside">
+                                    {lang === "1" ? "Zewnątrz" : "Outside"}
+                                </option>
+                                <option value="both">
+                                    {lang === "1" ? "Wenątrz i na zewnątrz" : "Inside and outside"}
+                                </option>
+                                {selectedCup.trend_color_lowered_edge && (
+                                    <option value="lowered_edge">
+                                        {lang === "1"
+                                            ? "Na zewnątrz z obniżonym rantem"
+                                            : "Outside with lowered edge"}
+                                    </option>
+                                )}
+                            </select>
+                        </div>
+                    )}
+                    {selectedCup.soft_touch && (
+                        <div className="flex flex-row justify-between items-center">
+                            Soft Touch:
+                            <select
+                                defaultValue=""
+                                onChange={(e) =>
+                                    setCupConfig({
+                                        ...cupConfig,
+                                        soft_touch: e.target.value ? true : false,
+                                        imprintType: "",
+                                        imprintColors: 0,
+                                        nadruk_wewnatrz_na_sciance: 0,
+                                        nadruk_na_uchu: false,
+                                        nadruk_na_spodzie: false,
+                                        nadruk_na_dnie: false,
+                                        nadruk_przez_rant: false,
+                                        nadruk_apla: false,
+                                        nadruk_dookola_pod_uchem: false,
+                                        nadruk_zlotem: false,
+                                        personalizacja: false,
+                                        zdobienie_paskiem: false,
+                                        zdobienie_tapeta_na_barylce: false,
+                                        nadruk_na_powloce_magicznej_1_kolor: false,
+                                        naklejka_papierowa_z_nadrukiem: false,
+                                        wkladanie_ulotek_do_kubka: false,
+                                    })
+                                }
+                                className="border w-max border-[#bbb] bg-slate-50 text-black px-2 py-[2px] rounded-md"
+                            >
+                                <option value="">
+                                    {lang === "1" ? "Bez Soft Touch" : "No Soft Touch"}
+                                </option>
+                                <option value="soft_touch">
+                                    {lang === "1" ? "Zewnątrz" : "Outside"}
+                                </option>
+                            </select>
+                        </div>
+                    )}
+                    {selectedCup.pro_color && (
+                        <div className="flex flex-row justify-between items-center">
+                            Pro Color:
+                            <select
+                                defaultValue=""
+                                onChange={(e) =>
+                                    setCupConfig({
+                                        ...cupConfig,
+                                        pro_color: e.target.value ? true : false,
+                                        imprintType: "",
+                                        imprintColors: 0,
+                                        nadruk_wewnatrz_na_sciance: 0,
+                                        nadruk_na_uchu: false,
+                                        nadruk_na_spodzie: false,
+                                        nadruk_na_dnie: false,
+                                        nadruk_przez_rant: false,
+                                        nadruk_apla: false,
+                                        nadruk_dookola_pod_uchem: false,
+                                        nadruk_zlotem: false,
+                                        personalizacja: false,
+                                        zdobienie_paskiem: false,
+                                        zdobienie_tapeta_na_barylce: false,
+                                        nadruk_na_powloce_magicznej_1_kolor: false,
+                                        naklejka_papierowa_z_nadrukiem: false,
+                                        wkladanie_ulotek_do_kubka: false,
+                                    })
+                                }
+                                className="border w-max border-[#bbb] bg-slate-50 text-black px-2 py-[2px] rounded-md"
+                            >
+                                <option value="">
+                                    {lang === "1" ? "Bez Pro Color" : "No Pro Color"}
+                                </option>
+                                <option value="pro_color">
+                                    {lang === "1" ? "Wewnątrz" : "Inside"}
+                                </option>
+                            </select>
+                        </div>
+                    )}
+                    <div className="flex flex-row justify-between items-center">
+                        {lang === "1" ? "Wybierz nadruk: " : "Select print type: "}
                         <select
                             defaultValue=""
                             onChange={(e) => {
-                                if (e.target.value === cupConfig.trend_color) return;
+                                if (e.target.value === cupConfig.imprintType) return;
                                 setCupConfig({
                                     ...cupConfig,
-                                    trend_color: e.target
-                                        .value as CupConfigInterface["trend_color"],
-                                    imprintType: "",
+                                    imprintType: e.target
+                                        .value as CupConfigInterface["imprintType"],
                                     imprintColors: 0,
                                     nadruk_wewnatrz_na_sciance: 0,
                                     nadruk_na_uchu: false,
@@ -453,308 +581,187 @@ export default function Test({
                                     wkladanie_ulotek_do_kubka: false,
                                 });
                             }}
-                            className="w-max text-right border border-[#2F4858] rounded-full px-2 py-[2px] bg-white ml-4"
+                            className="border w-max border-[#bbb] bg-slate-50 text-black px-2 py-[2px] rounded-md"
                         >
-                            <option value="">
-                                {lang === "1" ? "Bez Trend Color" : "No Trend Color"}
-                            </option>
-                            <option value="inside">{lang === "1" ? "Wewnątrz" : "Inside"}</option>
-                            <option value="outside">{lang === "1" ? "Zewnątrz" : "Outside"}</option>
-                            <option value="both">
-                                {lang === "1" ? "Wenątrz i na zewnątrz" : "Inside and outside"}
-                            </option>
-                            {selectedCup.trend_color_lowered_edge && (
-                                <option value="lowered_edge">
-                                    {lang === "1"
-                                        ? "Na zewnątrz z obniżonym rantem"
-                                        : "Outside with lowered edge"}
-                                </option>
-                            )}
+                            <option value="">{lang === "1" ? "Brak" : "None"}</option>
+                            {selectedCup.direct_print &&
+                                checkRestriction({
+                                    cupConfig,
+                                    restrictions,
+                                    imprintType: "direct_print",
+                                }) && (
+                                    <option value="direct_print">
+                                        {lang === "1" ? "Nadruk bezpośredni" : "Direct print"}
+                                    </option>
+                                )}
+                            {selectedCup.transfer_plus &&
+                                checkRestriction({
+                                    cupConfig,
+                                    restrictions,
+                                    imprintType: "transfer_plus",
+                                }) && (
+                                    <>
+                                        <option value="transfer_plus_1">
+                                            {lang === "1"
+                                                ? "Kalka ceramiczna 1 strona"
+                                                : "Transfer plus 1 side"}
+                                        </option>
+                                        <option value="transfer_plus_2">
+                                            {lang === "1"
+                                                ? "Kalka ceramiczna 2 strony"
+                                                : "Transfer plus 2 sides"}
+                                        </option>
+                                        <option value="transfer_plus_round">
+                                            {lang === "1"
+                                                ? "Kalka ceramiczna wokół"
+                                                : "Transfer plus around"}
+                                        </option>
+                                    </>
+                                )}
+                            {selectedCup.polylux &&
+                                checkRestriction({
+                                    cupConfig,
+                                    restrictions,
+                                    imprintType: "polylux",
+                                }) && (
+                                    <>
+                                        <option value="polylux_1">
+                                            Polylux {lang === "1" ? "1 strona" : "1 side"}
+                                        </option>
+                                        <option value="polylux_2">
+                                            Polylux {lang === "1" ? "2 strony" : "2 sides"}
+                                        </option>
+                                        <option value="polylux_round">
+                                            Polylux {lang === "1" ? "wokół" : "around"}
+                                        </option>
+                                    </>
+                                )}
+                            {selectedCup.deep_effect &&
+                                checkRestriction({
+                                    cupConfig,
+                                    restrictions,
+                                    imprintType: "deep_effect",
+                                }) && (
+                                    <>
+                                        <option value="deep_effect_1">
+                                            Deep effect {lang === "1" ? "1 strona" : "1 side"}
+                                        </option>
+                                        <option value="deep_effect_2">
+                                            Deep effect {lang === "1" ? "2 strony" : "2 sides"}
+                                        </option>
+                                    </>
+                                )}
+                            {selectedCup.deep_effect_plus &&
+                                checkRestriction({
+                                    cupConfig,
+                                    restrictions,
+                                    imprintType: "deep_effect_plus",
+                                }) && (
+                                    <>
+                                        <option value="deep_effect_plus_1">
+                                            Deep effect plus {lang === "1" ? "1 strona" : "1 side"}
+                                        </option>
+                                        <option value="deep_effect_plus_2">
+                                            Deep effect plus {lang === "1" ? "2 strony" : "2 sides"}
+                                        </option>
+                                    </>
+                                )}
+                            {selectedCup.digital_print &&
+                                checkRestriction({
+                                    cupConfig,
+                                    restrictions,
+                                    imprintType: "digital_print",
+                                }) && (
+                                    <option value="digital_print">
+                                        {lang === "1" ? "Nadruk cyfrowy" : "Digital print"}
+                                    </option>
+                                )}
                         </select>
                     </div>
-                )}
-                {selectedCup.soft_touch && (
-                    <div>
-                        Soft Touch:
+                    <div className="flex flex-row justify-between items-center">
+                        {lang === "1" ? "Liczba kolorów nadruku: " : "Number of print colors: "}
                         <select
                             defaultValue=""
-                            onChange={(e) =>
+                            disabled={
+                                !cupConfig.imprintType || cupConfig.imprintType === "digital_print"
+                            }
+                            onChange={(e) => {
+                                const imprintColors = parseInt(e.target.value) || 0;
                                 setCupConfig({
                                     ...cupConfig,
-                                    soft_touch: e.target.value ? true : false,
-                                    imprintType: "",
-                                    imprintColors: 0,
-                                    nadruk_wewnatrz_na_sciance: 0,
-                                    nadruk_na_uchu: false,
-                                    nadruk_na_spodzie: false,
-                                    nadruk_na_dnie: false,
-                                    nadruk_przez_rant: false,
-                                    nadruk_apla: false,
-                                    nadruk_dookola_pod_uchem: false,
-                                    nadruk_zlotem: false,
-                                    personalizacja: false,
-                                    zdobienie_paskiem: false,
-                                    zdobienie_tapeta_na_barylce: false,
-                                    nadruk_na_powloce_magicznej_1_kolor: false,
-                                    naklejka_papierowa_z_nadrukiem: false,
-                                    wkladanie_ulotek_do_kubka: false,
-                                })
-                            }
-                            className="w-max text-right border border-[#2F4858] rounded-full px-2 py-[2px] bg-white ml-4"
+                                    imprintColors,
+                                });
+                            }}
+                            className="border w-max border-[#bbb] bg-slate-50 text-black px-2 py-[2px] rounded-md"
                         >
-                            <option value="">
-                                {lang === "1" ? "Bez Soft Touch" : "No Soft Touch"}
+                            <option value="" disabled hidden>
+                                {cupConfig.imprintType !== "digital_print"
+                                    ? lang === "1"
+                                        ? "Brak"
+                                        : "None"
+                                    : lang === "1"
+                                    ? "Pełny kolor"
+                                    : "Full color"}
                             </option>
-                            <option value="soft_touch">
-                                {lang === "1" ? "Zewnątrz" : "Outside"}
-                            </option>
+                            {cupConfig.imprintType &&
+                                [
+                                    "deep_effect_1",
+                                    "deep_effect_2",
+                                    "deep_effect_plus_1",
+                                    "deep_effect_plus_2",
+                                ].includes(cupConfig.imprintType) &&
+                                [...Array(2)].map(
+                                    (_, index) => (
+                                        (index += 1),
+                                        (
+                                            <option key={index} value={index}>
+                                                {index.toString()}
+                                            </option>
+                                        )
+                                    )
+                                )}
+                            {cupConfig.imprintType &&
+                                cupConfig.imprintType === "direct_print" &&
+                                [...Array(4)].map(
+                                    (_, index) => (
+                                        (index += 1),
+                                        (
+                                            <option key={index} value={index}>
+                                                {index.toString()}
+                                            </option>
+                                        )
+                                    )
+                                )}
+                            {cupConfig.imprintType &&
+                                [
+                                    "transfer_plus_1",
+                                    "transfer_plus_2",
+                                    "transfer_plus_round",
+                                    "polylux_1",
+                                    "polylux_2",
+                                    "polylux_round",
+                                ].includes(cupConfig.imprintType) &&
+                                [...Array(16)].map(
+                                    (_, index) => (
+                                        (index += 1),
+                                        (
+                                            <option key={index} value={index}>
+                                                {index.toString()}
+                                            </option>
+                                        )
+                                    )
+                                )}
                         </select>
                     </div>
-                )}
-                {selectedCup.pro_color && (
-                    <div>
-                        Pro Color:
-                        <select
-                            defaultValue=""
-                            onChange={(e) =>
-                                setCupConfig({
-                                    ...cupConfig,
-                                    pro_color: e.target.value ? true : false,
-                                    imprintType: "",
-                                    imprintColors: 0,
-                                    nadruk_wewnatrz_na_sciance: 0,
-                                    nadruk_na_uchu: false,
-                                    nadruk_na_spodzie: false,
-                                    nadruk_na_dnie: false,
-                                    nadruk_przez_rant: false,
-                                    nadruk_apla: false,
-                                    nadruk_dookola_pod_uchem: false,
-                                    nadruk_zlotem: false,
-                                    personalizacja: false,
-                                    zdobienie_paskiem: false,
-                                    zdobienie_tapeta_na_barylce: false,
-                                    nadruk_na_powloce_magicznej_1_kolor: false,
-                                    naklejka_papierowa_z_nadrukiem: false,
-                                    wkladanie_ulotek_do_kubka: false,
-                                })
-                            }
-                            className="w-max text-right border border-[#2F4858] rounded-full px-2 py-[2px] bg-white ml-4"
-                        >
-                            <option value="">
-                                {lang === "1" ? "Bez Pro Color" : "No Pro Color"}
-                            </option>
-                            <option value="pro_color">
-                                {lang === "1" ? "Wewnątrz" : "Inside"}
-                            </option>
-                        </select>
-                    </div>
-                )}
-                <div>
-                    {lang === "1" ? "Wybierz nadruk: " : "Select print type: "}
-                    <select
-                        defaultValue=""
-                        onChange={(e) => {
-                            if (e.target.value === cupConfig.imprintType) return;
-                            setCupConfig({
-                                ...cupConfig,
-                                imprintType: e.target.value as CupConfigInterface["imprintType"],
-                                imprintColors: 0,
-                                nadruk_wewnatrz_na_sciance: 0,
-                                nadruk_na_uchu: false,
-                                nadruk_na_spodzie: false,
-                                nadruk_na_dnie: false,
-                                nadruk_przez_rant: false,
-                                nadruk_apla: false,
-                                nadruk_dookola_pod_uchem: false,
-                                nadruk_zlotem: false,
-                                personalizacja: false,
-                                zdobienie_paskiem: false,
-                                zdobienie_tapeta_na_barylce: false,
-                                nadruk_na_powloce_magicznej_1_kolor: false,
-                                naklejka_papierowa_z_nadrukiem: false,
-                                wkladanie_ulotek_do_kubka: false,
-                            });
-                        }}
-                        className="w-max text-right border border-[#2F4858] rounded-full px-2 py-[2px] bg-white ml-4"
-                    >
-                        <option value="">{lang === "1" ? "Brak" : "None"}</option>
-                        {selectedCup.direct_print &&
-                            checkRestriction({
-                                cupConfig,
-                                restrictions,
-                                imprintType: "direct_print",
-                            }) && (
-                                <option value="direct_print">
-                                    {lang === "1" ? "Nadruk bezpośredni" : "Direct print"}
-                                </option>
-                            )}
-                        {selectedCup.transfer_plus &&
-                            checkRestriction({
-                                cupConfig,
-                                restrictions,
-                                imprintType: "transfer_plus",
-                            }) && (
-                                <>
-                                    <option value="transfer_plus_1">
-                                        {lang === "1"
-                                            ? "Kalka ceramiczna 1 strona"
-                                            : "Transfer plus 1 side"}
-                                    </option>
-                                    <option value="transfer_plus_2">
-                                        {lang === "1"
-                                            ? "Kalka ceramiczna 2 strony"
-                                            : "Transfer plus 2 sides"}
-                                    </option>
-                                    <option value="transfer_plus_round">
-                                        {lang === "1"
-                                            ? "Kalka ceramiczna wokół"
-                                            : "Transfer plus around"}
-                                    </option>
-                                </>
-                            )}
-                        {selectedCup.polylux &&
-                            checkRestriction({
-                                cupConfig,
-                                restrictions,
-                                imprintType: "polylux",
-                            }) && (
-                                <>
-                                    <option value="polylux_1">
-                                        Polylux {lang === "1" ? "1 strona" : "1 side"}
-                                    </option>
-                                    <option value="polylux_2">
-                                        Polylux {lang === "1" ? "2 strony" : "2 sides"}
-                                    </option>
-                                    <option value="polylux_round">
-                                        Polylux {lang === "1" ? "wokół" : "around"}
-                                    </option>
-                                </>
-                            )}
-                        {selectedCup.deep_effect &&
-                            checkRestriction({
-                                cupConfig,
-                                restrictions,
-                                imprintType: "deep_effect",
-                            }) && (
-                                <>
-                                    <option value="deep_effect_1">
-                                        Deep effect {lang === "1" ? "1 strona" : "1 side"}
-                                    </option>
-                                    <option value="deep_effect_2">
-                                        Deep effect {lang === "1" ? "2 strony" : "2 sides"}
-                                    </option>
-                                </>
-                            )}
-                        {selectedCup.deep_effect_plus &&
-                            checkRestriction({
-                                cupConfig,
-                                restrictions,
-                                imprintType: "deep_effect_plus",
-                            }) && (
-                                <>
-                                    <option value="deep_effect_plus_1">
-                                        Deep effect plus {lang === "1" ? "1 strona" : "1 side"}
-                                    </option>
-                                    <option value="deep_effect_plus_2">
-                                        Deep effect plus {lang === "1" ? "2 strony" : "2 sides"}
-                                    </option>
-                                </>
-                            )}
-                        {selectedCup.digital_print &&
-                            checkRestriction({
-                                cupConfig,
-                                restrictions,
-                                imprintType: "digital_print",
-                            }) && (
-                                <option value="digital_print">
-                                    {lang === "1" ? "Nadruk cyfrowy" : "Digital print"}
-                                </option>
-                            )}
-                    </select>
                 </div>
-                <div>
-                    {lang === "1" ? "Liczba kolorów nadruku: " : "Number of print colors: "}
-                    <select
-                        defaultValue=""
-                        disabled={
-                            !cupConfig.imprintType || cupConfig.imprintType === "digital_print"
-                        }
-                        onChange={(e) => {
-                            const imprintColors = parseInt(e.target.value) || 0;
-                            setCupConfig({
-                                ...cupConfig,
-                                imprintColors,
-                            });
-                        }}
-                        className="w-max text-right border border-[#2F4858] rounded-full px-2 py-[2px] bg-white ml-4"
-                    >
-                        <option value="" disabled hidden>
-                            {cupConfig.imprintType !== "digital_print"
-                                ? lang === "1"
-                                    ? "Brak"
-                                    : "None"
-                                : lang === "1"
-                                ? "Pełny kolor"
-                                : "Full color"}
-                        </option>
-                        {cupConfig.imprintType &&
-                            [
-                                "deep_effect_1",
-                                "deep_effect_2",
-                                "deep_effect_plus_1",
-                                "deep_effect_plus_2",
-                            ].includes(cupConfig.imprintType) &&
-                            [...Array(2)].map(
-                                (_, index) => (
-                                    (index += 1),
-                                    (
-                                        <option key={index} value={index}>
-                                            {index.toString()}
-                                        </option>
-                                    )
-                                )
-                            )}
-                        {cupConfig.imprintType &&
-                            cupConfig.imprintType === "direct_print" &&
-                            [...Array(4)].map(
-                                (_, index) => (
-                                    (index += 1),
-                                    (
-                                        <option key={index} value={index}>
-                                            {index.toString()}
-                                        </option>
-                                    )
-                                )
-                            )}
-                        {cupConfig.imprintType &&
-                            [
-                                "transfer_plus_1",
-                                "transfer_plus_2",
-                                "transfer_plus_round",
-                                "polylux_1",
-                                "polylux_2",
-                                "polylux_round",
-                            ].includes(cupConfig.imprintType) &&
-                            [...Array(16)].map(
-                                (_, index) => (
-                                    (index += 1),
-                                    (
-                                        <option key={index} value={index}>
-                                            {index.toString()}
-                                        </option>
-                                    )
-                                )
-                            )}
-                    </select>
-                </div>
-                <div className="flex flex-col">
+                <div className="flex flex-col flex-wrap max-h-[230px] gap-1 accent-[#009E60] bg-slate-100 pt-4 pb-2">
                     {selectedCup.nadruk_wewnatrz_na_sciance &&
                         checkRestriction({
                             cupConfig,
                             restrictions,
                             anotherValue: "nadruk_wewnatrz_na_sciance",
                         }) && (
-                            <div className="flex flex-row">
+                            <div className="flex flex-row gap-2 items-center mx-4">
                                 <input
                                     type="checkbox"
                                     onChange={(e) =>
@@ -769,45 +776,32 @@ export default function Test({
                                               })
                                     }
                                 />
-                                <p>
+                                <p className="py-[2px]">
                                     {lang === "1"
                                         ? "Nadruk wewnątrz na ściance"
                                         : "Print on the inside"}
                                 </p>
                                 {cupConfig.nadruk_wewnatrz_na_sciance ? (
-                                    <>
-                                        <select
-                                            defaultValue="1"
-                                            onChange={(e) =>
-                                                setCupConfig({
-                                                    ...cupConfig,
-                                                    nadruk_wewnatrz_na_sciance: parseInt(
-                                                        e.target.value
-                                                    ) as 1 | 2 | 3 | 4,
-                                                })
-                                            }
-                                            className="w-max text-right border border-[#2F4858] rounded-full px-2 py-[2px] bg-white mx-4"
-                                        >
-                                            <option value="1">1</option>
-                                            <option value="2">2</option>
-                                            <option value="3">3</option>
-                                            <option value="4">4</option>
-                                        </select>
-                                        <p>
-                                            {lang === "1"
-                                                ? `nadruk${
-                                                      cupConfig.nadruk_wewnatrz_na_sciance === 1
-                                                          ? ""
-                                                          : "i"
-                                                  }`
-                                                : `print${
-                                                      cupConfig.nadruk_wewnatrz_na_sciance === 1
-                                                          ? ""
-                                                          : "s"
-                                                  }`}
-                                        </p>
-                                    </>
-                                ) : null}
+                                    <select
+                                        defaultValue="1"
+                                        onChange={(e) =>
+                                            setCupConfig({
+                                                ...cupConfig,
+                                                nadruk_wewnatrz_na_sciance: parseInt(
+                                                    e.target.value
+                                                ) as 1 | 2 | 3 | 4,
+                                            })
+                                        }
+                                        className="border w-16 border-[#bbb] bg-slate-50 text-black px-2 py-[2px] rounded-md"
+                                    >
+                                        <option value="1">1</option>
+                                        <option value="2">2</option>
+                                        <option value="3">3</option>
+                                        <option value="4">4</option>
+                                    </select>
+                                ) : (
+                                    <div className="w-16" />
+                                )}
                             </div>
                         )}
                     {selectedCup.nadruk_na_uchu &&
@@ -816,7 +810,7 @@ export default function Test({
                             restrictions,
                             anotherValue: "nadruk_na_uchu",
                         }) && (
-                            <div className="flex flex-row">
+                            <div className="flex flex-row gap-2 items-center mx-4">
                                 <input
                                     type="checkbox"
                                     onChange={(e) =>
@@ -826,7 +820,9 @@ export default function Test({
                                         })
                                     }
                                 />
-                                <p>{lang === "1" ? "Nadruk na uchu" : "Print on the handle"}</p>
+                                <p className="py-[2px]">
+                                    {lang === "1" ? "Nadruk na uchu" : "Print on the handle"}
+                                </p>
                             </div>
                         )}
                     {selectedCup.nadruk_na_spodzie &&
@@ -835,7 +831,7 @@ export default function Test({
                             restrictions,
                             anotherValue: "nadruk_na_spodzie",
                         }) && (
-                            <div className="flex flex-row">
+                            <div className="flex flex-row gap-2 items-center mx-4">
                                 <input
                                     type="checkbox"
                                     onChange={(e) =>
@@ -845,7 +841,7 @@ export default function Test({
                                         })
                                     }
                                 />
-                                <p>
+                                <p className="py-[2px]">
                                     {lang === "1"
                                         ? "Nadruk na spodzie (zewn.)"
                                         : "Print on the bottom outside"}
@@ -858,7 +854,7 @@ export default function Test({
                             restrictions,
                             anotherValue: "nadruk_na_dnie",
                         }) && (
-                            <div className="flex flex-row">
+                            <div className="flex flex-row gap-2 items-center mx-4">
                                 <input
                                     type="checkbox"
                                     onChange={(e) =>
@@ -868,7 +864,7 @@ export default function Test({
                                         })
                                     }
                                 />
-                                <p>
+                                <p className="py-[2px]">
                                     {lang === "1"
                                         ? "Nadruk na dnie (wewn.)"
                                         : "Print on the bottom inside"}
@@ -881,7 +877,7 @@ export default function Test({
                             restrictions,
                             anotherValue: "nadruk_przez_rant",
                         }) && (
-                            <div className="flex flex-row">
+                            <div className="flex flex-row gap-2 items-center mx-4">
                                 <input
                                     type="checkbox"
                                     onChange={(e) =>
@@ -891,7 +887,9 @@ export default function Test({
                                         })
                                     }
                                 />
-                                <p>{lang === "1" ? "Nadruk przez rant" : "Over the rim imprint"}</p>
+                                <p className="py-[2px]">
+                                    {lang === "1" ? "Nadruk przez rant" : "Over the rim imprint"}
+                                </p>
                             </div>
                         )}
                     {selectedCup.nadruk_apla &&
@@ -900,7 +898,7 @@ export default function Test({
                             restrictions,
                             anotherValue: "nadruk_apla",
                         }) && (
-                            <div className="flex flex-row">
+                            <div className="flex flex-row gap-2 items-center mx-4">
                                 <input
                                     type="checkbox"
                                     onChange={(e) =>
@@ -910,7 +908,9 @@ export default function Test({
                                         })
                                     }
                                 />
-                                <p>{lang === "1" ? "Nadruk apla" : "Apla print"}</p>
+                                <p className="py-[2px]">
+                                    {lang === "1" ? "Nadruk apla" : "Apla print"}
+                                </p>
                             </div>
                         )}
                     {selectedCup.nadruk_dookola_pod_uchem &&
@@ -919,7 +919,7 @@ export default function Test({
                             restrictions,
                             anotherValue: "nadruk_dookola_pod_uchem",
                         }) && (
-                            <div className="flex flex-row">
+                            <div className="flex flex-row gap-2 items-center mx-4">
                                 <input
                                     type="checkbox"
                                     onChange={(e) =>
@@ -929,7 +929,7 @@ export default function Test({
                                         })
                                     }
                                 />
-                                <p>
+                                <p className="py-[2px]">
                                     {lang === "1"
                                         ? "Nadruk dookoła (pod uchem)"
                                         : "Print around (under the handle)"}
@@ -948,15 +948,17 @@ export default function Test({
                                 restrictions,
                                 anotherValue: "nadruk_zlotem_50",
                             }))) && (
-                        <div className="flex flex-row">
+                        <div className="flex flex-row gap-2 items-center mx-4">
                             <input
                                 type="checkbox"
                                 onChange={(e) =>
                                     setCupConfig({ ...cupConfig, nadruk_zlotem: e.target.checked })
                                 }
                             />
-                            <p>{lang === "1" ? "Nadruk złotem" : "Gold print"}</p>
-                            {cupConfig.nadruk_zlotem && (
+                            <p className="py-[2px]">
+                                {lang === "1" ? "Nadruk złotem" : "Gold print"}
+                            </p>
+                            {cupConfig.nadruk_zlotem ? (
                                 <select
                                     defaultValue=""
                                     onChange={(e) => {
@@ -965,7 +967,7 @@ export default function Test({
                                             nadruk_zlotem: e.target.value as "25" | "50",
                                         });
                                     }}
-                                    className="w-max text-right border border-[#2F4858] rounded-full px-2 py-[2px] bg-white ml-4"
+                                    className="border w-32 border-[#bbb] bg-slate-50 text-black px-2 py-[2px] rounded-md"
                                 >
                                     <option value="" disabled hidden>
                                         {lang === "1" ? "Brak" : "None"}
@@ -983,6 +985,8 @@ export default function Test({
                                             anotherValue: "nadruk_zlotem_50",
                                         }) && <option value="50">{"<= 50cm2"}</option>}
                                 </select>
+                            ) : (
+                                <div className="w-32" />
                             )}
                         </div>
                     )}
@@ -992,7 +996,7 @@ export default function Test({
                             restrictions,
                             anotherValue: "personalizacja",
                         }) && (
-                            <div className="flex flex-row">
+                            <div className="flex flex-row gap-2 items-center mx-4">
                                 <input
                                     type="checkbox"
                                     onChange={(e) =>
@@ -1002,7 +1006,9 @@ export default function Test({
                                         })
                                     }
                                 />
-                                <p>{lang === "1" ? "Personalizacja" : "Personalization"}</p>
+                                <p className="py-[2px]">
+                                    {lang === "1" ? "Personalizacja" : "Personalization"}
+                                </p>
                             </div>
                         )}
                     {((selectedCup.zdobienie_paskiem_bez_laczenia &&
@@ -1017,7 +1023,7 @@ export default function Test({
                                 restrictions,
                                 anotherValue: "zdobienie_paskiem_z_laczeniem",
                             }))) && (
-                        <div className="flex flex-row">
+                        <div className="flex flex-row gap-2 items-center mx-4">
                             <input
                                 type="checkbox"
                                 onChange={(e) =>
@@ -1027,8 +1033,10 @@ export default function Test({
                                     })
                                 }
                             />
-                            <p>{lang === "1" ? "Zdobienie paskiem" : "Decoration with stripe"}</p>
-                            {cupConfig.zdobienie_paskiem && (
+                            <p className="py-[2px]">
+                                {lang === "1" ? "Zdobienie paskiem" : "Decoration with stripe"}
+                            </p>
+                            {cupConfig.zdobienie_paskiem ? (
                                 <select
                                     defaultValue=""
                                     onChange={(e) => {
@@ -1039,7 +1047,7 @@ export default function Test({
                                                 | "z_laczeniem",
                                         });
                                     }}
-                                    className="w-max text-right border border-[#2F4858] rounded-full px-2 py-[2px] bg-white ml-4"
+                                    className="border w-48 border-[#bbb] bg-slate-50 text-black px-2 py-[2px] rounded-md"
                                 >
                                     <option value="" disabled hidden>
                                         {lang === "1" ? "Brak" : "None"}
@@ -1067,6 +1075,8 @@ export default function Test({
                                             </option>
                                         )}
                                 </select>
+                            ) : (
+                                <div className="w-48" />
                             )}
                         </div>
                     )}
@@ -1076,7 +1086,7 @@ export default function Test({
                             restrictions,
                             anotherValue: "nadruk_na_powloce_magicznej_1_kolor",
                         }) && (
-                            <div className="flex flex-row">
+                            <div className="flex flex-row gap-2 items-center mx-4">
                                 <input
                                     type="checkbox"
                                     onChange={(e) =>
@@ -1091,7 +1101,7 @@ export default function Test({
                                               })
                                     }
                                 />
-                                <p>
+                                <p className="py-[2px]">
                                     {lang === "1"
                                         ? "Nadruk na powłoce magicznej (1 kolor)"
                                         : "Print on the magic coating (1 color)"}
@@ -1110,7 +1120,7 @@ export default function Test({
                                 restrictions,
                                 anotherValue: "zdobienie_tapeta_na_barylce_II_stopien",
                             }))) && (
-                        <div className="flex flex-row">
+                        <div className="flex flex-row gap-2 items-center mx-4">
                             <input
                                 type="checkbox"
                                 onChange={(e) =>
@@ -1120,12 +1130,12 @@ export default function Test({
                                     })
                                 }
                             />
-                            <p>
+                            <p className="py-[2px]">
                                 {lang === "1"
                                     ? "Zdobienie tapetą na baryłce"
                                     : "Decoration with tape on the barrel"}
                             </p>
-                            {cupConfig.zdobienie_tapeta_na_barylce && (
+                            {cupConfig.zdobienie_tapeta_na_barylce ? (
                                 <select
                                     defaultValue=""
                                     onChange={(e) => {
@@ -1136,7 +1146,7 @@ export default function Test({
                                                 | "II_stopien",
                                         });
                                     }}
-                                    className="w-max text-right border border-[#2F4858] rounded-full px-2 py-[2px] bg-white ml-4"
+                                    className="border w-52 border-[#bbb] bg-slate-50 text-black px-2 py-[2px] rounded-md"
                                 >
                                     <option value="" disabled hidden>
                                         {lang === "1" ? "Brak" : "None"}
@@ -1150,7 +1160,7 @@ export default function Test({
                                             <option value="I_stopien">
                                                 {lang === "1"
                                                     ? "I stopień trudności"
-                                                    : "First degree of difficulty"}
+                                                    : "I degree of difficulty"}
                                             </option>
                                         )}
                                     {selectedCup.zdobienie_tapeta_na_barylce_II_stopien_trudnosci &&
@@ -1162,10 +1172,12 @@ export default function Test({
                                             <option value="II_stopien">
                                                 {lang === "1"
                                                     ? "II stopień trudności"
-                                                    : "Second degree of difficulty"}
+                                                    : "II degree of difficulty"}
                                             </option>
                                         )}
                                 </select>
+                            ) : (
+                                <div className="w-52" />
                             )}
                         </div>
                     )}
@@ -1175,7 +1187,7 @@ export default function Test({
                             restrictions,
                             anotherValue: "naklejka_papierowa_z_nadrukiem",
                         }) && (
-                            <div className="flex flex-row">
+                            <div className="flex flex-row gap-2 items-center mx-4">
                                 <input
                                     type="checkbox"
                                     onChange={(e) =>
@@ -1190,7 +1202,7 @@ export default function Test({
                                               })
                                     }
                                 />
-                                <p>
+                                <p className="py-[2px]">
                                     {lang === "1"
                                         ? "Naklejka papierowa z nadrukiem"
                                         : "Paper sticker with imprint"}
@@ -1203,7 +1215,7 @@ export default function Test({
                             restrictions,
                             anotherValue: "wkladanie_ulotek_do_kubka",
                         }) && (
-                            <div className="flex flex-row">
+                            <div className="flex flex-row gap-2 items-center mx-4">
                                 <input
                                     type="checkbox"
                                     onChange={(e) =>
@@ -1218,7 +1230,7 @@ export default function Test({
                                               })
                                     }
                                 />
-                                <p>
+                                <p className="py-[2px]">
                                     {lang === "1"
                                         ? "Wkładanie ulotek do kubka"
                                         : "Inserting leaflets into the cup"}
@@ -1227,39 +1239,39 @@ export default function Test({
                         )}
                 </div>
             </div>
-            <div className="ml-[40%] w-[60%]">
-                <div className="flex flex-row">
-                    <p>{lang === "1" ? "Opakowanie: " : "Packaging: "}</p>
-                    <select
-                        defaultValue=""
-                        onChange={(e) =>
-                            setCupConfig({
-                                ...cupConfig,
-                                cardboard: e.target.value as CupConfigInterface["cardboard"],
-                            })
-                        }
-                        className="w-max text-right border border-[#2F4858] rounded-full px-2 py-[2px] bg-white ml-4"
-                    >
-                        <option value="">
-                            {lang === "1" ? "Opakowanie zbiorcze" : "Bulk packaging"}
-                        </option>
-                        <option value="singular">
-                            {lang === "1" ? "Kartoniki jednostkowe" : "Unit cartons"}
-                        </option>
-                        {selectedCup.category !== "filiżanka" && (
-                            <>
-                                <option value="6pack_wykrojnik">
-                                    {lang === "1" ? "6-pak z wykrojnika" : "6-pack from a die"}
-                                </option>
-                                <option value="6pack_klapowy">
-                                    {lang === "1" ? "6-pak klapowy" : "6-pack flap"}
-                                </option>
-                            </>
-                        )}
-                    </select>
-                </div>
-                {/* transport tylko w polsce (dla klientow PL) */}
-                <div className="flex flex-row ml-60 gap-[28px]">
+            <div className="ml-[40%] w-[60%] mt-5">
+                <div className="flex flex-row ml-64 gap-[28px] items-center relative">
+                    <div className="inline-flex flex-col absolute -left-64 bg-slate-100 px-4 pb-4 pt-2">
+                        <p className="py-[2px]">{lang === "1" ? "Opakowanie: " : "Packaging: "}</p>
+                        <select
+                            defaultValue=""
+                            onChange={(e) =>
+                                setCupConfig({
+                                    ...cupConfig,
+                                    cardboard: e.target.value as CupConfigInterface["cardboard"],
+                                })
+                            }
+                            className="border w-max border-[#bbb] bg-slate-50 text-black px-2 py-[2px] rounded-md h-max"
+                        >
+                            <option value="">
+                                {lang === "1" ? "Opakowanie zbiorcze" : "Bulk packaging"}
+                            </option>
+                            <option value="singular">
+                                {lang === "1" ? "Kartoniki jednostkowe" : "Unit cartons"}
+                            </option>
+                            {selectedCup.category !== "filiżanka" && (
+                                <>
+                                    <option value="6pack_wykrojnik">
+                                        {lang === "1" ? "6-pak z wykrojnika" : "6-pack from a die"}
+                                    </option>
+                                    <option value="6pack_klapowy">
+                                        {lang === "1" ? "6-pak klapowy" : "6-pack flap"}
+                                    </option>
+                                </>
+                            )}
+                        </select>
+                    </div>
+
                     <PalletQuantities
                         lang={lang}
                         selectedCardboard={cupConfig.cardboard}

@@ -7,6 +7,7 @@ import { Cup } from "../api/updatecups/route";
 import noImage from "@/../public/noimage.png";
 import { PricesDisplay } from "@/components/calculator/pricesDisplay";
 import { PalletQuantities } from "@/components/calculator/palletQuantities";
+import { Restriction, checkRestriction } from "@/lib/checkRestriction";
 
 export default function Test({
     searchParams,
@@ -75,6 +76,12 @@ export default function Test({
             full_pallet_singular: 960,
         },
     ];
+    const restrictions = [
+        {
+            imprintType: "direct_print",
+            anotherValue: "trend_color_inside",
+        },
+    ] as Restriction[];
 
     const [selectedCup, setSelectedCup] = useState<Cup>(cupData[0]);
     const [amounts, setAmounts] = useState<{
@@ -571,69 +578,98 @@ export default function Test({
                         className="w-max text-right border border-[#2F4858] rounded-full px-2 py-[2px] bg-white ml-4"
                     >
                         <option value="">{lang === "1" ? "Brak" : "None"}</option>
-                        {/* tutaj trzeba dolozyc troche +20% np do wpisania w panelu */}
-                        {selectedCup.direct_print && (
-                            <option value="direct_print">
-                                {lang === "1" ? "Nadruk bezpośredni" : "Direct print"}
-                            </option>
-                        )}
-                        {selectedCup.transfer_plus && (
-                            <>
-                                <option value="transfer_plus_1">
-                                    {lang === "1"
-                                        ? "Kalka ceramiczna 1 strona"
-                                        : "Transfer plus 1 side"}
+                        {selectedCup.direct_print &&
+                            checkRestriction({
+                                cupConfig,
+                                restrictions,
+                                imprintType: "direct_print",
+                            }) && (
+                                <option value="direct_print">
+                                    {lang === "1" ? "Nadruk bezpośredni" : "Direct print"}
                                 </option>
-                                <option value="transfer_plus_2">
-                                    {lang === "1"
-                                        ? "Kalka ceramiczna 2 strony"
-                                        : "Transfer plus 2 sides"}
+                            )}
+                        {selectedCup.transfer_plus &&
+                            checkRestriction({
+                                cupConfig,
+                                restrictions,
+                                imprintType: "transfer_plus",
+                            }) && (
+                                <>
+                                    <option value="transfer_plus_1">
+                                        {lang === "1"
+                                            ? "Kalka ceramiczna 1 strona"
+                                            : "Transfer plus 1 side"}
+                                    </option>
+                                    <option value="transfer_plus_2">
+                                        {lang === "1"
+                                            ? "Kalka ceramiczna 2 strony"
+                                            : "Transfer plus 2 sides"}
+                                    </option>
+                                    <option value="transfer_plus_round">
+                                        {lang === "1"
+                                            ? "Kalka ceramiczna wokół"
+                                            : "Transfer plus around"}
+                                    </option>
+                                </>
+                            )}
+                        {selectedCup.polylux &&
+                            checkRestriction({
+                                cupConfig,
+                                restrictions,
+                                imprintType: "polylux",
+                            }) && (
+                                <>
+                                    <option value="polylux_1">
+                                        Polylux {lang === "1" ? "1 strona" : "1 side"}
+                                    </option>
+                                    <option value="polylux_2">
+                                        Polylux {lang === "1" ? "2 strony" : "2 sides"}
+                                    </option>
+                                    <option value="polylux_round">
+                                        Polylux {lang === "1" ? "wokół" : "around"}
+                                    </option>
+                                </>
+                            )}
+                        {selectedCup.deep_effect &&
+                            checkRestriction({
+                                cupConfig,
+                                restrictions,
+                                imprintType: "deep_effect",
+                            }) && (
+                                <>
+                                    <option value="deep_effect_1">
+                                        Deep effect {lang === "1" ? "1 strona" : "1 side"}
+                                    </option>
+                                    <option value="deep_effect_2">
+                                        Deep effect {lang === "1" ? "2 strony" : "2 sides"}
+                                    </option>
+                                </>
+                            )}
+                        {selectedCup.deep_effect_plus &&
+                            checkRestriction({
+                                cupConfig,
+                                restrictions,
+                                imprintType: "deep_effect_plus",
+                            }) && (
+                                <>
+                                    <option value="deep_effect_plus_1">
+                                        Deep effect plus {lang === "1" ? "1 strona" : "1 side"}
+                                    </option>
+                                    <option value="deep_effect_plus_2">
+                                        Deep effect plus {lang === "1" ? "2 strony" : "2 sides"}
+                                    </option>
+                                </>
+                            )}
+                        {selectedCup.digital_print &&
+                            checkRestriction({
+                                cupConfig,
+                                restrictions,
+                                imprintType: "digital_print",
+                            }) && (
+                                <option value="digital_print">
+                                    {lang === "1" ? "Nadruk cyfrowy" : "Digital print"}
                                 </option>
-                                <option value="transfer_plus_round">
-                                    {lang === "1"
-                                        ? "Kalka ceramiczna wokół"
-                                        : "Transfer plus around"}
-                                </option>
-                            </>
-                        )}
-                        {selectedCup.polylux && (
-                            <>
-                                <option value="polylux_1">
-                                    Polylux {lang === "1" ? "1 strona" : "1 side"}
-                                </option>
-                                <option value="polylux_2">
-                                    Polylux {lang === "1" ? "2 strony" : "2 sides"}
-                                </option>
-                                <option value="polylux_round">
-                                    Polylux {lang === "1" ? "wokół" : "around"}
-                                </option>
-                            </>
-                        )}
-                        {selectedCup.deep_effect && (
-                            <>
-                                <option value="deep_effect_1">
-                                    Deep effect {lang === "1" ? "1 strona" : "1 side"}
-                                </option>
-                                <option value="deep_effect_2">
-                                    Deep effect {lang === "1" ? "2 strony" : "2 sides"}
-                                </option>
-                            </>
-                        )}
-                        {selectedCup.deep_effect_plus && (
-                            <>
-                                <option value="deep_effect_plus_1">
-                                    Deep effect plus {lang === "1" ? "1 strona" : "1 side"}
-                                </option>
-                                <option value="deep_effect_plus_2">
-                                    Deep effect plus {lang === "1" ? "2 strony" : "2 sides"}
-                                </option>
-                            </>
-                        )}
-                        {selectedCup.digital_print && (
-                            <option value="digital_print">
-                                {lang === "1" ? "Nadruk cyfrowy" : "Digital print"}
-                            </option>
-                        )}
+                            )}
                     </select>
                 </div>
                 <div>
@@ -712,151 +748,206 @@ export default function Test({
                     </select>
                 </div>
                 <div className="flex flex-col">
-                    {selectedCup.nadruk_wewnatrz_na_sciance && (
-                        <div className="flex flex-row">
-                            <input
-                                type="checkbox"
-                                onChange={(e) =>
-                                    e.target.checked
-                                        ? setCupConfig({
-                                              ...cupConfig,
-                                              nadruk_wewnatrz_na_sciance: 1,
-                                          })
-                                        : setCupConfig({
-                                              ...cupConfig,
-                                              nadruk_wewnatrz_na_sciance: 0,
-                                          })
-                                }
-                            />
-                            <p>
-                                {lang === "1"
-                                    ? "Nadruk wewnątrz na ściance"
-                                    : "Print on the inside"}
-                            </p>
-                            {cupConfig.nadruk_wewnatrz_na_sciance ? (
-                                <>
-                                    <select
-                                        defaultValue="1"
-                                        onChange={(e) =>
-                                            setCupConfig({
-                                                ...cupConfig,
-                                                nadruk_wewnatrz_na_sciance: parseInt(
-                                                    e.target.value
-                                                ) as 1 | 2 | 3 | 4,
-                                            })
-                                        }
-                                        className="w-max text-right border border-[#2F4858] rounded-full px-2 py-[2px] bg-white mx-4"
-                                    >
-                                        <option value="1">1</option>
-                                        <option value="2">2</option>
-                                        <option value="3">3</option>
-                                        <option value="4">4</option>
-                                    </select>
-                                    <p>
-                                        {lang === "1"
-                                            ? `nadruk${
-                                                  cupConfig.nadruk_wewnatrz_na_sciance === 1
-                                                      ? ""
-                                                      : "i"
-                                              }`
-                                            : `print${
-                                                  cupConfig.nadruk_wewnatrz_na_sciance === 1
-                                                      ? ""
-                                                      : "s"
-                                              }`}
-                                    </p>
-                                </>
-                            ) : null}
-                        </div>
-                    )}
-                    {selectedCup.nadruk_na_uchu && (
-                        <div className="flex flex-row">
-                            <input
-                                type="checkbox"
-                                onChange={(e) =>
-                                    setCupConfig({ ...cupConfig, nadruk_na_uchu: e.target.checked })
-                                }
-                            />
-                            <p>{lang === "1" ? "Nadruk na uchu" : "Print on the handle"}</p>
-                        </div>
-                    )}
-                    {selectedCup.nadruk_na_spodzie && (
-                        <div className="flex flex-row">
-                            <input
-                                type="checkbox"
-                                onChange={(e) =>
-                                    setCupConfig({
-                                        ...cupConfig,
-                                        nadruk_na_spodzie: e.target.checked,
-                                    })
-                                }
-                            />
-                            <p>
-                                {lang === "1"
-                                    ? "Nadruk na spodzie (zewn.)"
-                                    : "Print on the bottom outside"}
-                            </p>
-                        </div>
-                    )}
-                    {selectedCup.nadruk_na_dnie && (
-                        <div className="flex flex-row">
-                            <input
-                                type="checkbox"
-                                onChange={(e) =>
-                                    setCupConfig({ ...cupConfig, nadruk_na_dnie: e.target.checked })
-                                }
-                            />
-                            <p>
-                                {lang === "1"
-                                    ? "Nadruk na dnie (wewn.)"
-                                    : "Print on the bottom inside"}
-                            </p>
-                        </div>
-                    )}
-                    {selectedCup.nadruk_przez_rant && (
-                        <div className="flex flex-row">
-                            <input
-                                type="checkbox"
-                                onChange={(e) =>
-                                    setCupConfig({
-                                        ...cupConfig,
-                                        nadruk_przez_rant: e.target.checked,
-                                    })
-                                }
-                            />
-                            <p>{lang === "1" ? "Nadruk przez rant" : "Over the rim imprint"}</p>
-                        </div>
-                    )}
-                    {selectedCup.nadruk_apla && (
-                        <div className="flex flex-row">
-                            <input
-                                type="checkbox"
-                                onChange={(e) =>
-                                    setCupConfig({ ...cupConfig, nadruk_apla: e.target.checked })
-                                }
-                            />
-                            <p>{lang === "1" ? "Nadruk apla" : "Apla print"}</p>
-                        </div>
-                    )}
-                    {selectedCup.nadruk_dookola_pod_uchem && (
-                        <div className="flex flex-row">
-                            <input
-                                type="checkbox"
-                                onChange={(e) =>
-                                    setCupConfig({
-                                        ...cupConfig,
-                                        nadruk_dookola_pod_uchem: e.target.checked,
-                                    })
-                                }
-                            />
-                            <p>
-                                {lang === "1"
-                                    ? "Nadruk dookoła (pod uchem)"
-                                    : "Print around (under the handle)"}
-                            </p>
-                        </div>
-                    )}
-                    {(selectedCup.nadruk_zlotem_do_25cm2 || selectedCup.nadruk_zlotem_do_50cm2) && (
+                    {selectedCup.nadruk_wewnatrz_na_sciance &&
+                        checkRestriction({
+                            cupConfig,
+                            restrictions,
+                            anotherValue: "nadruk_wewnatrz_na_sciance",
+                        }) && (
+                            <div className="flex flex-row">
+                                <input
+                                    type="checkbox"
+                                    onChange={(e) =>
+                                        e.target.checked
+                                            ? setCupConfig({
+                                                  ...cupConfig,
+                                                  nadruk_wewnatrz_na_sciance: 1,
+                                              })
+                                            : setCupConfig({
+                                                  ...cupConfig,
+                                                  nadruk_wewnatrz_na_sciance: 0,
+                                              })
+                                    }
+                                />
+                                <p>
+                                    {lang === "1"
+                                        ? "Nadruk wewnątrz na ściance"
+                                        : "Print on the inside"}
+                                </p>
+                                {cupConfig.nadruk_wewnatrz_na_sciance ? (
+                                    <>
+                                        <select
+                                            defaultValue="1"
+                                            onChange={(e) =>
+                                                setCupConfig({
+                                                    ...cupConfig,
+                                                    nadruk_wewnatrz_na_sciance: parseInt(
+                                                        e.target.value
+                                                    ) as 1 | 2 | 3 | 4,
+                                                })
+                                            }
+                                            className="w-max text-right border border-[#2F4858] rounded-full px-2 py-[2px] bg-white mx-4"
+                                        >
+                                            <option value="1">1</option>
+                                            <option value="2">2</option>
+                                            <option value="3">3</option>
+                                            <option value="4">4</option>
+                                        </select>
+                                        <p>
+                                            {lang === "1"
+                                                ? `nadruk${
+                                                      cupConfig.nadruk_wewnatrz_na_sciance === 1
+                                                          ? ""
+                                                          : "i"
+                                                  }`
+                                                : `print${
+                                                      cupConfig.nadruk_wewnatrz_na_sciance === 1
+                                                          ? ""
+                                                          : "s"
+                                                  }`}
+                                        </p>
+                                    </>
+                                ) : null}
+                            </div>
+                        )}
+                    {selectedCup.nadruk_na_uchu &&
+                        checkRestriction({
+                            cupConfig,
+                            restrictions,
+                            anotherValue: "nadruk_na_uchu",
+                        }) && (
+                            <div className="flex flex-row">
+                                <input
+                                    type="checkbox"
+                                    onChange={(e) =>
+                                        setCupConfig({
+                                            ...cupConfig,
+                                            nadruk_na_uchu: e.target.checked,
+                                        })
+                                    }
+                                />
+                                <p>{lang === "1" ? "Nadruk na uchu" : "Print on the handle"}</p>
+                            </div>
+                        )}
+                    {selectedCup.nadruk_na_spodzie &&
+                        checkRestriction({
+                            cupConfig,
+                            restrictions,
+                            anotherValue: "nadruk_na_spodzie",
+                        }) && (
+                            <div className="flex flex-row">
+                                <input
+                                    type="checkbox"
+                                    onChange={(e) =>
+                                        setCupConfig({
+                                            ...cupConfig,
+                                            nadruk_na_spodzie: e.target.checked,
+                                        })
+                                    }
+                                />
+                                <p>
+                                    {lang === "1"
+                                        ? "Nadruk na spodzie (zewn.)"
+                                        : "Print on the bottom outside"}
+                                </p>
+                            </div>
+                        )}
+                    {selectedCup.nadruk_na_dnie &&
+                        checkRestriction({
+                            cupConfig,
+                            restrictions,
+                            anotherValue: "nadruk_na_dnie",
+                        }) && (
+                            <div className="flex flex-row">
+                                <input
+                                    type="checkbox"
+                                    onChange={(e) =>
+                                        setCupConfig({
+                                            ...cupConfig,
+                                            nadruk_na_dnie: e.target.checked,
+                                        })
+                                    }
+                                />
+                                <p>
+                                    {lang === "1"
+                                        ? "Nadruk na dnie (wewn.)"
+                                        : "Print on the bottom inside"}
+                                </p>
+                            </div>
+                        )}
+                    {selectedCup.nadruk_przez_rant &&
+                        checkRestriction({
+                            cupConfig,
+                            restrictions,
+                            anotherValue: "nadruk_przez_rant",
+                        }) && (
+                            <div className="flex flex-row">
+                                <input
+                                    type="checkbox"
+                                    onChange={(e) =>
+                                        setCupConfig({
+                                            ...cupConfig,
+                                            nadruk_przez_rant: e.target.checked,
+                                        })
+                                    }
+                                />
+                                <p>{lang === "1" ? "Nadruk przez rant" : "Over the rim imprint"}</p>
+                            </div>
+                        )}
+                    {selectedCup.nadruk_apla &&
+                        checkRestriction({
+                            cupConfig,
+                            restrictions,
+                            anotherValue: "nadruk_apla",
+                        }) && (
+                            <div className="flex flex-row">
+                                <input
+                                    type="checkbox"
+                                    onChange={(e) =>
+                                        setCupConfig({
+                                            ...cupConfig,
+                                            nadruk_apla: e.target.checked,
+                                        })
+                                    }
+                                />
+                                <p>{lang === "1" ? "Nadruk apla" : "Apla print"}</p>
+                            </div>
+                        )}
+                    {selectedCup.nadruk_dookola_pod_uchem &&
+                        checkRestriction({
+                            cupConfig,
+                            restrictions,
+                            anotherValue: "nadruk_dookola_pod_uchem",
+                        }) && (
+                            <div className="flex flex-row">
+                                <input
+                                    type="checkbox"
+                                    onChange={(e) =>
+                                        setCupConfig({
+                                            ...cupConfig,
+                                            nadruk_dookola_pod_uchem: e.target.checked,
+                                        })
+                                    }
+                                />
+                                <p>
+                                    {lang === "1"
+                                        ? "Nadruk dookoła (pod uchem)"
+                                        : "Print around (under the handle)"}
+                                </p>
+                            </div>
+                        )}
+                    {((selectedCup.nadruk_zlotem_do_25cm2 &&
+                        checkRestriction({
+                            cupConfig,
+                            restrictions,
+                            anotherValue: "nadruk_zlotem_25",
+                        })) ||
+                        (selectedCup.nadruk_zlotem_do_50cm2 &&
+                            checkRestriction({
+                                cupConfig,
+                                restrictions,
+                                anotherValue: "nadruk_zlotem_50",
+                            }))) && (
                         <div className="flex flex-row">
                             <input
                                 type="checkbox"
@@ -879,29 +970,53 @@ export default function Test({
                                     <option value="" disabled hidden>
                                         {lang === "1" ? "Brak" : "None"}
                                     </option>
-                                    {selectedCup.nadruk_zlotem_do_25cm2 && (
-                                        <option value="25">{"<= 25cm2"}</option>
-                                    )}
-                                    {selectedCup.nadruk_zlotem_do_50cm2 && (
-                                        <option value="50">{"<= 50cm2"}</option>
-                                    )}
+                                    {selectedCup.nadruk_zlotem_do_25cm2 &&
+                                        checkRestriction({
+                                            cupConfig,
+                                            restrictions,
+                                            anotherValue: "nadruk_zlotem_25",
+                                        }) && <option value="25">{"<= 25cm2"}</option>}
+                                    {selectedCup.nadruk_zlotem_do_50cm2 &&
+                                        checkRestriction({
+                                            cupConfig,
+                                            restrictions,
+                                            anotherValue: "nadruk_zlotem_50",
+                                        }) && <option value="50">{"<= 50cm2"}</option>}
                                 </select>
                             )}
                         </div>
                     )}
-                    {selectedCup.personalizacja && (
-                        <div className="flex flex-row">
-                            <input
-                                type="checkbox"
-                                onChange={(e) =>
-                                    setCupConfig({ ...cupConfig, personalizacja: e.target.checked })
-                                }
-                            />
-                            <p>{lang === "1" ? "Personalizacja" : "Personalization"}</p>
-                        </div>
-                    )}
-                    {(selectedCup.zdobienie_paskiem_bez_laczenia ||
-                        selectedCup.zdobienie_paskiem_z_laczeniem) && (
+                    {selectedCup.personalizacja &&
+                        checkRestriction({
+                            cupConfig,
+                            restrictions,
+                            anotherValue: "personalizacja",
+                        }) && (
+                            <div className="flex flex-row">
+                                <input
+                                    type="checkbox"
+                                    onChange={(e) =>
+                                        setCupConfig({
+                                            ...cupConfig,
+                                            personalizacja: e.target.checked,
+                                        })
+                                    }
+                                />
+                                <p>{lang === "1" ? "Personalizacja" : "Personalization"}</p>
+                            </div>
+                        )}
+                    {((selectedCup.zdobienie_paskiem_bez_laczenia &&
+                        checkRestriction({
+                            cupConfig,
+                            restrictions,
+                            anotherValue: "zdobienie_paskiem_bez_laczenia",
+                        })) ||
+                        (selectedCup.zdobienie_paskiem_z_laczeniem &&
+                            checkRestriction({
+                                cupConfig,
+                                restrictions,
+                                anotherValue: "zdobienie_paskiem_z_laczeniem",
+                            }))) && (
                         <div className="flex flex-row">
                             <input
                                 type="checkbox"
@@ -929,45 +1044,72 @@ export default function Test({
                                     <option value="" disabled hidden>
                                         {lang === "1" ? "Brak" : "None"}
                                     </option>
-                                    {selectedCup.zdobienie_paskiem_bez_laczenia && (
-                                        <option value="bez_laczenia">
-                                            {lang === "1" ? "Bez łączenia" : "Without connection"}
-                                        </option>
-                                    )}
-                                    {selectedCup.zdobienie_paskiem_z_laczeniem && (
-                                        <option value="z_laczeniem">
-                                            {lang === "1" ? "Z łączeniem" : "With connection"}
-                                        </option>
-                                    )}
+                                    {selectedCup.zdobienie_paskiem_bez_laczenia &&
+                                        checkRestriction({
+                                            cupConfig,
+                                            restrictions,
+                                            anotherValue: "zdobienie_paskiem_bez_laczenia",
+                                        }) && (
+                                            <option value="bez_laczenia">
+                                                {lang === "1"
+                                                    ? "Bez łączenia"
+                                                    : "Without connection"}
+                                            </option>
+                                        )}
+                                    {selectedCup.zdobienie_paskiem_z_laczeniem &&
+                                        checkRestriction({
+                                            cupConfig,
+                                            restrictions,
+                                            anotherValue: "zdobienie_paskiem_z_laczeniem",
+                                        }) && (
+                                            <option value="z_laczeniem">
+                                                {lang === "1" ? "Z łączeniem" : "With connection"}
+                                            </option>
+                                        )}
                                 </select>
                             )}
                         </div>
                     )}
-                    {selectedCup.nadruk_na_powloce_magicznej_1_kolor && (
-                        <div className="flex flex-row">
-                            <input
-                                type="checkbox"
-                                onChange={(e) =>
-                                    e.target.checked
-                                        ? setCupConfig({
-                                              ...cupConfig,
-                                              nadruk_na_powloce_magicznej_1_kolor: true,
-                                          })
-                                        : setCupConfig({
-                                              ...cupConfig,
-                                              nadruk_na_powloce_magicznej_1_kolor: false,
-                                          })
-                                }
-                            />
-                            <p>
-                                {lang === "1"
-                                    ? "Nadruk na powłoce magicznej (1 kolor)"
-                                    : "Print on the magic coating (1 color)"}
-                            </p>
-                        </div>
-                    )}
-                    {(selectedCup.zdobienie_tapeta_na_barylce_I_stopien_trudnosci ||
-                        selectedCup.zdobienie_tapeta_na_barylce_II_stopien_trudnosci) && (
+                    {selectedCup.nadruk_na_powloce_magicznej_1_kolor &&
+                        checkRestriction({
+                            cupConfig,
+                            restrictions,
+                            anotherValue: "nadruk_na_powloce_magicznej_1_kolor",
+                        }) && (
+                            <div className="flex flex-row">
+                                <input
+                                    type="checkbox"
+                                    onChange={(e) =>
+                                        e.target.checked
+                                            ? setCupConfig({
+                                                  ...cupConfig,
+                                                  nadruk_na_powloce_magicznej_1_kolor: true,
+                                              })
+                                            : setCupConfig({
+                                                  ...cupConfig,
+                                                  nadruk_na_powloce_magicznej_1_kolor: false,
+                                              })
+                                    }
+                                />
+                                <p>
+                                    {lang === "1"
+                                        ? "Nadruk na powłoce magicznej (1 kolor)"
+                                        : "Print on the magic coating (1 color)"}
+                                </p>
+                            </div>
+                        )}
+                    {((selectedCup.zdobienie_tapeta_na_barylce_I_stopien_trudnosci &&
+                        checkRestriction({
+                            cupConfig,
+                            restrictions,
+                            anotherValue: "zdobienie_tapeta_na_barylce_I_stopien",
+                        })) ||
+                        (selectedCup.zdobienie_tapeta_na_barylce_II_stopien_trudnosci &&
+                            checkRestriction({
+                                cupConfig,
+                                restrictions,
+                                anotherValue: "zdobienie_tapeta_na_barylce_II_stopien",
+                            }))) && (
                         <div className="flex flex-row">
                             <input
                                 type="checkbox"
@@ -999,70 +1141,90 @@ export default function Test({
                                     <option value="" disabled hidden>
                                         {lang === "1" ? "Brak" : "None"}
                                     </option>
-                                    {selectedCup.zdobienie_tapeta_na_barylce_I_stopien_trudnosci && (
-                                        <option value="I_stopien">
-                                            {lang === "1"
-                                                ? "I stopień trudności"
-                                                : "First degree of difficulty"}
-                                        </option>
-                                    )}
-                                    {selectedCup.zdobienie_tapeta_na_barylce_II_stopien_trudnosci && (
-                                        <option value="II_stopien">
-                                            {lang === "1"
-                                                ? "II stopień trudności"
-                                                : "Second degree of difficulty"}
-                                        </option>
-                                    )}
+                                    {selectedCup.zdobienie_tapeta_na_barylce_I_stopien_trudnosci &&
+                                        checkRestriction({
+                                            cupConfig,
+                                            restrictions,
+                                            anotherValue: "zdobienie_tapeta_na_barylce_I_stopien",
+                                        }) && (
+                                            <option value="I_stopien">
+                                                {lang === "1"
+                                                    ? "I stopień trudności"
+                                                    : "First degree of difficulty"}
+                                            </option>
+                                        )}
+                                    {selectedCup.zdobienie_tapeta_na_barylce_II_stopien_trudnosci &&
+                                        checkRestriction({
+                                            cupConfig,
+                                            restrictions,
+                                            anotherValue: "zdobienie_tapeta_na_barylce_II_stopien",
+                                        }) && (
+                                            <option value="II_stopien">
+                                                {lang === "1"
+                                                    ? "II stopień trudności"
+                                                    : "Second degree of difficulty"}
+                                            </option>
+                                        )}
                                 </select>
                             )}
                         </div>
                     )}
-                    {selectedCup.naklejka_papierowa_z_nadrukiem && (
-                        <div className="flex flex-row">
-                            <input
-                                type="checkbox"
-                                onChange={(e) =>
-                                    e.target.checked
-                                        ? setCupConfig({
-                                              ...cupConfig,
-                                              naklejka_papierowa_z_nadrukiem: true,
-                                          })
-                                        : setCupConfig({
-                                              ...cupConfig,
-                                              naklejka_papierowa_z_nadrukiem: false,
-                                          })
-                                }
-                            />
-                            <p>
-                                {lang === "1"
-                                    ? "Naklejka papierowa z nadrukiem"
-                                    : "Paper sticker with imprint"}
-                            </p>
-                        </div>
-                    )}
-                    {selectedCup.wkladanie_ulotek_do_kubka && (
-                        <div className="flex flex-row">
-                            <input
-                                type="checkbox"
-                                onChange={(e) =>
-                                    e.target.checked
-                                        ? setCupConfig({
-                                              ...cupConfig,
-                                              wkladanie_ulotek_do_kubka: true,
-                                          })
-                                        : setCupConfig({
-                                              ...cupConfig,
-                                              naklejka_papierowa_z_nadrukiem: false,
-                                          })
-                                }
-                            />
-                            <p>
-                                {lang === "1"
-                                    ? "Wkładanie ulotek do kubka"
-                                    : "Inserting leaflets into the cup"}
-                            </p>
-                        </div>
-                    )}
+                    {selectedCup.naklejka_papierowa_z_nadrukiem &&
+                        checkRestriction({
+                            cupConfig,
+                            restrictions,
+                            anotherValue: "naklejka_papierowa_z_nadrukiem",
+                        }) && (
+                            <div className="flex flex-row">
+                                <input
+                                    type="checkbox"
+                                    onChange={(e) =>
+                                        e.target.checked
+                                            ? setCupConfig({
+                                                  ...cupConfig,
+                                                  naklejka_papierowa_z_nadrukiem: true,
+                                              })
+                                            : setCupConfig({
+                                                  ...cupConfig,
+                                                  naklejka_papierowa_z_nadrukiem: false,
+                                              })
+                                    }
+                                />
+                                <p>
+                                    {lang === "1"
+                                        ? "Naklejka papierowa z nadrukiem"
+                                        : "Paper sticker with imprint"}
+                                </p>
+                            </div>
+                        )}
+                    {selectedCup.wkladanie_ulotek_do_kubka &&
+                        checkRestriction({
+                            cupConfig,
+                            restrictions,
+                            anotherValue: "wkladanie_ulotek_do_kubka",
+                        }) && (
+                            <div className="flex flex-row">
+                                <input
+                                    type="checkbox"
+                                    onChange={(e) =>
+                                        e.target.checked
+                                            ? setCupConfig({
+                                                  ...cupConfig,
+                                                  wkladanie_ulotek_do_kubka: true,
+                                              })
+                                            : setCupConfig({
+                                                  ...cupConfig,
+                                                  naklejka_papierowa_z_nadrukiem: false,
+                                              })
+                                    }
+                                />
+                                <p>
+                                    {lang === "1"
+                                        ? "Wkładanie ulotek do kubka"
+                                        : "Inserting leaflets into the cup"}
+                                </p>
+                            </div>
+                        )}
                 </div>
             </div>
             <div className="ml-[40%] w-[60%]">

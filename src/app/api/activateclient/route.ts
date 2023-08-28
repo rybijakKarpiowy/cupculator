@@ -13,13 +13,14 @@ export const POST = async (req: NextRequest) => {
         return NextResponse.redirect(new URL("/login", baseUrl));
     }
 
-    const { user_id, cup_pricing, color_pricing, eu } = (await req.json()) as {
+    const data = (await req.json()) as {
         auth_id: string;
         user_id: string;
         cup_pricing: string;
         color_pricing: string;
         eu?: boolean;
     };
+    const { user_id, cup_pricing, color_pricing, eu } = data
 
     const { data: roleData, error: error1 } = await supabase
         .from("users_restricted")

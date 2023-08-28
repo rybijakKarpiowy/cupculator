@@ -730,6 +730,16 @@ export const DashboardPages = ({
                                             ))}
                                         </select>
                                     </li>
+                                    <button
+                                        type="button"
+                                        disabled={loading}
+                                        onClick={() => handleDeleteUser(client.user_id)}
+                                        className={`px-2 w-16 rounded-md ${
+                                            loading ? "bg-slate-400" : "bg-red-300 hover:bg-red-400"
+                                        }`}
+                                    >
+                                        Usuń
+                                    </button>
                                 </div>
                             ))}
                     </ul>

@@ -233,8 +233,12 @@ export default function AccountDetails() {
             return;
         }
 
-        toast.success(`${lang === "1" ? "Wprowadzono dane!" : "Data entered!"}`, {autoClose: 3000});
-        setTimeout(() => window.location.href = `/?cup=${cup}&lang=${lang}`, 3000);
+        toast.success(`${
+            lang === "1"
+                ? "Drogi Kliencie, Otrzymaliśmy Twojego maila z prośbą o założenie konta i dostęp do kalkulatora. W kolejnym mailu otrzymasz potwierdzenie aktywacji."
+                : "Dear Client, We received your request to get an account and access to the calculator. Expect our confirmation of registration in next upcoming mail from us."
+        }`);
+        setTimeout(() => window.location.href = `/?cup=${cup}&lang=${lang}`, 5500);
         setLoading(false);
     };
 

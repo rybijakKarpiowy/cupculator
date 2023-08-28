@@ -19,6 +19,7 @@ export default function Register() {
     const handleSubmit = async (event: React.FormEvent<HTMLButtonElement>) => {
         setLoading(true);
         event.preventDefault();
+        console.log("baseUrl", baseUrl);
         const { email, password, passwordRepeat, check1, check2, check3 } = document.getElementById(
             "form"
         ) as HTMLFormElement;
@@ -99,6 +100,17 @@ export default function Register() {
 
         if (error) {
             console.log(error);
+            if (error.status === 429) {
+                toast.error(
+                    `${
+                        lang === "1"
+                            ? "Wysłałeś zbyt wiele żądań, spróbuj ponownie później!"
+                            : "You have sent too many requests, try again later!"
+                    }`
+                );
+                setLoading(false);
+                return;
+            }
             toast.error(
                 `${
                     lang === "1"
@@ -171,10 +183,22 @@ export default function Register() {
                         className="border border-[#bbb] bg-slate-50 text-black"
                         disabled={loading}
                     />
-                    <label htmlFor="ckeck1" className="text-md">
+                    <label htmlFor="ckeck1" className="text-md gap-1">
                         {lang === "1"
-                            ? "Zgodnie z art. 6 ust. 1 lit. a oraz art. 9 ust.2 lit. a ogólnego rozporządzenia o ochronie danych osobowych z dnia 27 kwietnia 2016r. Parlamentu Europejskiego i Rady (UE) 2016/679 wyrażam zgodę, na przetwarzanie moich danych osobowych, w celu korzystania z kalkulatora podłączonego do platformy internetowej www.kubki.com.pl."
-                            : "According to Art. 6 sec. 1 lit. a and art. 9 section 2 lit. a of the general regulation on the protection of personal data of April 27, 2016. European Parliament and of the Council (EU) 2016/679, I consent to the processing of my personal data in order to use the calculator connected to the internet platform www.kubki.com.pl."}
+                            ? "Wyrażam zgodę na przetwarzanie moich danych osobowych w celu korzystania z kalkulatora podłączonego do platformy internetowej www.kubki.com.pl. Informacja o przetwarzaniu danych osobowych dostępna jest "
+                            : "I agree to processing of my personal data in order to use the calculator connected to the on-line platform www.kubki.com.pl. Information of the data analysis is available "}
+                        <Link
+                            href={
+                                lang === "1"
+                                    ? `https://kubki.com.pl/files/45613/Oswiadczenie_do_maila_-_RODO.pdf?&lang=${lang}`
+                                    : `https://kubki.com.pl/files/45613/Statement_for_e-mail_-_RODO_ENG.pdf?lang=${lang}`
+                            }
+                            className="font-semibold text-black hover:text-[#c00418]"
+                        >
+                            {lang === "1"
+                                ? "TUTAJ"
+                                : "HERE"}
+                        </Link>
                     </label>
                 </div>
                 <div className="flex flex-row justify-start px-[30%] items-center gap-4">
@@ -187,8 +211,8 @@ export default function Register() {
                     />
                     <label htmlFor="ckeck2" className="text-md">
                         {lang === "1"
-                            ? "Zgodnie z ustawą z dnia 18 lipca 2002 r. o świadczeniu usług drogą elektroniczną wyrażam zgodę na przesyłanie informacji handlowych środkami komunikacji elektronicznej."
-                            : "In accordance with the Act of July 18, 2002 on the provision of electronic services, I consent to the sending of commercial information by electronic means."}
+                            ? "Wyrażam zgodę na przetwarzanie przez Pro Media Sp. z o.o. moich danych osobowych w celach marketingowych oraz w celu otrzymywania informacji handlowych."
+                            : "I agree to process of my personal data by Pro Media Sp. z o.o. due to marketing and trading activities."}
                     </label>
                 </div>
                 <div className="flex flex-row justify-start px-[30%] items-center gap-4">
@@ -200,7 +224,7 @@ export default function Register() {
                         disabled={loading}
                     />
                     <label htmlFor="ckeck3" className="text-md gap-1">
-                        {lang === "1" ? "Akceptuję " : "I accept "}
+                        {lang === "1" ? "Akceptuję " : "I agree to "}
                         <Link
                             href={
                                 lang === "1"
@@ -211,7 +235,7 @@ export default function Register() {
                         >
                             {lang === "1"
                                 ? "Warunki Współpracy dla Agencji Reklamowych"
-                                : "Terms of cooperation for European Customers"}
+                                : "the term of co-operation"}
                         </Link>
                     </label>
                 </div>

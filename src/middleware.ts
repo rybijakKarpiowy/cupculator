@@ -106,6 +106,6 @@ export const config = {
     matcher: ["/", "/dashboard/:path*", "/login", "/recovery", "/register", "/resetpassword"],
 };
 
-export const baseUrl = process.env.VERCEL_URL
-    ? `https://${process.env.VERCEL_URL}`
+export const baseUrl = process.env.NODE_ENV === "production"
+    ? "https://cupculator.vercel.app"
     : "http://localhost:3000";

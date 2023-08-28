@@ -9,7 +9,7 @@ import { Restriction } from "@/lib/checkRestriction";
 import { toast } from "react-toastify";
 
 const getUserData = async (authUser: AuthUser, lang: string, cup: string) => {
-    const res = await fetch(`${baseUrl}api/dashboard`, {
+    const res = await fetch(`${baseUrl}/api/dashboard`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
@@ -45,7 +45,7 @@ const getUserData = async (authUser: AuthUser, lang: string, cup: string) => {
 };
 
 const getPricings = async (authUser: AuthUser) => {
-    const res = await fetch(`${baseUrl}api/pricings`, {
+    const res = await fetch(`${baseUrl}/api/pricings`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

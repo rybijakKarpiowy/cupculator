@@ -104,7 +104,7 @@ export default async function Home({
     }
 
     // If role is Salesman or Admin, show select with all users, and calculator with selected user's data
-    const allUserDataRes = await fetch(`${baseUrl}api/getallusers`, {
+    const allUserDataRes = await fetch(`${baseUrl}/api/getallusers`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",

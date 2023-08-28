@@ -9,11 +9,11 @@ export async function middleware(req: NextRequest) {
     let cup = searchParams.get("cup");
     let setBaseParams = false;
 
-    if (!lang) {
+    if (!lang || lang === "" || lang === "null" || lang === "undefined") {
         lang = "1";
         setBaseParams = true;
     }
-    if (!cup) {
+    if (!cup || cup === "" || cup === "undefined") {
         cup = "null";
         setBaseParams = true;
     }
@@ -81,7 +81,7 @@ export async function middleware(req: NextRequest) {
             data.users_restricted.role === "User"
         ) {
             return NextResponse.redirect(
-                new URL(`https://kubki.com.pl/Kubki?lang=${lang}`, baseUrl)
+                new URL(`https://kubki.com.pl/Kubki?lang=${lang}`)
             );
         }
 

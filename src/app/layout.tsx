@@ -23,12 +23,11 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             .from("users_restricted")
             .select("*")
             .eq("user_id", authUser)
-            .single();
         if (error) {
             console.log(error);
         }
-        if (data) {
-            userRestrictedData = data;
+        if (data && data.length > 0) {
+            userRestrictedData = data[0];
         }
     }
 
@@ -37,7 +36,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
             <body
                 className={`overflow-y-scroll bg-[url('https://kubki.com.pl/img/bg.jpg')] bg-repeat-x bg-[center_115px] bg-white`}
             >
-                <Navbar authUser={userRestrictedData} />
+                <Navbar authUser={authUser} role={userRestrictedData?.role} />
                 <main className="mt-[115px]">{children}</main>
                 <ToastContainer
                     position="bottom-center"

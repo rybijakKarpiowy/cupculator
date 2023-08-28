@@ -12,8 +12,10 @@ import logo20years from "@/../public/logo-20lat.png";
 
 export const Navbar = ({
     authUser,
+    role,
 }: {
-    authUser: Database["public"]["Tables"]["users_restricted"]["Row"] | null;
+    authUser: string | undefined;
+    role: "User" | "Salesman" | "Admin" | undefined;
 }) => {
     const searchParams = useSearchParams();
     const lang = searchParams.get("lang") || "1";
@@ -182,7 +184,7 @@ export const Navbar = ({
                             </label>
                         </>
                     )}
-                    {authUser && authUser.role !== "User" && (
+                    {authUser && (role == "Admin" || role == "Salesman") && (
                         <li className="absolute block h-[33px] -right-[158px] top-[47px]">
                             <Link href={`/dashboard?cup=${cup}&lang=${lang}`} className="tab">
                                 Panel

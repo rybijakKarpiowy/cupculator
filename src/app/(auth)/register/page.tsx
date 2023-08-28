@@ -26,13 +26,17 @@ export default function Register() {
             email: email.value as string,
             password: password.value as string,
             passwordRepeat: passwordRepeat.value as string,
-            check1: check1.checked as boolean,
-            check2: check2.checked as boolean,
-            check3: check3.checked as boolean,
         } as {
             email: string;
             password: string;
             passwordRepeat: string;
+        };
+
+        const checks = {
+            check1: check1.checked as boolean,
+            check2: check2.checked as boolean,
+            check3: check3.checked as boolean,
+        } as {
             check1: boolean;
             check2: boolean;
             check3: boolean;
@@ -73,12 +77,12 @@ export default function Register() {
             return;
         }
 
-        if (!userData.check1 || !userData.check2 || !userData.check3) {
+        if (!checks.check1 || !checks.check2 || !checks.check3) {
             toast.warn(
                 `${
                     lang === "1"
-                        ? "Musisz zaakceptować politykę prywatności (wszystkie zgody)"
-                        : "You must accept the privacy policy (all consents)"
+                        ? "Musisz zaakceptować wszystkie zgody"
+                        : "You must accept all consents"
                 }`
             );
             setLoading(false);
@@ -89,7 +93,7 @@ export default function Register() {
             email: userData.email,
             password: userData.password,
             options: {
-                emailRedirectTo: `${baseUrl}account/details?cup=${cup}&lang=${lang}`,
+                emailRedirectTo: new URL("/", baseUrl).toString(),
             },
         });
 

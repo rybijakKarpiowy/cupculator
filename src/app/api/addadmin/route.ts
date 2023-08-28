@@ -6,7 +6,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (req: NextRequest) => {
     const res = NextResponse.next();
-    const clientSupabase = createMiddlewareClient<Database>({req, res});
+    const clientSupabase = createMiddlewareClient<Database>({ req, res });
     const auth_id = (await clientSupabase.auth.getSession()).data.session?.user.id;
 
     if (!auth_id) {
@@ -37,14 +37,20 @@ export const POST = async (req: NextRequest) => {
         return NextResponse.redirect(new URL("/", baseUrl));
     }
 
-    const { data: userData, error: error2 } = await supabase.auth.signUp({ email, password });
+    const { data: userData, error: error2 } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+            emailRedirectTo: new URL("/", baseUrl).toString(),
+        },
+    });
 
     if (error2) {
         return NextResponse.json(error2.message, { status: 500 });
     }
 
     const user_id = userData?.user?.id;
-    console.log(user_id)
+    console.log(user_id);
 
     if (!user_id) {
         return NextResponse.json("User ID not found", { status: 500 });

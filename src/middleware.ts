@@ -107,5 +107,5 @@ export const config = {
 };
 
 export const baseUrl = process.env.VERCEL_URL
-    ? new URL(`https://${process.env.VERCEL_URL}`)
-    : new URL("http://localhost:3000");
+    ? `https://${process.env.VERCEL_URL}`
+    : "http://localhost:3000";

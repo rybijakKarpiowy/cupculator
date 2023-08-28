@@ -19,7 +19,7 @@ export default function Register() {
     const handleSubmit = async (event: React.FormEvent<HTMLButtonElement>) => {
         setLoading(true);
         event.preventDefault();
-
+        console.log(baseUrl)
         const { email, password, passwordRepeat, check1, check2, check3 } = document.getElementById(
             "form"
         ) as HTMLFormElement;

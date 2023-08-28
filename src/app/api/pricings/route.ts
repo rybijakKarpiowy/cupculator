@@ -1,5 +1,5 @@
 import { supabase } from "@/database/supabase";
-import { baseUrl } from "@/middleware";
+import { baseUrl } from "@/app/page";
 import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (req: NextRequest) => {

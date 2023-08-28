@@ -4,7 +4,7 @@ import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/dist/client/components/headers";
 import { User as AuthUser, PostgrestError } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
-import { baseUrl } from "@/middleware";
+import { baseUrl } from "@/app/page";
 import { Restriction } from "@/lib/checkRestriction";
 import { toast } from "react-toastify";
 

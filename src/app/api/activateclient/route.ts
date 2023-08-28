@@ -1,6 +1,6 @@
 import { supabase } from "@/database/supabase";
 import { NextRequest, NextResponse } from "next/server";
-import { baseUrl } from "@/middleware";
+import { baseUrl } from "@/app/page";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/database/types";
 

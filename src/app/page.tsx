@@ -3,7 +3,6 @@ import { UserSelector } from "@/components/calculator/userSelector";
 import { Database } from "@/database/types";
 import { Restriction } from "@/lib/checkRestriction";
 import { getUserPricings } from "@/lib/getUserPricings";
-import { baseUrl } from "@/middleware";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { PostgrestError } from "@supabase/supabase-js";
 import { cookies } from "next/dist/client/components/headers";
@@ -140,3 +139,7 @@ export interface pricingsInterface {
     cup_pricing: string;
     color_pricing: string;
 }
+
+export const baseUrl = process.env.NODE_ENV === "production"
+    ? "https://cupculator.vercel.app"
+    : "http://localhost:3000";

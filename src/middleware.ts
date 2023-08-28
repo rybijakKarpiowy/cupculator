@@ -2,6 +2,7 @@ import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { Database } from "./database/types";
+import { baseUrl } from "./app/page";
 
 export async function middleware(req: NextRequest) {
     const searchParams = new URL(req.url).searchParams;
@@ -105,7 +106,3 @@ export async function middleware(req: NextRequest) {
 export const config = {
     matcher: ["/", "/dashboard/:path*", "/login", "/recovery", "/register", "/resetpassword"],
 };
-
-export const baseUrl = process.env.NODE_ENV === "production"
-    ? "https://cupculator.vercel.app"
-    : "http://localhost:3000";

@@ -1,6 +1,6 @@
 "use client";
 
-import { baseUrl } from "@/middleware";
+import { baseUrl } from "@/app/page";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";

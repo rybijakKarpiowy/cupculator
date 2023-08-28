@@ -1,6 +1,6 @@
 "use client";
 
-import { baseUrl } from "@/middleware";
+import { baseUrl } from "@/app/page";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -19,7 +19,7 @@ export default function Register() {
     const handleSubmit = async (event: React.FormEvent<HTMLButtonElement>) => {
         setLoading(true);
         event.preventDefault();
-        console.log("baseUrl", baseUrl);
+
         const { email, password, passwordRepeat, check1, check2, check3 } = document.getElementById(
             "form"
         ) as HTMLFormElement;

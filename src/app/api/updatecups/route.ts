@@ -2,7 +2,7 @@ import { supabase } from "@/database/supabase";
 import { NextRequest, NextResponse } from "next/server";
 import { JWT } from "google-auth-library";
 import { GoogleSpreadsheet } from "google-spreadsheet";
-import { baseUrl } from "@/middleware";
+import { baseUrl } from "@/app/page";
 import { Database } from "@/database/types";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 

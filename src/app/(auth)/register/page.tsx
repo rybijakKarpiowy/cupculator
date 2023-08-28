@@ -129,7 +129,7 @@ export default function Register() {
                     </label>
                     <input
                         id="email"
-                        name= "email"
+                        name="email"
                         type="email"
                         className="border border-[#bbb] bg-slate-50 text-black px-2 py-1 w-80 rounded-md"
                         disabled={loading}
@@ -196,13 +196,18 @@ export default function Register() {
                         disabled={loading}
                     />
                     <label htmlFor="ckeck3" className="text-md gap-1">
-                        {lang === "1"
-                            ? "Akceptuję " : "I accept "}
+                        {lang === "1" ? "Akceptuję " : "I accept "}
                         <Link
-                            href={`/regulations?cup=${cup}&lang=${lang}`}
+                            href={
+                                lang === "1"
+                                    ? `https://kubki.com.pl/files/45613/Warunki_wspolpracy_dla_Agencji_Reklamowych_2019.pdf?fbclid=IwAR2356gs-P2G9PM47HCaVUINkhQe6Zoef3sF-bbBpnwcG19wW3lc1xHm-ac?&lang=${lang}`
+                                    : `https://kubki.com.pl/files/45613/Terms_of_cooperation_for_European_Customers.pdf?fbclid=IwAR3D-hs5RmPYS_fQ7BcLi5iZrWKZ6eLrPMPLox_e1J46Zw3roDNtqpOYZao?lang=${lang}`
+                            }
                             className="font-semibold text-black hover:text-[#c00418]"
                         >
-                            {lang === "1" ? "Warunki Współpracy dla Agencji Reklamowych" : "Terms of Cooperation for Advertising Agencies"}
+                            {lang === "1"
+                                ? "Warunki Współpracy dla Agencji Reklamowych"
+                                : "Terms of cooperation for European Customers"}
                         </Link>
                     </label>
                 </div>

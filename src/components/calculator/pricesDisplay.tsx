@@ -4,6 +4,7 @@ import { calculatePrices } from "@/lib/calculatePrices";
 import { ColorPricing } from "@/lib/colorPricingType";
 import { toast } from "react-toastify";
 import { CupConfigInterface } from "./calculator";
+import { priceToString } from "@/lib/priceToString";
 
 export const PricesDisplay = ({
     amount,
@@ -46,28 +47,29 @@ export const PricesDisplay = ({
                 {lang === "1" ? " szt." : " pcs."}
             </p>
             <p>
-                {calculatedPrices.unit}
+                {priceToString(calculatedPrices.unit)}
                 {clientPriceUnit}
             </p>
             <p>
-                {calculatedPrices.prep}
+                {priceToString(calculatedPrices.prep)}
                 {clientPriceUnit}
             </p>
             {clientPriceUnit === "zł" && (
                 <p>
-                    {calculatedPrices.transport}
+                    {priceToString(calculatedPrices.transport)}
                     {clientPriceUnit}
                 </p>
             )}
             <p>
-                {calculatedPrices.prep &&
-                    calculatedPrices.unit &&
-                    amount &&
-                    (calculatedPrices.transport
-                        ? calculatedPrices.prep +
-                          calculatedPrices.unit * amount +
-                          calculatedPrices.transport
-                        : calculatedPrices.prep + calculatedPrices.unit * amount)}
+                {calculatedPrices.prep && calculatedPrices.unit && amount
+                    ? calculatedPrices.transport
+                        ? priceToString(
+                              calculatedPrices.prep +
+                                  calculatedPrices.unit * amount +
+                                  calculatedPrices.transport
+                          )
+                        : priceToString(calculatedPrices.prep + calculatedPrices.unit * amount)
+                    : "0.00"}
                 {clientPriceUnit}
             </p>
         </div>

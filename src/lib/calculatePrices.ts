@@ -469,11 +469,11 @@ export const calculatePrices = ({
         full: palletsCount.full ? additionalValues.full_pallet_price * palletsCount.full : null,
     } as { mini: number | null; half: number | null; full: number | null };
 
-    const unitCost = cupCost + imprintCost + trendProSoftCost + additionalCosts;
-    // prepCost is declared earlier
+    const unitCost = Math.round((cupCost + imprintCost + trendProSoftCost + additionalCosts)*100)/100
+    prepCost = Math.round(prepCost*100)/100
     const transportCost =
         clientPriceUnit === "zł"
-            ? Math.min(...(Object.values(palletsCosts).filter((item) => item !== null) as number[]))
+            ? Math.round(Math.min(...(Object.values(palletsCosts).filter((item) => item !== null) as number[]))*100)/100
             : 0;
 
     return {

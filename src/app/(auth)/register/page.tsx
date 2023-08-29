@@ -175,7 +175,7 @@ export default function Register() {
                         disabled={loading}
                     />
                 </div>
-                <div className="flex flex-row justify-start px-[30%] items-center gap-4">
+                <div className="flex flex-row justify-start px-[30%] items-center gap-4 cursor-pointer">
                     <input
                         id="ckeck1"
                         name="check1"
@@ -201,7 +201,7 @@ export default function Register() {
                         </Link>
                     </label>
                 </div>
-                <div className="flex flex-row justify-start px-[30%] items-center gap-4">
+                <div className="flex flex-row justify-start px-[30%] items-center gap-4 cursor-pointer">
                     <input
                         id="ckeck2"
                         name="check2"
@@ -215,7 +215,7 @@ export default function Register() {
                             : "I agree to process of my personal data by Pro Media Sp. z o.o. due to marketing and trading activities."}
                     </label>
                 </div>
-                <div className="flex flex-row justify-start px-[30%] items-center gap-4">
+                <div className="flex flex-row justify-start px-[30%] items-center gap-4 cursor-pointer">
                     <input
                         id="ckeck3"
                         name="check3"

@@ -3,6 +3,7 @@
 import { supabase } from "@/database/supabase";
 import { ColorPricing } from "./colorPricingType";
 import { PostgrestError } from "@supabase/supabase-js";
+import { Cup } from "@/app/api/updatecups/route";
 
 export const getUserPricings = async (authId: string, cupLink: string) => {
     // get user data
@@ -54,14 +55,14 @@ export const getUserPricings = async (authId: string, cupLink: string) => {
                     price_1008: 0,
                     price_2520: 0,
                 },
-            };
+            } as Cup;
         }
-
+    
         const { pricing_name, ...cupPricing } = cupPricingsFiltered[0];
         return {
             ...rest,
             prices: cupPricing,
-        };
+        } as Cup;
     });
 
     // get color pricing

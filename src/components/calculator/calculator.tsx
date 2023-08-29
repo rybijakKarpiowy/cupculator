@@ -2,14 +2,15 @@
 
 import { Cup } from "@/app/api/updatecups/route";
 import Image from "next/image";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Database } from "@/database/types";
 import { toast } from "react-toastify";
 import noImage from "@/../public/noimage.png";
 import { ColorPricing } from "@/lib/colorPricingType";
 import { PricesDisplay } from "./pricesDisplay";
-import { Restriction, checkRestriction } from "@/lib/checkRestriction";
+import { Restriction, getNewForbidden } from "@/lib/checkRestriction";
 import { PalletQuantities } from "./palletQuantities";
+import { resetInputs } from "@/lib/resetInputs";
 
 export const Calculator = ({
     cupData,
@@ -60,6 +61,45 @@ export const Calculator = ({
         wkladanie_ulotek_do_kubka: false,
         cardboard: "",
     });
+    const [forbidden, setForbidden] = useState({
+        direct_print: false,
+        transfer_plus: false,
+        polylux: false,
+        deep_effect: false,
+        deep_effect_plus: false,
+        digital_print: false,
+        trend_color_inside: false,
+        trend_color_outside: false,
+        trend_color_both: false,
+        trend_color_lowered_edge: false,
+        soft_touch: false,
+        pro_color: false,
+        nadruk_wewnatrz_na_sciance: false,
+        nadruk_na_uchu: false,
+        nadruk_na_spodzie: false,
+        nadruk_na_dnie: false,
+        nadruk_przez_rant: false,
+        nadruk_apla: false,
+        nadruk_dookola_pod_uchem: false,
+        nadruk_zlotem_25: false,
+        nadruk_zlotem_50: false,
+        personalizacja: false,
+        zdobienie_paskiem_bez_laczenia: false,
+        zdobienie_paskiem_z_laczeniem: false,
+        nadruk_na_powloce_magicznej_1_kolor: false,
+        zdobienie_tapeta_na_barylce_I_stopien: false,
+        zdobienie_tapeta_na_barylce_II_stopien: false,
+        naklejka_papierowa_z_nadrukiem: false,
+        wkladanie_ulotek_do_kubka: false,
+    });
+
+    useEffect(() => {
+        const newForbidden = getNewForbidden({
+            cupConfig,
+            restrictions,
+        });
+        setForbidden(newForbidden);
+    }, [cupConfig]);
 
     const amountAlerts = (amount: number | null, inputId: number) => {
         if (!amount) return;
@@ -236,9 +276,34 @@ export const Calculator = ({
                                 wkladanie_ulotek_do_kubka: false,
                                 cardboard: "",
                             });
+                            resetInputs(
+                                document, {
+                                    trend_color: true,
+                                    soft_touch: true,
+                                    pro_color: true,
+                                    imprintType: true,
+                                    nadruk_na_wewnatrz_sciance: true,
+                                    nadruk_na_uchu: true,
+                                    nadruk_na_spodzie: true,
+                                    nadruk_na_dnie: true,
+                                    nadruk_przez_rant: true,
+                                    nadruk_apla: true,
+                                    nadruk_dookola_pod_uchem: true,
+                                    nadruk_zlotem: true,
+                                    personalizacja: true,
+                                    zdobienie_paskiem: true,
+                                    nadruk_na_powloce_magicznej_1_kolor: true,
+                                    zdobienie_tapeta_na_barylce: true,
+                                    naklejka_papierowa_z_nadrukiem: true,
+                                    wkladanie_ulotek_do_kubka: true,
+                                    cardboard: true,
+                                }
+                            );
                             setSelectedCup(
                                 cupData.find((cup) => cup.code === e.target.value) as Cup
                             );
+                            // reset input/select elements
+
                         }}
                         defaultValue={cupData[0].code}
                         className="border w-max border-[#bbb] bg-slate-50 text-black px-2 py-[2px] rounded-md"
@@ -372,6 +437,7 @@ export const Calculator = ({
                             Trend Color:
                             <select
                                 defaultValue=""
+                                id="trend_color"
                                 onChange={(e) => {
                                     if (e.target.value === cupConfig.trend_color) return;
                                     setCupConfig({
@@ -395,6 +461,23 @@ export const Calculator = ({
                                         naklejka_papierowa_z_nadrukiem: false,
                                         wkladanie_ulotek_do_kubka: false,
                                     });
+                                    resetInputs(document, {
+                                        imprintType: true,
+                                        nadruk_na_wewnatrz_sciance: true,
+                                        nadruk_na_uchu: true,
+                                        nadruk_na_spodzie: true,
+                                        nadruk_na_dnie: true,
+                                        nadruk_przez_rant: true,
+                                        nadruk_apla: true,
+                                        nadruk_dookola_pod_uchem: true,
+                                        nadruk_zlotem: true,
+                                        personalizacja: true,
+                                        zdobienie_paskiem: true,
+                                        nadruk_na_powloce_magicznej_1_kolor: true,
+                                        zdobienie_tapeta_na_barylce: true,
+                                        naklejka_papierowa_z_nadrukiem: true,
+                                        wkladanie_ulotek_do_kubka: true,
+                                    })
                                 }}
                                 className="border w-max border-[#bbb] bg-slate-50 text-black px-2 py-[2px] rounded-md"
                             >
@@ -425,7 +508,8 @@ export const Calculator = ({
                             Soft Touch:
                             <select
                                 defaultValue=""
-                                onChange={(e) =>
+                                id="soft_touch"
+                                onChange={(e) => {
                                     setCupConfig({
                                         ...cupConfig,
                                         soft_touch: e.target.value ? true : false,
@@ -446,6 +530,25 @@ export const Calculator = ({
                                         naklejka_papierowa_z_nadrukiem: false,
                                         wkladanie_ulotek_do_kubka: false,
                                     })
+                                    resetInputs(document, {
+                                        imprintType: true,
+                                        nadruk_na_wewnatrz_sciance: true,
+                                        nadruk_na_uchu: true,
+                                        nadruk_na_spodzie: true,
+                                        nadruk_na_dnie: true,
+                                        nadruk_przez_rant: true,
+                                        nadruk_apla: true,
+                                        nadruk_dookola_pod_uchem: true,
+                                        nadruk_zlotem: true,
+                                        personalizacja: true,
+                                        zdobienie_paskiem: true,
+                                        nadruk_na_powloce_magicznej_1_kolor: true,
+                                        zdobienie_tapeta_na_barylce: true,
+                                        naklejka_papierowa_z_nadrukiem: true,
+                                        wkladanie_ulotek_do_kubka: true,
+                                        cardboard: true,
+                                    })
+                                }
                                 }
                                 className="border w-max border-[#bbb] bg-slate-50 text-black px-2 py-[2px] rounded-md"
                             >
@@ -463,7 +566,8 @@ export const Calculator = ({
                             Pro Color:
                             <select
                                 defaultValue=""
-                                onChange={(e) =>
+                                id="pro_color"
+                                onChange={(e) =>{
                                     setCupConfig({
                                         ...cupConfig,
                                         pro_color: e.target.value ? true : false,
@@ -484,7 +588,25 @@ export const Calculator = ({
                                         naklejka_papierowa_z_nadrukiem: false,
                                         wkladanie_ulotek_do_kubka: false,
                                     })
-                                }
+                                    resetInputs(document, {
+                                        imprintType: true,
+                                        nadruk_na_wewnatrz_sciance: true,
+                                        nadruk_na_uchu: true,
+                                        nadruk_na_spodzie: true,
+                                        nadruk_na_dnie: true,
+                                        nadruk_przez_rant: true,
+                                        nadruk_apla: true,
+                                        nadruk_dookola_pod_uchem: true,
+                                        nadruk_zlotem: true,
+                                        personalizacja: true,
+                                        zdobienie_paskiem: true,
+                                        nadruk_na_powloce_magicznej_1_kolor: true,
+                                        zdobienie_tapeta_na_barylce: true,
+                                        naklejka_papierowa_z_nadrukiem: true,
+                                        wkladanie_ulotek_do_kubka: true,
+                                        cardboard: true,
+                                    })
+                                }}
                                 className="border w-max border-[#bbb] bg-slate-50 text-black px-2 py-[2px] rounded-md"
                             >
                                 <option value="">
@@ -500,6 +622,7 @@ export const Calculator = ({
                         {lang === "1" ? "Wybierz nadruk: " : "Select print type: "}
                         <select
                             defaultValue=""
+                            id="imprintType"
                             onChange={(e) => {
                                 if (e.target.value === cupConfig.imprintType) return;
                                 setCupConfig({
@@ -522,108 +645,96 @@ export const Calculator = ({
                                     naklejka_papierowa_z_nadrukiem: false,
                                     wkladanie_ulotek_do_kubka: false,
                                 });
+                                resetInputs(document, {
+                                    nadruk_na_wewnatrz_sciance: true,
+                                    nadruk_na_uchu: true,
+                                    nadruk_na_spodzie: true,
+                                    nadruk_na_dnie: true,
+                                    nadruk_przez_rant: true,
+                                    nadruk_apla: true,
+                                    nadruk_dookola_pod_uchem: true,
+                                    nadruk_zlotem: true,
+                                    personalizacja: true,
+                                    zdobienie_paskiem: true,
+                                    nadruk_na_powloce_magicznej_1_kolor: true,
+                                    zdobienie_tapeta_na_barylce: true,
+                                    naklejka_papierowa_z_nadrukiem: true,
+                                    wkladanie_ulotek_do_kubka: true,
+                                    cardboard: true,
+                                })
                             }}
                             className="border w-max border-[#bbb] bg-slate-50 text-black px-2 py-[2px] rounded-md"
                         >
                             <option value="">{lang === "1" ? "Brak" : "None"}</option>
-                            {selectedCup.direct_print &&
-                                checkRestriction({
-                                    cupConfig,
-                                    restrictions,
-                                    imprintType: "direct_print",
-                                }) && (
-                                    <option value="direct_print">
-                                        {lang === "1" ? "Nadruk bezpośredni" : "Direct print"}
+                            {selectedCup.direct_print && !forbidden.direct_print && (
+                                <option value="direct_print">
+                                    {lang === "1" ? "Nadruk bezpośredni" : "Direct print"}
+                                </option>
+                            )}
+                            {selectedCup.transfer_plus && !forbidden.transfer_plus && (
+                                <>
+                                    <option value="transfer_plus_1">
+                                        {lang === "1"
+                                            ? "Kalka ceramiczna 1 strona"
+                                            : "Transfer plus 1 side"}
                                     </option>
-                                )}
-                            {selectedCup.transfer_plus &&
-                                checkRestriction({
-                                    cupConfig,
-                                    restrictions,
-                                    imprintType: "transfer_plus",
-                                }) && (
-                                    <>
-                                        <option value="transfer_plus_1">
-                                            {lang === "1"
-                                                ? "Kalka ceramiczna 1 strona"
-                                                : "Transfer plus 1 side"}
-                                        </option>
-                                        <option value="transfer_plus_2">
-                                            {lang === "1"
-                                                ? "Kalka ceramiczna 2 strony"
-                                                : "Transfer plus 2 sides"}
-                                        </option>
-                                        <option value="transfer_plus_round">
-                                            {lang === "1"
-                                                ? "Kalka ceramiczna wokół"
-                                                : "Transfer plus around"}
-                                        </option>
-                                    </>
-                                )}
-                            {selectedCup.polylux &&
-                                checkRestriction({
-                                    cupConfig,
-                                    restrictions,
-                                    imprintType: "polylux",
-                                }) && (
-                                    <>
-                                        <option value="polylux_1">
-                                            Polylux {lang === "1" ? "1 strona" : "1 side"}
-                                        </option>
-                                        <option value="polylux_2">
-                                            Polylux {lang === "1" ? "2 strony" : "2 sides"}
-                                        </option>
-                                        <option value="polylux_round">
-                                            Polylux {lang === "1" ? "wokół" : "around"}
-                                        </option>
-                                    </>
-                                )}
-                            {selectedCup.deep_effect &&
-                                checkRestriction({
-                                    cupConfig,
-                                    restrictions,
-                                    imprintType: "deep_effect",
-                                }) && (
-                                    <>
-                                        <option value="deep_effect_1">
-                                            Deep effect {lang === "1" ? "1 strona" : "1 side"}
-                                        </option>
-                                        <option value="deep_effect_2">
-                                            Deep effect {lang === "1" ? "2 strony" : "2 sides"}
-                                        </option>
-                                    </>
-                                )}
-                            {selectedCup.deep_effect_plus &&
-                                checkRestriction({
-                                    cupConfig,
-                                    restrictions,
-                                    imprintType: "deep_effect_plus",
-                                }) && (
-                                    <>
-                                        <option value="deep_effect_plus_1">
-                                            Deep effect plus {lang === "1" ? "1 strona" : "1 side"}
-                                        </option>
-                                        <option value="deep_effect_plus_2">
-                                            Deep effect plus {lang === "1" ? "2 strony" : "2 sides"}
-                                        </option>
-                                    </>
-                                )}
-                            {selectedCup.digital_print &&
-                                checkRestriction({
-                                    cupConfig,
-                                    restrictions,
-                                    imprintType: "digital_print",
-                                }) && (
-                                    <option value="digital_print">
-                                        {lang === "1" ? "Nadruk cyfrowy" : "Digital print"}
+                                    <option value="transfer_plus_2">
+                                        {lang === "1"
+                                            ? "Kalka ceramiczna 2 strony"
+                                            : "Transfer plus 2 sides"}
                                     </option>
-                                )}
+                                    <option value="transfer_plus_round">
+                                        {lang === "1"
+                                            ? "Kalka ceramiczna wokół"
+                                            : "Transfer plus around"}
+                                    </option>
+                                </>
+                            )}
+                            {selectedCup.polylux && !forbidden.polylux && (
+                                <>
+                                    <option value="polylux_1">
+                                        Polylux {lang === "1" ? "1 strona" : "1 side"}
+                                    </option>
+                                    <option value="polylux_2">
+                                        Polylux {lang === "1" ? "2 strony" : "2 sides"}
+                                    </option>
+                                    <option value="polylux_round">
+                                        Polylux {lang === "1" ? "wokół" : "around"}
+                                    </option>
+                                </>
+                            )}
+                            {selectedCup.deep_effect && !forbidden.deep_effect && (
+                                <>
+                                    <option value="deep_effect_1">
+                                        Deep effect {lang === "1" ? "1 strona" : "1 side"}
+                                    </option>
+                                    <option value="deep_effect_2">
+                                        Deep effect {lang === "1" ? "2 strony" : "2 sides"}
+                                    </option>
+                                </>
+                            )}
+                            {selectedCup.deep_effect_plus && !forbidden.deep_effect_plus && (
+                                <>
+                                    <option value="deep_effect_plus_1">
+                                        Deep effect plus {lang === "1" ? "1 strona" : "1 side"}
+                                    </option>
+                                    <option value="deep_effect_plus_2">
+                                        Deep effect plus {lang === "1" ? "2 strony" : "2 sides"}
+                                    </option>
+                                </>
+                            )}
+                            {selectedCup.digital_print && !forbidden.digital_print && (
+                                <option value="digital_print">
+                                    {lang === "1" ? "Nadruk cyfrowy" : "Digital print"}
+                                </option>
+                            )}
                         </select>
                     </div>
                     <div className="flex flex-row justify-between items-center">
                         {lang === "1" ? "Liczba kolorów nadruku: " : "Number of print colors: "}
                         <select
                             defaultValue=""
+                            id="imprintColors"
                             disabled={
                                 !cupConfig.imprintType || cupConfig.imprintType === "digital_print"
                             }
@@ -698,14 +809,11 @@ export const Calculator = ({
                 </div>
                 <div className="flex flex-col flex-wrap max-h-[230px] gap-1 accent-[#009E60] bg-slate-100 pt-4 pb-2">
                     {selectedCup.nadruk_wewnatrz_na_sciance &&
-                        checkRestriction({
-                            cupConfig,
-                            restrictions,
-                            anotherValue: "nadruk_wewnatrz_na_sciance",
-                        }) && (
+                        !forbidden.nadruk_wewnatrz_na_sciance && (
                             <div className="flex flex-row gap-2 items-center mx-4">
                                 <input
                                     type="checkbox"
+                                    id="nadruk_wewnatrz_na_sciance"
                                     onChange={(e) =>
                                         e.target.checked
                                             ? setCupConfig({
@@ -717,6 +825,7 @@ export const Calculator = ({
                                                   nadruk_wewnatrz_na_sciance: 0,
                                               })
                                     }
+                                    className="cursor-pointer"
                                 />
                                 <p className="py-[2px]">
                                     {lang === "1"
@@ -726,6 +835,7 @@ export const Calculator = ({
                                 {cupConfig.nadruk_wewnatrz_na_sciance ? (
                                     <select
                                         defaultValue="1"
+                                        id="nadruk_wewnatrz_na_sciance_select"
                                         onChange={(e) =>
                                             setCupConfig({
                                                 ...cupConfig,
@@ -746,130 +856,113 @@ export const Calculator = ({
                                 )}
                             </div>
                         )}
-                    {selectedCup.nadruk_na_uchu &&
-                        checkRestriction({
-                            cupConfig,
-                            restrictions,
-                            anotherValue: "nadruk_na_uchu",
-                        }) && (
-                            <div className="flex flex-row gap-2 items-center mx-4">
-                                <input
-                                    type="checkbox"
-                                    onChange={(e) =>
-                                        setCupConfig({
-                                            ...cupConfig,
-                                            nadruk_na_uchu: e.target.checked,
-                                        })
-                                    }
-                                />
-                                <p className="py-[2px]">
-                                    {lang === "1" ? "Nadruk na uchu" : "Print on the handle"}
-                                </p>
-                            </div>
-                        )}
-                    {selectedCup.nadruk_na_spodzie &&
-                        checkRestriction({
-                            cupConfig,
-                            restrictions,
-                            anotherValue: "nadruk_na_spodzie",
-                        }) && (
-                            <div className="flex flex-row gap-2 items-center mx-4">
-                                <input
-                                    type="checkbox"
-                                    onChange={(e) =>
-                                        setCupConfig({
-                                            ...cupConfig,
-                                            nadruk_na_spodzie: e.target.checked,
-                                        })
-                                    }
-                                />
-                                <p className="py-[2px]">
-                                    {lang === "1"
-                                        ? "Nadruk na spodzie (zewn.)"
-                                        : "Print on the bottom outside"}
-                                </p>
-                            </div>
-                        )}
-                    {selectedCup.nadruk_na_dnie &&
-                        checkRestriction({
-                            cupConfig,
-                            restrictions,
-                            anotherValue: "nadruk_na_dnie",
-                        }) && (
-                            <div className="flex flex-row gap-2 items-center mx-4">
-                                <input
-                                    type="checkbox"
-                                    onChange={(e) =>
-                                        setCupConfig({
-                                            ...cupConfig,
-                                            nadruk_na_dnie: e.target.checked,
-                                        })
-                                    }
-                                />
-                                <p className="py-[2px]">
-                                    {lang === "1"
-                                        ? "Nadruk na dnie (wewn.)"
-                                        : "Print on the bottom inside"}
-                                </p>
-                            </div>
-                        )}
-                    {selectedCup.nadruk_przez_rant &&
-                        checkRestriction({
-                            cupConfig,
-                            restrictions,
-                            anotherValue: "nadruk_przez_rant",
-                        }) && (
-                            <div className="flex flex-row gap-2 items-center mx-4">
-                                <input
-                                    type="checkbox"
-                                    onChange={(e) =>
-                                        setCupConfig({
-                                            ...cupConfig,
-                                            nadruk_przez_rant: e.target.checked,
-                                        })
-                                    }
-                                />
-                                <p className="py-[2px]">
-                                    {lang === "1" ? "Nadruk przez rant" : "Over the rim imprint"}
-                                </p>
-                            </div>
-                        )}
-                    {selectedCup.nadruk_apla &&
-                        checkRestriction({
-                            cupConfig,
-                            restrictions,
-                            anotherValue: "nadruk_apla",
-                        }) && (
-                            <div className="flex flex-row gap-2 items-center mx-4">
-                                <input
-                                    type="checkbox"
-                                    onChange={(e) =>
-                                        setCupConfig({
-                                            ...cupConfig,
-                                            nadruk_apla: e.target.checked,
-                                        })
-                                    }
-                                />
-                                <p className="py-[2px]">
-                                    {lang === "1" ? "Nadruk apla" : "Apla print"}
-                                </p>
-                            </div>
-                        )}
+                    {selectedCup.nadruk_na_uchu && !forbidden.nadruk_na_uchu && (
+                        <div className="flex flex-row gap-2 items-center mx-4">
+                            <input
+                                type="checkbox"
+                                id="nadruk_na_uchu"
+                                onChange={(e) =>
+                                    setCupConfig({
+                                        ...cupConfig,
+                                        nadruk_na_uchu: e.target.checked,
+                                    })
+                                }
+                                className="cursor-pointer"
+                            />
+                            <p className="py-[2px]">
+                                {lang === "1" ? "Nadruk na uchu" : "Print on the handle"}
+                            </p>
+                        </div>
+                    )}
+                    {selectedCup.nadruk_na_spodzie && !forbidden.nadruk_na_spodzie && (
+                        <div className="flex flex-row gap-2 items-center mx-4">
+                            <input
+                                type="checkbox"
+                                id="nadruk_na_spodzie"
+                                onChange={(e) =>
+                                    setCupConfig({
+                                        ...cupConfig,
+                                        nadruk_na_spodzie: e.target.checked,
+                                    })
+                                }
+                                className="cursor-pointer"
+                            />
+                            <p className="py-[2px]">
+                                {lang === "1"
+                                    ? "Nadruk na spodzie (zewn.)"
+                                    : "Print on the bottom outside"}
+                            </p>
+                        </div>
+                    )}
+                    {selectedCup.nadruk_na_dnie && !forbidden.nadruk_na_dnie && (
+                        <div className="flex flex-row gap-2 items-center mx-4">
+                            <input
+                                type="checkbox"
+                                id="nadruk_na_dnie"
+                                onChange={(e) =>
+                                    setCupConfig({
+                                        ...cupConfig,
+                                        nadruk_na_dnie: e.target.checked,
+                                    })
+                                }
+                                className="cursor-pointer"
+                            />
+                            <p className="py-[2px]">
+                                {lang === "1"
+                                    ? "Nadruk na dnie (wewn.)"
+                                    : "Print on the bottom inside"}
+                            </p>
+                        </div>
+                    )}
+                    {selectedCup.nadruk_przez_rant && !forbidden.nadruk_przez_rant && (
+                        <div className="flex flex-row gap-2 items-center mx-4">
+                            <input
+                                type="checkbox"
+                                id="nadruk_przez_rant"
+                                onChange={(e) =>
+                                    setCupConfig({
+                                        ...cupConfig,
+                                        nadruk_przez_rant: e.target.checked,
+                                    })
+                                }
+                                className="cursor-pointer"
+                            />
+                            <p className="py-[2px]">
+                                {lang === "1" ? "Nadruk przez rant" : "Over the rim imprint"}
+                            </p>
+                        </div>
+                    )}
+                    {selectedCup.nadruk_apla && !forbidden.nadruk_apla && (
+                        <div className="flex flex-row gap-2 items-center mx-4">
+                            <input
+                                type="checkbox"
+                                id="nadruk_apla"
+                                onChange={(e) =>
+                                    setCupConfig({
+                                        ...cupConfig,
+                                        nadruk_apla: e.target.checked,
+                                    })
+                                }
+                                className="cursor-pointer"
+                            />
+                            <p className="py-[2px]">
+                                {lang === "1" ? "Nadruk apla" : "Apla print"}
+                            </p>
+                        </div>
+                    )}
                     {selectedCup.nadruk_dookola_pod_uchem &&
-                        checkRestriction({
-                            cupConfig,
-                            restrictions,
-                            anotherValue: "nadruk_dookola_pod_uchem",
-                        }) && (
+                        !forbidden.nadruk_dookola_pod_uchem && (
                             <div className="flex flex-row gap-2 items-center mx-4">
                                 <input
                                     type="checkbox"
+                                    id="nadruk_dookola_pod_uchem"
                                     onChange={(e) =>
                                         setCupConfig({
                                             ...cupConfig,
                                             nadruk_dookola_pod_uchem: e.target.checked,
                                         })
                                     }
+                                    className="cursor-pointer"
                                 />
                                 <p className="py-[2px]">
                                     {lang === "1"
@@ -878,24 +971,16 @@ export const Calculator = ({
                                 </p>
                             </div>
                         )}
-                    {((selectedCup.nadruk_zlotem_do_25cm2 &&
-                        checkRestriction({
-                            cupConfig,
-                            restrictions,
-                            anotherValue: "nadruk_zlotem_25",
-                        })) ||
-                        (selectedCup.nadruk_zlotem_do_50cm2 &&
-                            checkRestriction({
-                                cupConfig,
-                                restrictions,
-                                anotherValue: "nadruk_zlotem_50",
-                            }))) && (
+                    {((selectedCup.nadruk_zlotem_do_25cm2 && !forbidden.nadruk_zlotem_25) ||
+                        (selectedCup.nadruk_zlotem_do_50cm2 && !forbidden.nadruk_zlotem_50)) && (
                         <div className="flex flex-row gap-2 items-center mx-4">
                             <input
                                 type="checkbox"
+                                id="nadruk_zlotem"
                                 onChange={(e) =>
                                     setCupConfig({ ...cupConfig, nadruk_zlotem: e.target.checked })
                                 }
+                                className="cursor-pointer"
                             />
                             <p className="py-[2px]">
                                 {lang === "1" ? "Nadruk złotem" : "Gold print"}
@@ -903,6 +988,7 @@ export const Calculator = ({
                             {cupConfig.nadruk_zlotem ? (
                                 <select
                                     defaultValue=""
+                                    id="nadruk_zlotem_select"
                                     onChange={(e) => {
                                         setCupConfig({
                                             ...cupConfig,
@@ -915,65 +1001,52 @@ export const Calculator = ({
                                         {lang === "1" ? "Brak" : "None"}
                                     </option>
                                     {selectedCup.nadruk_zlotem_do_25cm2 &&
-                                        checkRestriction({
-                                            cupConfig,
-                                            restrictions,
-                                            anotherValue: "nadruk_zlotem_25",
-                                        }) && <option value="25">{"<= 25cm2"}</option>}
+                                        !forbidden.nadruk_zlotem_25 && (
+                                            <option value="25">{"<= 25cm2"}</option>
+                                        )}
                                     {selectedCup.nadruk_zlotem_do_50cm2 &&
-                                        checkRestriction({
-                                            cupConfig,
-                                            restrictions,
-                                            anotherValue: "nadruk_zlotem_50",
-                                        }) && <option value="50">{"<= 50cm2"}</option>}
+                                        !forbidden.nadruk_zlotem_50 && (
+                                            <option value="50">{"<= 50cm2"}</option>
+                                        )}
                                 </select>
                             ) : (
                                 <div className="w-32" />
                             )}
                         </div>
                     )}
-                    {selectedCup.personalizacja &&
-                        checkRestriction({
-                            cupConfig,
-                            restrictions,
-                            anotherValue: "personalizacja",
-                        }) && (
-                            <div className="flex flex-row gap-2 items-center mx-4">
-                                <input
-                                    type="checkbox"
-                                    onChange={(e) =>
-                                        setCupConfig({
-                                            ...cupConfig,
-                                            personalizacja: e.target.checked,
-                                        })
-                                    }
-                                />
-                                <p className="py-[2px]">
-                                    {lang === "1" ? "Personalizacja" : "Personalization"}
-                                </p>
-                            </div>
-                        )}
-                    {((selectedCup.zdobienie_paskiem_bez_laczenia &&
-                        checkRestriction({
-                            cupConfig,
-                            restrictions,
-                            anotherValue: "zdobienie_paskiem_bez_laczenia",
-                        })) ||
-                        (selectedCup.zdobienie_paskiem_z_laczeniem &&
-                            checkRestriction({
-                                cupConfig,
-                                restrictions,
-                                anotherValue: "zdobienie_paskiem_z_laczeniem",
-                            }))) && (
+                    {selectedCup.personalizacja && !forbidden.personalizacja && (
                         <div className="flex flex-row gap-2 items-center mx-4">
                             <input
                                 type="checkbox"
+                                id="personalizacja"
+                                onChange={(e) =>
+                                    setCupConfig({
+                                        ...cupConfig,
+                                        personalizacja: e.target.checked,
+                                    })
+                                }
+                                className="cursor-pointer"
+                            />
+                            <p className="py-[2px]">
+                                {lang === "1" ? "Personalizacja" : "Personalization"}
+                            </p>
+                        </div>
+                    )}
+                    {((selectedCup.zdobienie_paskiem_bez_laczenia &&
+                        !forbidden.zdobienie_paskiem_bez_laczenia) ||
+                        (selectedCup.zdobienie_paskiem_z_laczeniem &&
+                            !forbidden.zdobienie_paskiem_z_laczeniem)) && (
+                        <div className="flex flex-row gap-2 items-center mx-4">
+                            <input
+                                type="checkbox"
+                                id="zdobienie_paskiem"
                                 onChange={(e) =>
                                     setCupConfig({
                                         ...cupConfig,
                                         zdobienie_paskiem: e.target.checked,
                                     })
                                 }
+                                className="cursor-pointer"
                             />
                             <p className="py-[2px]">
                                 {lang === "1" ? "Zdobienie paskiem" : "Decoration with stripe"}
@@ -981,6 +1054,7 @@ export const Calculator = ({
                             {cupConfig.zdobienie_paskiem ? (
                                 <select
                                     defaultValue=""
+                                    id="zdobienie_paskiem_select"
                                     onChange={(e) => {
                                         setCupConfig({
                                             ...cupConfig,
@@ -995,11 +1069,7 @@ export const Calculator = ({
                                         {lang === "1" ? "Brak" : "None"}
                                     </option>
                                     {selectedCup.zdobienie_paskiem_bez_laczenia &&
-                                        checkRestriction({
-                                            cupConfig,
-                                            restrictions,
-                                            anotherValue: "zdobienie_paskiem_bez_laczenia",
-                                        }) && (
+                                        !forbidden.zdobienie_paskiem_bez_laczenia && (
                                             <option value="bez_laczenia">
                                                 {lang === "1"
                                                     ? "Bez łączenia"
@@ -1007,11 +1077,7 @@ export const Calculator = ({
                                             </option>
                                         )}
                                     {selectedCup.zdobienie_paskiem_z_laczeniem &&
-                                        checkRestriction({
-                                            cupConfig,
-                                            restrictions,
-                                            anotherValue: "zdobienie_paskiem_z_laczeniem",
-                                        }) && (
+                                        !forbidden.zdobienie_paskiem_z_laczeniem && (
                                             <option value="z_laczeniem">
                                                 {lang === "1" ? "Z łączeniem" : "With connection"}
                                             </option>
@@ -1023,14 +1089,11 @@ export const Calculator = ({
                         </div>
                     )}
                     {selectedCup.nadruk_na_powloce_magicznej_1_kolor &&
-                        checkRestriction({
-                            cupConfig,
-                            restrictions,
-                            anotherValue: "nadruk_na_powloce_magicznej_1_kolor",
-                        }) && (
+                        !forbidden.nadruk_na_powloce_magicznej_1_kolor && (
                             <div className="flex flex-row gap-2 items-center mx-4">
                                 <input
                                     type="checkbox"
+                                    id="nadruk_na_powloce_magicznej_1_kolor"
                                     onChange={(e) =>
                                         e.target.checked
                                             ? setCupConfig({
@@ -1042,6 +1105,7 @@ export const Calculator = ({
                                                   nadruk_na_powloce_magicznej_1_kolor: false,
                                               })
                                     }
+                                    className="cursor-pointer"
                                 />
                                 <p className="py-[2px]">
                                     {lang === "1"
@@ -1051,26 +1115,20 @@ export const Calculator = ({
                             </div>
                         )}
                     {((selectedCup.zdobienie_tapeta_na_barylce_I_stopien_trudnosci &&
-                        checkRestriction({
-                            cupConfig,
-                            restrictions,
-                            anotherValue: "zdobienie_tapeta_na_barylce_I_stopien",
-                        })) ||
+                        !forbidden.zdobienie_tapeta_na_barylce_I_stopien) ||
                         (selectedCup.zdobienie_tapeta_na_barylce_II_stopien_trudnosci &&
-                            checkRestriction({
-                                cupConfig,
-                                restrictions,
-                                anotherValue: "zdobienie_tapeta_na_barylce_II_stopien",
-                            }))) && (
+                            !forbidden.zdobienie_tapeta_na_barylce_II_stopien)) && (
                         <div className="flex flex-row gap-2 items-center mx-4">
                             <input
                                 type="checkbox"
+                                id="zdobienie_tapeta_na_barylce"
                                 onChange={(e) =>
                                     setCupConfig({
                                         ...cupConfig,
                                         zdobienie_tapeta_na_barylce: e.target.checked,
                                     })
                                 }
+                                className="cursor-pointer"
                             />
                             <p className="py-[2px]">
                                 {lang === "1"
@@ -1080,6 +1138,7 @@ export const Calculator = ({
                             {cupConfig.zdobienie_tapeta_na_barylce ? (
                                 <select
                                     defaultValue=""
+                                    id="zdobienie_tapeta_na_barylce_select"
                                     onChange={(e) => {
                                         setCupConfig({
                                             ...cupConfig,
@@ -1094,11 +1153,7 @@ export const Calculator = ({
                                         {lang === "1" ? "Brak" : "None"}
                                     </option>
                                     {selectedCup.zdobienie_tapeta_na_barylce_I_stopien_trudnosci &&
-                                        checkRestriction({
-                                            cupConfig,
-                                            restrictions,
-                                            anotherValue: "zdobienie_tapeta_na_barylce_I_stopien",
-                                        }) && (
+                                        !forbidden.zdobienie_tapeta_na_barylce_I_stopien && (
                                             <option value="I_stopien">
                                                 {lang === "1"
                                                     ? "I stopień trudności"
@@ -1106,11 +1161,7 @@ export const Calculator = ({
                                             </option>
                                         )}
                                     {selectedCup.zdobienie_tapeta_na_barylce_II_stopien_trudnosci &&
-                                        checkRestriction({
-                                            cupConfig,
-                                            restrictions,
-                                            anotherValue: "zdobienie_tapeta_na_barylce_II_stopien",
-                                        }) && (
+                                        !forbidden.zdobienie_tapeta_na_barylce_II_stopien && (
                                             <option value="II_stopien">
                                                 {lang === "1"
                                                     ? "II stopień trudności"
@@ -1124,14 +1175,11 @@ export const Calculator = ({
                         </div>
                     )}
                     {selectedCup.naklejka_papierowa_z_nadrukiem &&
-                        checkRestriction({
-                            cupConfig,
-                            restrictions,
-                            anotherValue: "naklejka_papierowa_z_nadrukiem",
-                        }) && (
+                        !forbidden.naklejka_papierowa_z_nadrukiem && (
                             <div className="flex flex-row gap-2 items-center mx-4">
                                 <input
                                     type="checkbox"
+                                    id="naklejka_papierowa_z_nadrukiem"
                                     onChange={(e) =>
                                         e.target.checked
                                             ? setCupConfig({
@@ -1143,6 +1191,7 @@ export const Calculator = ({
                                                   naklejka_papierowa_z_nadrukiem: false,
                                               })
                                     }
+                                    className="cursor-pointer"
                                 />
                                 <p className="py-[2px]">
                                     {lang === "1"
@@ -1152,14 +1201,11 @@ export const Calculator = ({
                             </div>
                         )}
                     {selectedCup.wkladanie_ulotek_do_kubka &&
-                        checkRestriction({
-                            cupConfig,
-                            restrictions,
-                            anotherValue: "wkladanie_ulotek_do_kubka",
-                        }) && (
+                        !forbidden.wkladanie_ulotek_do_kubka && (
                             <div className="flex flex-row gap-2 items-center mx-4">
                                 <input
                                     type="checkbox"
+                                    id="wkladanie_ulotek_do_kubka"
                                     onChange={(e) =>
                                         e.target.checked
                                             ? setCupConfig({
@@ -1171,6 +1217,7 @@ export const Calculator = ({
                                                   naklejka_papierowa_z_nadrukiem: false,
                                               })
                                     }
+                                    className="cursor-pointer"
                                 />
                                 <p className="py-[2px]">
                                     {lang === "1"
@@ -1187,6 +1234,7 @@ export const Calculator = ({
                         <p className="py-[2px]">{lang === "1" ? "Opakowanie: " : "Packaging: "}</p>
                         <select
                             defaultValue=""
+                            id="cardboard"
                             onChange={(e) =>
                                 setCupConfig({
                                     ...cupConfig,
@@ -1235,7 +1283,6 @@ export const Calculator = ({
                         amount={amounts.amount3}
                         keep={amounts.inputs > 2}
                     />
-                    {/* ceny palet tez w panelu do wrzucenia */}
                 </div>
             </div>
         </div>

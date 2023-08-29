@@ -138,142 +138,142 @@ export interface Database {
           category: string
           code: string
           color: string
-          deep_effect: boolean
-          deep_effect_plus: boolean
-          digital_print: boolean
-          digital_print_additional: boolean
-          direct_print: boolean
-          full_pallet: number
-          full_pallet_singular: number
-          half_pallet: number
-          half_pallet_singular: number
+          deep_effect: boolean | null
+          deep_effect_plus: boolean | null
+          digital_print: boolean | null
+          digital_print_additional: boolean | null
+          direct_print: boolean | null
+          full_pallet: number | null
+          full_pallet_singular: number | null
+          half_pallet: number | null
+          half_pallet_singular: number | null
           icon: string | null
           id: number
           link: string
           material: string
-          mini_pallet: number
-          mini_pallet_singular: number
-          nadruk_apla: boolean
-          nadruk_dookola_pod_uchem: boolean
-          nadruk_na_dnie: boolean
-          nadruk_na_powloce_magicznej_1_kolor: boolean
-          nadruk_na_spodzie: boolean
-          nadruk_na_uchu: boolean
-          nadruk_przez_rant: boolean
-          nadruk_wewnatrz_na_sciance: boolean
-          nadruk_zlotem_do_25cm2: boolean
-          nadruk_zlotem_do_50cm2: boolean
-          naklejka_papierowa_z_nadrukiem: boolean
+          mini_pallet: number | null
+          mini_pallet_singular: number | null
+          nadruk_apla: boolean | null
+          nadruk_dookola_pod_uchem: boolean | null
+          nadruk_na_dnie: boolean | null
+          nadruk_na_powloce_magicznej_1_kolor: boolean | null
+          nadruk_na_spodzie: boolean | null
+          nadruk_na_uchu: boolean | null
+          nadruk_przez_rant: boolean | null
+          nadruk_wewnatrz_na_sciance: boolean | null
+          nadruk_zlotem_do_25cm2: boolean | null
+          nadruk_zlotem_do_50cm2: boolean | null
+          naklejka_papierowa_z_nadrukiem: boolean | null
           name: string
-          personalizacja: boolean
-          polylux: boolean
-          pro_color: boolean
-          soft_touch: boolean
+          personalizacja: boolean | null
+          polylux: boolean | null
+          pro_color: boolean | null
+          soft_touch: boolean | null
           supplier: string | null
           supplier_code: string | null
-          transfer_plus: boolean
-          trend_color: boolean
-          trend_color_lowered_edge: boolean
+          transfer_plus: boolean | null
+          trend_color: boolean | null
+          trend_color_lowered_edge: boolean | null
           volume: string
-          wkladanie_ulotek_do_kubka: boolean
-          zdobienie_paskiem_bez_laczenia: boolean
-          zdobienie_paskiem_z_laczeniem: boolean
-          zdobienie_tapeta_na_barylce_I_stopien_trudnosci: boolean
-          zdobienie_tapeta_na_barylce_II_stopien_trudnosci: boolean
+          wkladanie_ulotek_do_kubka: boolean | null
+          zdobienie_paskiem_bez_laczenia: boolean | null
+          zdobienie_paskiem_z_laczeniem: boolean | null
+          zdobienie_tapeta_na_barylce_I_stopien_trudnosci: boolean | null
+          zdobienie_tapeta_na_barylce_II_stopien_trudnosci: boolean | null
         }
         Insert: {
           category: string
           code: string
           color: string
-          deep_effect?: boolean
-          deep_effect_plus?: boolean
-          digital_print?: boolean
-          digital_print_additional?: boolean
-          direct_print?: boolean
-          full_pallet?: number
-          full_pallet_singular?: number
-          half_pallet?: number
-          half_pallet_singular?: number
+          deep_effect?: boolean | null
+          deep_effect_plus?: boolean | null
+          digital_print?: boolean | null
+          digital_print_additional?: boolean | null
+          direct_print?: boolean | null
+          full_pallet?: number | null
+          full_pallet_singular?: number | null
+          half_pallet?: number | null
+          half_pallet_singular?: number | null
           icon?: string | null
           id?: number
           link: string
           material: string
-          mini_pallet?: number
-          mini_pallet_singular?: number
-          nadruk_apla?: boolean
-          nadruk_dookola_pod_uchem?: boolean
-          nadruk_na_dnie?: boolean
-          nadruk_na_powloce_magicznej_1_kolor?: boolean
-          nadruk_na_spodzie?: boolean
-          nadruk_na_uchu?: boolean
-          nadruk_przez_rant?: boolean
-          nadruk_wewnatrz_na_sciance?: boolean
-          nadruk_zlotem_do_25cm2?: boolean
-          nadruk_zlotem_do_50cm2?: boolean
-          naklejka_papierowa_z_nadrukiem?: boolean
+          mini_pallet?: number | null
+          mini_pallet_singular?: number | null
+          nadruk_apla?: boolean | null
+          nadruk_dookola_pod_uchem?: boolean | null
+          nadruk_na_dnie?: boolean | null
+          nadruk_na_powloce_magicznej_1_kolor?: boolean | null
+          nadruk_na_spodzie?: boolean | null
+          nadruk_na_uchu?: boolean | null
+          nadruk_przez_rant?: boolean | null
+          nadruk_wewnatrz_na_sciance?: boolean | null
+          nadruk_zlotem_do_25cm2?: boolean | null
+          nadruk_zlotem_do_50cm2?: boolean | null
+          naklejka_papierowa_z_nadrukiem?: boolean | null
           name: string
-          personalizacja?: boolean
-          polylux?: boolean
-          pro_color?: boolean
-          soft_touch?: boolean
+          personalizacja?: boolean | null
+          polylux?: boolean | null
+          pro_color?: boolean | null
+          soft_touch?: boolean | null
           supplier?: string | null
           supplier_code?: string | null
-          transfer_plus?: boolean
-          trend_color?: boolean
-          trend_color_lowered_edge?: boolean
+          transfer_plus?: boolean | null
+          trend_color?: boolean | null
+          trend_color_lowered_edge?: boolean | null
           volume: string
-          wkladanie_ulotek_do_kubka?: boolean
-          zdobienie_paskiem_bez_laczenia?: boolean
-          zdobienie_paskiem_z_laczeniem?: boolean
-          zdobienie_tapeta_na_barylce_I_stopien_trudnosci?: boolean
-          zdobienie_tapeta_na_barylce_II_stopien_trudnosci?: boolean
+          wkladanie_ulotek_do_kubka?: boolean | null
+          zdobienie_paskiem_bez_laczenia?: boolean | null
+          zdobienie_paskiem_z_laczeniem?: boolean | null
+          zdobienie_tapeta_na_barylce_I_stopien_trudnosci?: boolean | null
+          zdobienie_tapeta_na_barylce_II_stopien_trudnosci?: boolean | null
         }
         Update: {
           category?: string
           code?: string
           color?: string
-          deep_effect?: boolean
-          deep_effect_plus?: boolean
-          digital_print?: boolean
-          digital_print_additional?: boolean
-          direct_print?: boolean
-          full_pallet?: number
-          full_pallet_singular?: number
-          half_pallet?: number
-          half_pallet_singular?: number
+          deep_effect?: boolean | null
+          deep_effect_plus?: boolean | null
+          digital_print?: boolean | null
+          digital_print_additional?: boolean | null
+          direct_print?: boolean | null
+          full_pallet?: number | null
+          full_pallet_singular?: number | null
+          half_pallet?: number | null
+          half_pallet_singular?: number | null
           icon?: string | null
           id?: number
           link?: string
           material?: string
-          mini_pallet?: number
-          mini_pallet_singular?: number
-          nadruk_apla?: boolean
-          nadruk_dookola_pod_uchem?: boolean
-          nadruk_na_dnie?: boolean
-          nadruk_na_powloce_magicznej_1_kolor?: boolean
-          nadruk_na_spodzie?: boolean
-          nadruk_na_uchu?: boolean
-          nadruk_przez_rant?: boolean
-          nadruk_wewnatrz_na_sciance?: boolean
-          nadruk_zlotem_do_25cm2?: boolean
-          nadruk_zlotem_do_50cm2?: boolean
-          naklejka_papierowa_z_nadrukiem?: boolean
+          mini_pallet?: number | null
+          mini_pallet_singular?: number | null
+          nadruk_apla?: boolean | null
+          nadruk_dookola_pod_uchem?: boolean | null
+          nadruk_na_dnie?: boolean | null
+          nadruk_na_powloce_magicznej_1_kolor?: boolean | null
+          nadruk_na_spodzie?: boolean | null
+          nadruk_na_uchu?: boolean | null
+          nadruk_przez_rant?: boolean | null
+          nadruk_wewnatrz_na_sciance?: boolean | null
+          nadruk_zlotem_do_25cm2?: boolean | null
+          nadruk_zlotem_do_50cm2?: boolean | null
+          naklejka_papierowa_z_nadrukiem?: boolean | null
           name?: string
-          personalizacja?: boolean
-          polylux?: boolean
-          pro_color?: boolean
-          soft_touch?: boolean
+          personalizacja?: boolean | null
+          polylux?: boolean | null
+          pro_color?: boolean | null
+          soft_touch?: boolean | null
           supplier?: string | null
           supplier_code?: string | null
-          transfer_plus?: boolean
-          trend_color?: boolean
-          trend_color_lowered_edge?: boolean
+          transfer_plus?: boolean | null
+          trend_color?: boolean | null
+          trend_color_lowered_edge?: boolean | null
           volume?: string
-          wkladanie_ulotek_do_kubka?: boolean
-          zdobienie_paskiem_bez_laczenia?: boolean
-          zdobienie_paskiem_z_laczeniem?: boolean
-          zdobienie_tapeta_na_barylce_I_stopien_trudnosci?: boolean
-          zdobienie_tapeta_na_barylce_II_stopien_trudnosci?: boolean
+          wkladanie_ulotek_do_kubka?: boolean | null
+          zdobienie_paskiem_bez_laczenia?: boolean | null
+          zdobienie_paskiem_z_laczeniem?: boolean | null
+          zdobienie_tapeta_na_barylce_I_stopien_trudnosci?: boolean | null
+          zdobienie_tapeta_na_barylce_II_stopien_trudnosci?: boolean | null
         }
         Relationships: []
       }

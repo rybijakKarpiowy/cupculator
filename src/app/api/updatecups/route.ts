@@ -60,6 +60,7 @@ export const POST = async (req: NextRequest) => {
             return NextResponse.json("Serwer nie ma uprawnień do wglądu arkusza", { status: 403 });
         }
 
+        console.log(err.response.data.error);
         return NextResponse.json(err.response.data.error.message, { status: 500 });
     });
 
@@ -154,7 +155,7 @@ export const POST = async (req: NextRequest) => {
             if (obj.code) {
                 allCodes.push(obj.code);
             }
-            
+
             // check if the row that's supposed to be a cup is not missing any attributes
             if (
                 !obj.code ||
@@ -194,7 +195,7 @@ export const POST = async (req: NextRequest) => {
                 };
             }
 
-            // if some of the attributes are null, remove them
+            // if some of the attributes are null, remove them from the object
             Object.keys(obj).forEach((key) => {
                 // @ts-ignore
                 if (obj[key] === null) {
@@ -220,7 +221,7 @@ export const POST = async (req: NextRequest) => {
         );
     }
 
-    const encounteredCodes = new Set(preparedData.map((row) => row.code));
+    const encounteredCodes = new Set(allCodes.map((code) => code));
     if (encounteredCodes.size !== allCodes.length) {
         const codesDict = {} as { [key: string]: number };
         allCodes.forEach((code) => {
@@ -231,7 +232,6 @@ export const POST = async (req: NextRequest) => {
             }
         });
         const duplicateCodes = Object.keys(codesDict).filter((code) => codesDict[code] > 1);
-
         return NextResponse.json(
             {
                 message: "Some of the cups have duplicate codes",
@@ -246,14 +246,14 @@ export const POST = async (req: NextRequest) => {
         return rest;
     });
 
-    const { data: dbCupIds, error: error2 } = await supabase
+    // upsert cups from sheet and get their ids
+    const {data: dbCupIds, error: error2 } = await supabase
         .from("cups")
         .upsert(cupData, {
             onConflict: "code",
             ignoreDuplicates: false,
         })
         .select("id, code");
-
     if (error2) {
         console.error(error2);
         return NextResponse.json(error2.message, { status: 500 });
@@ -280,21 +280,20 @@ export const POST = async (req: NextRequest) => {
     }
 
     // update all cup pricings that are in the sheet
-    const { error: error4 } = await supabase.from("cup_pricings").upsert(
-        preparedData.map((row) => {
-            const { code, prices } = row;
-            const dbCupId = dbCupIds.find((cup) => cup.code === code)?.id as number;
-            return {
-                cup_id: dbCupId,
-                pricing_name,
-                ...prices,
-            };
-        }),
-        {
-            onConflict: "cup_id, pricing_name",
-            ignoreDuplicates: false,
-        }
-    );
+    const cupPricingsData = preparedData.map((row) => {
+        const { code, prices } = row;
+        const dbCupId = dbCupIds.find((cup) => cup.code === code)?.id as number;
+        return {
+            cup_id: dbCupId,
+            pricing_name,
+            ...prices,
+        };
+    });
+
+    const { error: error4 } = await supabase.from("cup_pricings").upsert(cupPricingsData, {
+        onConflict: "cup_id,pricing_name",
+        ignoreDuplicates: false,
+    });
 
     if (error4) {
         console.error(error4);
@@ -305,11 +304,15 @@ export const POST = async (req: NextRequest) => {
     const { data: cupIdsInPricings, error: error5 } = await supabase
         .from("cup_ids_in_pricings")
         .select("cup_id");
+    if (error5) {
+        console.error(error5);
+        return NextResponse.json(error5.message, { status: 500 });
+    }
     if (cupIdsInPricings) {
         const cupIdsToDelete = dbCupIds.filter(
             (cup) => !cupIdsInPricings.find((cupId) => cupId.cup_id === cup.id)
         );
-        const { error: error5 } = await supabase
+        const { error: error6 } = await supabase
             .from("cups")
             .delete()
             .in(
@@ -317,9 +320,9 @@ export const POST = async (req: NextRequest) => {
                 cupIdsToDelete.map((cup) => cup.id)
             );
 
-        if (error5) {
-            console.error(error5);
-            return NextResponse.json(error5.message, { status: 500 });
+        if (error6) {
+            console.error(error6);
+            return NextResponse.json(error6.message, { status: 500 });
         }
     }
 

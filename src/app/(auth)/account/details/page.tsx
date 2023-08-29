@@ -3,7 +3,7 @@
 import { Database } from "@/database/types";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 export default function AccountDetails() {
@@ -13,6 +13,11 @@ export default function AccountDetails() {
     const lang = searchParams.get("lang") || "1";
     const cup = searchParams.get("cup");
     const error_description = searchParams.get("error_description");
+
+    useEffect(() => {
+        if (loading) document.body.style.cursor = "wait";
+        else document.body.style.cursor = "default";
+    }, [loading]);
 
     if (error_description === "No associated flow state found. 400: Flow state is expired") {
         toast.error(
@@ -322,7 +327,7 @@ export default function AccountDetails() {
                     <select
                         id="country"
                         defaultValue={lang === "1" ? "Polska" : ""}
-                        className="border border-[#bbb] bg-slate-50 text-black px-2 py-1 w-80 rounded-md"
+                        className="border border-[#bbb] bg-slate-50 text-black px-2 py-[5.5px] w-80 rounded-md"
                         disabled={loading}
                         onClick={(e) => {
                             if (lang === "1") {
@@ -429,7 +434,7 @@ export default function AccountDetails() {
                         </label>
                         <select
                             id="region"
-                            className="border border-[#bbb] bg-slate-50 text-black px-2 py-1 w-80 rounded-md"
+                            className="border border-[#bbb] bg-slate-50 text-black px-2 py-[5.5px] w-80 rounded-md"
                             disabled={loading}
                             defaultValue=""
                         >

@@ -24,10 +24,10 @@ export async function middleware(req: NextRequest) {
     const session = await supabase.auth.getSession();
 
     if (session.data.session) {
-        if (req.nextUrl.pathname === "/resetpassword") {
+        if (["/resetpassword", "/account/details"].includes(req.nextUrl.pathname)) {
             if (setBaseParams) {
                 return NextResponse.redirect(
-                    new URL(`/resetpassword?cup=${cup}&lang=${lang}`, baseUrl)
+                    new URL(`/${req.nextUrl.pathname}?cup=${cup}&lang=${lang}`, baseUrl)
                 );
             }
             return NextResponse.next();
@@ -104,5 +104,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-    matcher: ["/", "/dashboard/:path*", "/login", "/recovery", "/register", "/resetpassword"],
+    matcher: ["/", "/dashboard/:path*", "/login", "/recovery", "/register", "/resetpassword", "/account/details"],
 };

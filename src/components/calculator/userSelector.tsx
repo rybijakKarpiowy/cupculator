@@ -68,11 +68,16 @@ export const UserSelector = ({
                 })}
             </select>
             {loading && <div>{lang === "1" ? "Ładowanie..." : "Loading..."}</div>}
-            {isError && (
+            {isError && cup !== "null" && (
                 <div className="text-center text-2xl mt-72">
                     {lang === "1"
                         ? "Wystąpił błąd, odśwież stronę"
                         : "An error occured, refresh the page"}
+                </div>
+            )}
+            {isError && cup === "null" && (
+                <div className="text-center text-2xl mt-72">
+                    {lang === "1" ? "Wybierz kubek" : "Select a cup"}
                 </div>
             )}
             {selectedPricingsData.colorPricing &&

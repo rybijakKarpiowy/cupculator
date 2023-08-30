@@ -13,10 +13,11 @@ export const getUserPricings = async (authId: string, cupLink: string) => {
         .eq("user_id", authId)
         .single();
     if (error1) {
-        console.log(error1);
+        console.log(error1, "error1");
         return null;
     }
     if (!user) {
+        console.log("user is null");
         return null;
     }
 
@@ -28,10 +29,11 @@ export const getUserPricings = async (authId: string, cupLink: string) => {
         )
         .eq("link", cupLink);
     if (error2) {
-        console.log(error2);
+        console.log(error2, "error2");
         return null;
     }
     if (!cupDataRaw || cupDataRaw.length === 0) {
+        console.log("cupDataRaw is null or empty");
         return null;
     }
 
@@ -72,10 +74,11 @@ export const getUserPricings = async (authId: string, cupLink: string) => {
         .eq("pricing_name", user.color_pricing)
         .single()) as { data: ColorPricing | null, error: PostgrestError | null}
     if (error4) {
-        console.log(error4);
+        console.log(error4, "error4");
         return null;
     }
     if (!colorPricing) {
+        console.log("colorPricing is null")
         return null;
     }
 

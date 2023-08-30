@@ -808,7 +808,7 @@ export const Calculator = ({
                         </select>
                     </div>
                 </div>
-                <div className="flex flex-col flex-wrap max-h-[230px] gap-1 accent-[#009E60] bg-slate-100 pt-4 pb-2">
+                <div className="flex flex-col flex-wrap gap-1 accent-[#009E60] bg-slate-100 pt-4 pb-2">
                     {selectedCup.nadruk_wewnatrz_na_sciance &&
                         !forbidden.nadruk_wewnatrz_na_sciance && (
                             <div className="flex flex-row gap-2 items-center mx-4">

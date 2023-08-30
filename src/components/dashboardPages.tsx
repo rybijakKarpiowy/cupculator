@@ -919,10 +919,10 @@ export const DashboardPages = ({
                             className="border border-black"
                         >
                             <option value="" disabled>
-                                Kubki/kolory
+                                Kubki/nadruki
                             </option>
                             <option value="cups">Kubki</option>
-                            <option value="colors">Kolory</option>
+                            <option value="colors">Nadruki</option>
                         </select>
                         <select
                             id="pricing_name"

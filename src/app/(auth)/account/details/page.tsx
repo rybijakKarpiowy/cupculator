@@ -185,7 +185,7 @@ export default function AccountDetails() {
             setLoading(false);
             return;
         }
-        if (!/^[0-9 ]+$/g.test(userData.NIP)) {
+        if (!/^[0-9 ]+$/g.test(userData.NIP) || (userData.NIP.length !== 10 && lang === "1")) {
             toast.warn(`${lang === "1" ? "Niepoprawny NIP!" : "Invalid NIP!"}`);
             setLoading(false);
             return;

@@ -5,6 +5,7 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function ResetPassword() {
     const [loading, setLoading] = useState(false);
@@ -26,6 +27,11 @@ export default function ResetPassword() {
     }
 
     const supabase = createClientComponentClient<Database>();
+    (async () => {
+    const user = await supabase.auth.getUser();
+    console.log(user);
+    })()
+
 
     const handleSubmit = async (event: React.FormEvent<HTMLButtonElement>) => {
         setLoading(true);

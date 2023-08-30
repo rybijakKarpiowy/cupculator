@@ -5,7 +5,6 @@ import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/database/types";
 import { cookies } from "next/dist/client/components/headers";
 import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
 
 export const metadata: Metadata = {
     title: "Kalkulator",
@@ -34,7 +33,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     return (
         <html lang="en">
             <body
-                className={`overflow-y-scroll bg-[url('https://kubki.com.pl/img/bg.jpg')] bg-repeat-x bg-[center_115px] bg-white`}
+                className="overflow-y-scroll bg-[url('https://kubki.com.pl/img/bg.jpg')] bg-repeat-x bg-[center_115px] bg-white"
             >
                 <Navbar authUser={authUser} role={userRestrictedData?.role} />
                 <main className="mt-[115px]">{children}</main>

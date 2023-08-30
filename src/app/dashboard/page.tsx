@@ -7,6 +7,7 @@ import { redirect } from "next/navigation";
 import { baseUrl } from "@/app/page";
 import { Restriction } from "@/lib/checkRestriction";
 import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 const getUserData = async (authUser: AuthUser, lang: string, cup: string) => {
     const res = await fetch(`${baseUrl}/api/dashboard`, {

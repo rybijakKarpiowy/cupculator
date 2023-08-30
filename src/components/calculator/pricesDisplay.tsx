@@ -3,6 +3,7 @@ import { Database } from "@/database/types";
 import { calculatePrices } from "@/lib/calculatePrices";
 import { ColorPricing } from "@/lib/colorPricingType";
 import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import { CupConfigInterface } from "./calculator";
 import { priceToString } from "@/lib/priceToString";
 

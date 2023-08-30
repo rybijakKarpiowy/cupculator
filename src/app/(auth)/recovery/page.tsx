@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function Recovery() {
     const [loading, setLoading] = useState(false);
@@ -41,6 +42,7 @@ export default function Recovery() {
         }
 
         if (data) {
+            console.log(data);
             toast.success(
                 lang === "1"
                     ? "Wysłano link do zresetowania hasła!"

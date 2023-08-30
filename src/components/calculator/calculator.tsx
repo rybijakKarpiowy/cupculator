@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useEffect, useState } from "react";
 import { Database } from "@/database/types";
 import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 import noImage from "@/../public/noimage.png";
 import { ColorPricing } from "@/lib/colorPricingType";
 import { PricesDisplay } from "./pricesDisplay";

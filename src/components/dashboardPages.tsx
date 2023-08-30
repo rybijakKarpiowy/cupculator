@@ -6,6 +6,7 @@ import { Restriction } from "@/lib/checkRestriction";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export const DashboardPages = ({
     clientsInput,

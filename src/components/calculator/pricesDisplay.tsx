@@ -65,11 +65,15 @@ export const PricesDisplay = ({
                 {calculatedPrices.prep && calculatedPrices.unit && amount
                     ? calculatedPrices.transport
                         ? priceToString(
-                              calculatedPrices.prep +
-                                  calculatedPrices.unit * amount +
-                                  calculatedPrices.transport
+                              Math.round(
+                                  calculatedPrices.prep +
+                                      calculatedPrices.unit * amount +
+                                      calculatedPrices.transport
+                              )
                           )
-                        : priceToString(calculatedPrices.prep + calculatedPrices.unit * amount)
+                        : priceToString(
+                              Math.round(calculatedPrices.prep + calculatedPrices.unit * amount)
+                          )
                     : "0.00"}
                 {clientPriceUnit}
             </p>

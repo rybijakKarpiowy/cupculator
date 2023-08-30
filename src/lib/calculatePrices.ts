@@ -2,6 +2,7 @@ import { Cup } from "@/app/api/updatecups/route";
 import { Database } from "@/database/types";
 import { ColorPricing } from "./colorPricingType";
 import { CupConfigInterface } from "@/components/calculator/calculator";
+import { getPalletQuantities } from "./getPalletQuantities";
 
 export const calculatePrices = ({
     amount,
@@ -436,45 +437,18 @@ export const calculatePrices = ({
             )?.price || 0;
     }
 
-    const palletsCount = { mini: null, half: null, full: null } as {
-        mini: number | null;
-        half: number | null;
-        full: number | null;
+    const palletsCount = getPalletQuantities(amount, selectedCup, cupConfig.cardboard);
+    const palletsPrice = {
+        mini: palletsCount.mini * additionalValues.mini_pallet_price,
+        half: palletsCount.half * additionalValues.half_pallet_price,
+        full: palletsCount.full * additionalValues.full_pallet_price,
     };
-    if (cupConfig.cardboard === "singular") {
-        palletsCount.mini = selectedCup.mini_pallet_singular
-            ? Math.ceil(amount / selectedCup.mini_pallet_singular)
-            : null;
-        palletsCount.half = selectedCup.half_pallet_singular
-            ? Math.ceil(amount / selectedCup.half_pallet_singular)
-            : null;
-        palletsCount.full = selectedCup.full_pallet_singular
-            ? Math.ceil(amount / selectedCup.full_pallet_singular)
-            : null;
-    } else {
-        palletsCount.mini = selectedCup.mini_pallet
-            ? Math.ceil(amount / selectedCup.mini_pallet)
-            : null;
-        palletsCount.half = selectedCup.half_pallet
-            ? Math.ceil(amount / selectedCup.half_pallet)
-            : null;
-        palletsCount.full = selectedCup.full_pallet
-            ? Math.ceil(amount / selectedCup.full_pallet)
-            : null;
-    }
 
-    const palletsCosts = {
-        mini: palletsCount.mini ? additionalValues.mini_pallet_price * palletsCount.mini : null,
-        half: palletsCount.half ? additionalValues.half_pallet_price * palletsCount.half : null,
-        full: palletsCount.full ? additionalValues.full_pallet_price * palletsCount.full : null,
-    } as { mini: number | null; half: number | null; full: number | null };
-
-    const unitCost = Math.round((cupCost + imprintCost + trendProSoftCost + additionalCosts)*100)/100
-    prepCost = Math.round(prepCost*100)/100
+    const unitCost =
+        Math.round((cupCost + imprintCost + trendProSoftCost + additionalCosts) * 100) / 100;
+    prepCost = Math.round(prepCost * 100) / 100;
     const transportCost =
-        clientPriceUnit === "zł"
-            ? Math.round(Math.min(...(Object.values(palletsCosts).filter((item) => item !== null) as number[]))*100)/100
-            : 0;
+        Math.round((palletsPrice.mini + palletsPrice.half + palletsPrice.full) * 100) / 100;
 
     return {
         data: {

@@ -497,7 +497,7 @@ export const DashboardPages = ({
                             </li>
                             <li className="px-2 border border-black w-48 text-center">Telefon</li>
                             <li className="px-2 border border-black w-48 text-center">NIP</li>
-                            <li className="px-2 border border-black w-12 text-center">EU?</li>
+                            <li className="px-2 border border-black w-16 text-center">EU?</li>
                             <li className="px-2 border border-black w-32 text-center">Kraj</li>
                             <li className="px-2 border border-black w-64 text-center">Email</li>
                             <li className="px-2 border border-black w-20 text-center">
@@ -514,7 +514,7 @@ export const DashboardPages = ({
                                     key={client.user_id}
                                     id={client.user_id}
                                     onSubmit={(e) => handleActication(client.user_id, e)}
-                                    className="flex flex-row"
+                                    className="flex flex-row w-max"
                                 >
                                     <li className="px-2 border border-black w-48 text-center">
                                         {client.first_name} {client.last_name}

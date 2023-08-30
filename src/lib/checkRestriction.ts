@@ -40,40 +40,40 @@ export const checkRestriction = ({
                     if (cupConfig.soft_touch) return true;
                 case "pro_color":
                     if (cupConfig.pro_color) return true;
-                case "nadruk_wewnatrz_na_sciance":
-                    if (!!cupConfig.nadruk_wewnatrz_na_sciance) return true;
-                case "nadruk_na_uchu":
-                    if (cupConfig.nadruk_na_uchu) return true;
-                case "nadruk_na_spodzie":
-                    if (cupConfig.nadruk_na_spodzie) return true;
-                case "nadruk_na_dnie":
-                    if (cupConfig.nadruk_na_dnie) return true;
-                case "nadruk_przez_rant":
-                    if (cupConfig.nadruk_przez_rant) return true;
-                case "nadruk_apla":
-                    if (cupConfig.nadruk_apla) return true;
-                case "nadruk_dookola_pod_uchem":
-                    if (cupConfig.nadruk_dookola_pod_uchem) return true;
-                case "nadruk_zlotem_25":
-                    if (cupConfig.nadruk_zlotem === "25") return true;
-                case "nadruk_zlotem_50":
-                    if (cupConfig.nadruk_zlotem === "50") return true;
-                case "personalizacja":
-                    if (cupConfig.personalizacja) return true;
-                case "zdobienie_paskiem_bez_laczenia":
-                    if (cupConfig.zdobienie_paskiem === "bez_laczenia") return true;
-                case "zdobienie_paskiem_z_laczeniem":
-                    if (cupConfig.zdobienie_paskiem === "z_laczeniem") return true;
-                case "nadruk_na_powloce_magicznej_1_kolor":
-                    if (cupConfig.nadruk_na_powloce_magicznej_1_kolor) return true;
-                case "zdobienie_tapeta_na_barylce_I_stopien":
-                    if (cupConfig.zdobienie_tapeta_na_barylce === "I_stopien") return true;
-                case "zdobienie_tapeta_na_barylce_II_stopien":
-                    if (cupConfig.zdobienie_tapeta_na_barylce === "II_stopien") return true;
-                case "naklejka_papierowa_z_nadrukiem":
-                    if (cupConfig.naklejka_papierowa_z_nadrukiem) return true;
-                case "wkladanie_ulotek_do_kubka":
-                    if (cupConfig.wkladanie_ulotek_do_kubka) return true;
+                // case "nadruk_wewnatrz_na_sciance":
+                //     if (!!cupConfig.nadruk_wewnatrz_na_sciance) return true;
+                // case "nadruk_na_uchu":
+                //     if (cupConfig.nadruk_na_uchu) return true;
+                // case "nadruk_na_spodzie":
+                //     if (cupConfig.nadruk_na_spodzie) return true;
+                // case "nadruk_na_dnie":
+                //     if (cupConfig.nadruk_na_dnie) return true;
+                // case "nadruk_przez_rant":
+                //     if (cupConfig.nadruk_przez_rant) return true;
+                // case "nadruk_apla":
+                //     if (cupConfig.nadruk_apla) return true;
+                // case "nadruk_dookola_pod_uchem":
+                //     if (cupConfig.nadruk_dookola_pod_uchem) return true;
+                // case "nadruk_zlotem_25":
+                //     if (cupConfig.nadruk_zlotem === "25") return true;
+                // case "nadruk_zlotem_50":
+                //     if (cupConfig.nadruk_zlotem === "50") return true;
+                // case "personalizacja":
+                //     if (cupConfig.personalizacja) return true;
+                // case "zdobienie_paskiem_bez_laczenia":
+                //     if (cupConfig.zdobienie_paskiem === "bez_laczenia") return true;
+                // case "zdobienie_paskiem_z_laczeniem":
+                //     if (cupConfig.zdobienie_paskiem === "z_laczeniem") return true;
+                // case "nadruk_na_powloce_magicznej_1_kolor":
+                //     if (cupConfig.nadruk_na_powloce_magicznej_1_kolor) return true;
+                // case "zdobienie_tapeta_na_barylce_I_stopien":
+                //     if (cupConfig.zdobienie_tapeta_na_barylce === "I_stopien") return true;
+                // case "zdobienie_tapeta_na_barylce_II_stopien":
+                //     if (cupConfig.zdobienie_tapeta_na_barylce === "II_stopien") return true;
+                // case "naklejka_papierowa_z_nadrukiem":
+                //     if (cupConfig.naklejka_papierowa_z_nadrukiem) return true;
+                // case "wkladanie_ulotek_do_kubka":
+                //     if (cupConfig.wkladanie_ulotek_do_kubka) return true;
                 default:
                     continue;
             }

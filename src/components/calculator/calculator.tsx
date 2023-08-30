@@ -28,7 +28,9 @@ export const Calculator = ({
     additionalValues: Database["public"]["Tables"]["additional_values"]["Row"];
     restrictions: Restriction[];
 }) => {
-    const [selectedCup, setSelectedCup] = useState<Cup>(cupData[0]);
+    const [selectedCup, setSelectedCup] = useState<Cup>(
+        cupData.sort((a, b) => a.color.localeCompare(b.color))[0]
+    );
     const [amounts, setAmounts] = useState<{
         amount1: number | null;
         amount2: number | null;
@@ -277,43 +279,44 @@ export const Calculator = ({
                                 wkladanie_ulotek_do_kubka: false,
                                 cardboard: "",
                             });
-                            resetInputs(
-                                document, {
-                                    trend_color: true,
-                                    soft_touch: true,
-                                    pro_color: true,
-                                    imprintType: true,
-                                    nadruk_na_wewnatrz_sciance: true,
-                                    nadruk_na_uchu: true,
-                                    nadruk_na_spodzie: true,
-                                    nadruk_na_dnie: true,
-                                    nadruk_przez_rant: true,
-                                    nadruk_apla: true,
-                                    nadruk_dookola_pod_uchem: true,
-                                    nadruk_zlotem: true,
-                                    personalizacja: true,
-                                    zdobienie_paskiem: true,
-                                    nadruk_na_powloce_magicznej_1_kolor: true,
-                                    zdobienie_tapeta_na_barylce: true,
-                                    naklejka_papierowa_z_nadrukiem: true,
-                                    wkladanie_ulotek_do_kubka: true,
-                                    cardboard: true,
-                                }
-                            );
+                            resetInputs(document, {
+                                trend_color: true,
+                                soft_touch: true,
+                                pro_color: true,
+                                imprintType: true,
+                                nadruk_na_wewnatrz_sciance: true,
+                                nadruk_na_uchu: true,
+                                nadruk_na_spodzie: true,
+                                nadruk_na_dnie: true,
+                                nadruk_przez_rant: true,
+                                nadruk_apla: true,
+                                nadruk_dookola_pod_uchem: true,
+                                nadruk_zlotem: true,
+                                personalizacja: true,
+                                zdobienie_paskiem: true,
+                                nadruk_na_powloce_magicznej_1_kolor: true,
+                                zdobienie_tapeta_na_barylce: true,
+                                naklejka_papierowa_z_nadrukiem: true,
+                                wkladanie_ulotek_do_kubka: true,
+                                cardboard: true,
+                            });
                             setSelectedCup(
                                 cupData.find((cup) => cup.code === e.target.value) as Cup
                             );
                             // reset input/select elements
-
                         }}
-                        defaultValue={cupData[0].code}
+                        defaultValue={
+                            cupData.sort((a, b) => a.color.localeCompare(b.color))[0].code
+                        }
                         className="border w-max border-[#bbb] bg-slate-50 text-black px-2 py-[2px] rounded-md"
                     >
-                        {cupData.map((cup) => (
-                            <option key={cup.code} value={cup.code}>
-                                {cup.color}
-                            </option>
-                        ))}
+                        {cupData
+                            .sort((a, b) => a.color.localeCompare(b.color))
+                            .map((cup) => (
+                                <option key={cup.code} value={cup.code}>
+                                    {cup.color}
+                                </option>
+                            ))}
                     </select>
                 </div>
                 <div className="relative">
@@ -478,7 +481,7 @@ export const Calculator = ({
                                         zdobienie_tapeta_na_barylce: true,
                                         naklejka_papierowa_z_nadrukiem: true,
                                         wkladanie_ulotek_do_kubka: true,
-                                    })
+                                    });
                                 }}
                                 className="border w-max border-[#bbb] bg-slate-50 text-black px-2 py-[2px] rounded-md"
                             >
@@ -530,7 +533,7 @@ export const Calculator = ({
                                         nadruk_na_powloce_magicznej_1_kolor: false,
                                         naklejka_papierowa_z_nadrukiem: false,
                                         wkladanie_ulotek_do_kubka: false,
-                                    })
+                                    });
                                     resetInputs(document, {
                                         imprintType: true,
                                         nadruk_na_wewnatrz_sciance: true,
@@ -548,9 +551,8 @@ export const Calculator = ({
                                         naklejka_papierowa_z_nadrukiem: true,
                                         wkladanie_ulotek_do_kubka: true,
                                         cardboard: true,
-                                    })
-                                }
-                                }
+                                    });
+                                }}
                                 className="border w-max border-[#bbb] bg-slate-50 text-black px-2 py-[2px] rounded-md"
                             >
                                 <option value="">
@@ -568,7 +570,7 @@ export const Calculator = ({
                             <select
                                 defaultValue=""
                                 id="pro_color"
-                                onChange={(e) =>{
+                                onChange={(e) => {
                                     setCupConfig({
                                         ...cupConfig,
                                         pro_color: e.target.value ? true : false,
@@ -588,7 +590,7 @@ export const Calculator = ({
                                         nadruk_na_powloce_magicznej_1_kolor: false,
                                         naklejka_papierowa_z_nadrukiem: false,
                                         wkladanie_ulotek_do_kubka: false,
-                                    })
+                                    });
                                     resetInputs(document, {
                                         imprintType: true,
                                         nadruk_na_wewnatrz_sciance: true,
@@ -606,7 +608,7 @@ export const Calculator = ({
                                         naklejka_papierowa_z_nadrukiem: true,
                                         wkladanie_ulotek_do_kubka: true,
                                         cardboard: true,
-                                    })
+                                    });
                                 }}
                                 className="border w-max border-[#bbb] bg-slate-50 text-black px-2 py-[2px] rounded-md"
                             >
@@ -630,7 +632,7 @@ export const Calculator = ({
                                     ...cupConfig,
                                     imprintType: e.target
                                         .value as CupConfigInterface["imprintType"],
-                                    imprintColors: 0,
+                                    imprintColors: 1,
                                     nadruk_wewnatrz_na_sciance: 0,
                                     nadruk_na_uchu: false,
                                     nadruk_na_spodzie: false,
@@ -662,7 +664,23 @@ export const Calculator = ({
                                     naklejka_papierowa_z_nadrukiem: true,
                                     wkladanie_ulotek_do_kubka: true,
                                     cardboard: true,
-                                })
+                                });
+                                if ([
+                                    "transfer_plus_1",
+                                    "transfer_plus_2",
+                                    "transfer_plus_round",
+                                    "polylux_1",
+                                    "polylux_2",
+                                    "polylux_round",
+                                    "direct_print"
+                                ].includes(e.target.value)) {
+                                    const imprintColorsSelect = document.getElementById(
+                                        "imprintColors"
+                                    ) as HTMLSelectElement | null;
+                                    if (imprintColorsSelect) {
+                                        imprintColorsSelect.value = "1";
+                                    }
+                                }
                             }}
                             className="border w-max border-[#bbb] bg-slate-50 text-black px-2 py-[2px] rounded-md"
                         >
@@ -731,82 +749,76 @@ export const Calculator = ({
                             )}
                         </select>
                     </div>
-                    <div className="flex flex-row justify-between items-center">
-                        {lang === "1" ? "Liczba kolorów nadruku: " : "Number of print colors: "}
-                        <select
-                            defaultValue=""
-                            id="imprintColors"
-                            disabled={
-                                !cupConfig.imprintType || cupConfig.imprintType === "digital_print"
-                            }
-                            onChange={(e) => {
-                                const imprintColors = parseInt(e.target.value) || 0;
-                                setCupConfig({
-                                    ...cupConfig,
-                                    imprintColors,
-                                });
-                            }}
-                            className="border w-max border-[#bbb] bg-slate-50 text-black px-2 py-[2px] rounded-md"
-                        >
-                            <option value="" disabled hidden>
-                                {cupConfig.imprintType !== "digital_print"
-                                    ? lang === "1"
-                                        ? "Brak"
-                                        : "None"
-                                    : lang === "1"
-                                    ? "Pełny kolor"
-                                    : "Full color"}
-                            </option>
-                            {cupConfig.imprintType &&
-                                [
-                                    "deep_effect_1",
-                                    "deep_effect_2",
-                                    "deep_effect_plus_1",
-                                    "deep_effect_plus_2",
-                                ].includes(cupConfig.imprintType) &&
-                                [...Array(2)].map(
-                                    (_, index) => (
-                                        (index += 1),
-                                        (
-                                            <option key={index} value={index}>
-                                                {index.toString()}
-                                            </option>
-                                        )
-                                    )
-                                )}
-                            {cupConfig.imprintType &&
-                                cupConfig.imprintType === "direct_print" &&
-                                [...Array(4)].map(
-                                    (_, index) => (
-                                        (index += 1),
-                                        (
-                                            <option key={index} value={index}>
-                                                {index.toString()}
-                                            </option>
-                                        )
-                                    )
-                                )}
-                            {cupConfig.imprintType &&
-                                [
-                                    "transfer_plus_1",
-                                    "transfer_plus_2",
-                                    "transfer_plus_round",
-                                    "polylux_1",
-                                    "polylux_2",
-                                    "polylux_round",
-                                ].includes(cupConfig.imprintType) &&
-                                [...Array(16)].map(
-                                    (_, index) => (
-                                        (index += 1),
-                                        (
-                                            <option key={index} value={index}>
-                                                {index.toString()}
-                                            </option>
-                                        )
-                                    )
-                                )}
-                        </select>
-                    </div>
+                    {cupConfig.imprintType &&
+                        ![
+                            "deep_effect_1",
+                            "deep_effect_2",
+                            "deep_effect_plus_1",
+                            "deep_effect_plus_2",
+                        ].includes(cupConfig.imprintType) && (
+                            <div className="flex flex-row justify-between items-center">
+                                {lang === "1"
+                                    ? "Liczba kolorów nadruku: "
+                                    : "Number of print colors: "}
+                                <select
+                                    defaultValue=""
+                                    id="imprintColors"
+                                    disabled={
+                                        !cupConfig.imprintType ||
+                                        cupConfig.imprintType === "digital_print"
+                                    }
+                                    onChange={(e) => {
+                                        const imprintColors = parseInt(e.target.value) || 0;
+                                        setCupConfig({
+                                            ...cupConfig,
+                                            imprintColors,
+                                        });
+                                    }}
+                                    className="border w-max border-[#bbb] bg-slate-50 text-black px-2 py-[2px] rounded-md"
+                                >
+                                    <option value="" disabled hidden>
+                                        {cupConfig.imprintType !== "digital_print"
+                                            ? lang === "1"
+                                                ? "Brak"
+                                                : "None"
+                                            : lang === "1"
+                                            ? "Pełny kolor"
+                                            : "Full color"}
+                                    </option>
+                                    {cupConfig.imprintType &&
+                                        cupConfig.imprintType === "direct_print" &&
+                                        [...Array(4)].map(
+                                            (_, index) => (
+                                                (index += 1),
+                                                (
+                                                    <option key={index} value={index}>
+                                                        {index.toString()}
+                                                    </option>
+                                                )
+                                            )
+                                        )}
+                                    {cupConfig.imprintType &&
+                                        [
+                                            "transfer_plus_1",
+                                            "transfer_plus_2",
+                                            "transfer_plus_round",
+                                            "polylux_1",
+                                            "polylux_2",
+                                            "polylux_round",
+                                        ].includes(cupConfig.imprintType) &&
+                                        [...Array(16)].map(
+                                            (_, index) => (
+                                                (index += 1),
+                                                (
+                                                    <option key={index} value={index}>
+                                                        {index.toString()}
+                                                    </option>
+                                                )
+                                            )
+                                        )}
+                                </select>
+                            </div>
+                        )}
                 </div>
                 <div className="flex flex-col flex-wrap gap-1 accent-[#009E60] bg-slate-100 pt-4 pb-2">
                     {selectedCup.nadruk_wewnatrz_na_sciance &&

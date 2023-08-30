@@ -63,6 +63,17 @@ export default function ResetPassword() {
         const { data, error } = await supabase.auth.updateUser({ password: password });
 
         if (error) {
+            if (error.status === 422) {
+                toast.warn(
+                    `${
+                        lang === "1"
+                            ? "Nowe hasło musi być inne niż poprzednie!"
+                            : "The new password must be different from the previous one!"
+                    }`
+                );
+                setLoading(false);
+                return;
+            }
             console.error(error);
             toast.error(`${lang === "1" ? "Wystąpił błąd!" : "An error occurred!"}`);
             setLoading(false);

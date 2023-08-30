@@ -19,7 +19,6 @@ export default function Register() {
     const handleSubmit = async (event: React.FormEvent<HTMLButtonElement>) => {
         setLoading(true);
         event.preventDefault();
-        console.log(baseUrl)
         const { email, password, passwordRepeat, check1, check2, check3 } = document.getElementById(
             "form"
         ) as HTMLFormElement;
@@ -123,6 +122,17 @@ export default function Register() {
         }
 
         if (data) {
+            if (data.user?.confirmed_at) {
+                toast.error(
+                    `${
+                        lang === "1"
+                            ? "Istnieje już konto z tym adresem email!"
+                            : "An account with this email address already exists!"
+                    }`
+                );
+                setLoading(false);
+                return;
+            }
             toast.success(
                 `${
                     lang === "1"
@@ -175,15 +185,15 @@ export default function Register() {
                         disabled={loading}
                     />
                 </div>
-                <div className="flex flex-row justify-start px-[30%] items-center gap-4 cursor-pointer">
+                <div className="flex flex-row justify-start px-[30%] items-center gap-4">
                     <input
                         id="ckeck1"
                         name="check1"
                         type="checkbox"
-                        className="border border-[#bbb] bg-slate-50 text-black"
+                        className="border border-[#bbb] bg-slate-50 text-black cursor-pointer"
                         disabled={loading}
                     />
-                    <label htmlFor="ckeck1" className="text-md gap-1">
+                    <label htmlFor="ckeck1" className="text-md gap-1 cursor-pointer">
                         {lang === "1"
                             ? "Wyrażam zgodę na przetwarzanie moich danych osobowych w celu korzystania z kalkulatora podłączonego do platformy internetowej www.kubki.com.pl. Informacja o przetwarzaniu danych osobowych dostępna jest "
                             : "I agree to processing of my personal data in order to use the calculator connected to the on-line platform www.kubki.com.pl. Information of the data analysis is available "}
@@ -195,35 +205,33 @@ export default function Register() {
                             }
                             className="font-semibold text-black hover:text-[#c00418]"
                         >
-                            {lang === "1"
-                                ? "TUTAJ"
-                                : "HERE"}
+                            {lang === "1" ? "TUTAJ" : "HERE"}
                         </Link>
                     </label>
                 </div>
-                <div className="flex flex-row justify-start px-[30%] items-center gap-4 cursor-pointer">
+                <div className="flex flex-row justify-start px-[30%] items-center gap-4">
                     <input
                         id="ckeck2"
                         name="check2"
                         type="checkbox"
-                        className="border border-[#bbb] bg-slate-50 text-black"
+                        className="border border-[#bbb] bg-slate-50 text-black cursor-pointer"
                         disabled={loading}
                     />
-                    <label htmlFor="ckeck2" className="text-md">
+                    <label htmlFor="ckeck2" className="text-md cursor-pointer">
                         {lang === "1"
                             ? "Wyrażam zgodę na przetwarzanie przez Pro Media Sp. z o.o. moich danych osobowych w celach marketingowych oraz w celu otrzymywania informacji handlowych."
                             : "I agree to process of my personal data by Pro Media Sp. z o.o. due to marketing and trading activities."}
                     </label>
                 </div>
-                <div className="flex flex-row justify-start px-[30%] items-center gap-4 cursor-pointer">
+                <div className="flex flex-row justify-start px-[30%] items-center gap-4">
                     <input
                         id="ckeck3"
                         name="check3"
                         type="checkbox"
-                        className="border border-[#bbb] bg-slate-50 text-black"
+                        className="border border-[#bbb] bg-slate-50 text-black cursor-pointer"
                         disabled={loading}
                     />
-                    <label htmlFor="ckeck3" className="text-md gap-1">
+                    <label htmlFor="ckeck3" className="text-md gap-1 cursor-pointer">
                         {lang === "1" ? "Akceptuję " : "I agree to "}
                         <Link
                             href={

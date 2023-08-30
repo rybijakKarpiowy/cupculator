@@ -64,7 +64,6 @@ export const Navbar = ({
                             className="h-[80px] w-auto"
                             src={logo20years}
                             alt="Kubki.com.pl"
-                            unoptimized
                         />
                     </Link>
                 </div>

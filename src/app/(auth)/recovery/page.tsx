@@ -27,6 +27,7 @@ export default function Recovery() {
         });
 
         if (error) {
+            console.log(error);
             if (error.message.includes("Email rate limit exceeded")) {
                 toast.error(
                     lang === "1"

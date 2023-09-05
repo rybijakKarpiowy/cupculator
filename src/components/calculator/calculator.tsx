@@ -46,8 +46,8 @@ export const Calculator = ({
         trend_color: "",
         soft_touch: false,
         pro_color: false,
-        imprintType: "",
-        imprintColors: 0,
+        imprintType: selectedCup.digital_print ? "" : "transfer_plus_1",
+        imprintColors: selectedCup.digital_print ? 0 : 1,
         nadruk_wewnatrz_na_sciance: 0,
         nadruk_na_uchu: false,
         nadruk_na_spodzie: false,
@@ -192,21 +192,10 @@ export const Calculator = ({
             return;
         }
         if (amount >= 5040) {
-            switch (inputId) {
-                case 1:
-                    setAmounts({ ...amounts, amount1: null });
-                    break;
-                case 2:
-                    setAmounts({ ...amounts, amount2: null });
-                    break;
-                case 3:
-                    setAmounts({ ...amounts, amount3: null });
-                    break;
-            }
             toast.info(
                 lang === "1"
-                    ? "Skontaktuj się z działem handlowym w celu uzyskania indywidualnej kalkulacji (co najmniej 5040 sztuk)"
-                    : "Contact our sales department for individual pricing (at least 5040 pieces)"
+                    ? "Aby uzyskać indywidualną wycenę skontaktuj się ze swoim opiekunem handlowym (dla ilości powyżej 5040szt.)"
+                    : "In order to get a special offer contact your sales department advisor (for amounts over 5040 pcs)"
             );
             return;
         }
@@ -229,7 +218,7 @@ export const Calculator = ({
                     <div className="flex flex-col relative w-80">
                         <p>{lang === "1" ? "Ilość: " : "Amount: "}</p>
                         <p>{lang === "1" ? "Jednostkowa cena produktu: " : "Price per unit: "}</p>
-                        <p>{lang === "1" ? "Koszt przygotowalni: " : "Preparation cost: "}</p>
+                        <p>{lang === "1" ? "Koszt przygotowalni: " : "Set up cost: "}</p>
                         {clientPriceUnit === "zł" && (
                             <p>{lang === "1" ? "Koszt transportu: " : "Transport cost: "}</p>
                         )}
@@ -658,7 +647,7 @@ export const Calculator = ({
                     <div className="flex flex-row justify-between items-center">
                         {lang === "1" ? "Wybierz nadruk: " : "Select print type: "}
                         <select
-                            defaultValue=""
+                            defaultValue={(!selectedCup.digital_print && selectedCup.transfer_plus) ? "transfer_plus_1" : ""}
                             id="imprintType"
                             onChange={(e) => {
                                 if (e.target.value === cupConfig.imprintType) return;
@@ -723,25 +712,25 @@ export const Calculator = ({
                             <option value="">{lang === "1" ? "Brak" : "None"}</option>
                             {selectedCup.direct_print && !forbidden.direct_print && (
                                 <option value="direct_print">
-                                    {lang === "1" ? "Nadruk bezpośredni" : "Direct print"}
+                                    Direct print
                                 </option>
                             )}
                             {selectedCup.transfer_plus && !forbidden.transfer_plus && (
                                 <>
                                     <option value="transfer_plus_1">
                                         {lang === "1"
-                                            ? "Kalka ceramiczna 1 strona"
-                                            : "Transfer plus 1 side"}
+                                            ? "Transfer Plus 1 strona"
+                                            : "Transfer Plus 1 side"}
                                     </option>
                                     <option value="transfer_plus_2">
                                         {lang === "1"
-                                            ? "Kalka ceramiczna 2 strony"
-                                            : "Transfer plus 2 sides"}
+                                            ? "Transfer Plus 2 strony"
+                                            : "Transfer Plus 2 sides"}
                                     </option>
                                     <option value="transfer_plus_round">
                                         {lang === "1"
-                                            ? "Kalka ceramiczna wokół"
-                                            : "Transfer plus around"}
+                                            ? "Transfer Plus Tapeta"
+                                            : "Transfer Plus Wallpaper"}
                                     </option>
                                 </>
                             )}
@@ -754,7 +743,7 @@ export const Calculator = ({
                                         Polylux {lang === "1" ? "2 strony" : "2 sides"}
                                     </option>
                                     <option value="polylux_round">
-                                        Polylux {lang === "1" ? "wokół" : "around"}
+                                        Polylux {lang === "1" ? "tapeta" : "wallpaper"}
                                     </option>
                                 </>
                             )}
@@ -797,7 +786,7 @@ export const Calculator = ({
                                     ? "Liczba kolorów nadruku: "
                                     : "Number of print colors: "}
                                 <select
-                                    defaultValue=""
+                                    defaultValue="1"
                                     id="imprintColors"
                                     disabled={
                                         !cupConfig.imprintType ||
@@ -812,20 +801,18 @@ export const Calculator = ({
                                     }}
                                     className="border w-max border-[#bbb] bg-slate-50 text-black px-2 py-[2px] rounded-md"
                                 >
-                                    <option value="" disabled hidden>
+                                    <option value="1" disabled hidden>
                                         {cupConfig.imprintType !== "digital_print"
-                                            ? lang === "1"
-                                                ? "Brak"
-                                                : "None"
+                                            ? "1"
                                             : lang === "1"
                                             ? "Pełny kolor"
                                             : "Full color"}
                                     </option>
                                     {cupConfig.imprintType &&
                                         cupConfig.imprintType === "direct_print" &&
-                                        [...Array(4)].map(
+                                        [...Array(3)].map(
                                             (_, index) => (
-                                                (index += 1),
+                                                (index += 2),
                                                 (
                                                     <option key={index} value={index}>
                                                         {index.toString()}
@@ -879,7 +866,7 @@ export const Calculator = ({
                                 <p className="py-[2px]">
                                     {lang === "1"
                                         ? "Nadruk wewnątrz na ściance"
-                                        : "Print on the inside"}
+                                        : "Print on the wall inside"}
                                 </p>
                                 {cupConfig.nadruk_wewnatrz_na_sciance ? (
                                     <select
@@ -1274,7 +1261,7 @@ export const Calculator = ({
                                 <p className="py-[2px]">
                                     {lang === "1"
                                         ? "Wkładanie ulotek do kubka"
-                                        : "Inserting leaflets into the cup"}
+                                        : "Inserting leaflets into the mug"}
                                 </p>
                             </div>
                         )}

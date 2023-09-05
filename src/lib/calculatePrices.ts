@@ -21,7 +21,7 @@ export const calculatePrices = ({
     lang: "1" | "2";
     clientPriceUnit: "zł" | "EUR";
 }) => {
-    if (!amount) return { data: { unit: null, prep: null, transport: null } };
+    if (!amount) return { data: { unit: null, prep: null, transport: null, cardboard: null } };
 
     let amountRange: "24" | "72" | "108" | "216" | "504" | "1008" | "2520";
     if (amount < 72) amountRange = "24";
@@ -82,12 +82,12 @@ export const calculatePrices = ({
         case "direct_print":
             if (amountRange === "24") {
                 return {
-                    data: { unit: null, prep: null, transport: null },
+                    data: { unit: null, prep: null, transport: null, cardboard: null },
                 };
             }
             if ((amountRange === "72" || amountRange === "108") && cupConfig.imprintColors > 1) {
                 return {
-                    data: { unit: null, prep: null, transport: null },
+                    data: { unit: null, prep: null, transport: null, cardboard: null },
                 };
             }
             imprintCost =
@@ -429,6 +429,29 @@ export const calculatePrices = ({
             )?.price || 0;
     }
 
+    let cardboardCost = 0;
+    switch (cupConfig.cardboard) {
+        case "":
+            break;
+        case "singular":
+            if (selectedCup.category === "filiżanka") {
+                cardboardCost +=
+                    colorPricing.cardboards.find((item) => item.name === "Jednostkowy na filiżankę")?.prices[amountRange] || 0;
+            } else {
+                cardboardCost +=
+                    colorPricing.cardboards.find((item) => item.name === "Jednostkowy na kubek")?.prices[amountRange] || 0;
+            }
+            break;
+        case "6pack_klapowy":
+            cardboardCost +=
+                colorPricing.cardboards.find((item) => item.name === "6-pack klapowy")?.prices[amountRange] || 0;
+            break;
+        case "6pack_wykrojnik":
+            cardboardCost +=
+                colorPricing.cardboards.find((item) => item.name === "6-pack z wykrojnika")?.prices[amountRange] || 0;
+            break;
+    }
+
     const palletsCount = getPalletQuantities(amount, selectedCup, cupConfig.cardboard);
     const palletsPrice = {
         mini: palletsCount.mini * additionalValues.mini_pallet_price,
@@ -439,18 +462,19 @@ export const calculatePrices = ({
     const unitCost =
         Math.round((cupCost + imprintCost + trendProSoftCost + additionalCosts) * 100) / 100;
     prepCost = Math.round(prepCost * 100) / 100;
-    const transportCost =
-        Math.round((palletsPrice.mini + palletsPrice.half + palletsPrice.full) * 100) / 100;
+    const transportCost = clientPriceUnit === "zł" ?
+        Math.round((palletsPrice.mini + palletsPrice.half + palletsPrice.full) * 100) / 100 : 0;
 
     return {
         data: {
             unit: unitCost,
             prep: prepCost,
             transport: transportCost,
+            cardboard: cardboardCost,
         },
         error: notSoImportantError,
     } as {
-        data: { unit: number | null; prep: number | null; transport: number | null };
+        data: { unit: number | null; prep: number | null; transport: number | null; cardboard: number | null };
         error?: string;
     };
 };

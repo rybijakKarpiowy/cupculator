@@ -117,7 +117,7 @@ export const DashboardPages = ({
                 | "PL"
                 | "brak";
             if (eu === "brak") {
-                toast.warn("Potwierdź czy klient ma być w EU czy nie");
+                toast.warn("Wybierz walutę klienta");
                 setLoading(false);
                 return;
             }
@@ -479,8 +479,9 @@ export const DashboardPages = ({
                     <h2>Aktywacja klientów</h2>
                     <hr />
                     <br />
-                    <ul className="overflow-x-auto px-4 w-full">
-                        <ul className="flex flex-row">
+                    <ul className="overflow-x-auto px-4 w-auto">
+                        <li>
+                        <ul className="flex flex-row min-w-max">
                             <li className="px-2 border border-black w-48 text-center">
                                 Imię i nazwisko
                             </li>
@@ -497,16 +498,18 @@ export const DashboardPages = ({
                             </li>
                             <li className="px-2 border border-black w-48 text-center">Telefon</li>
                             <li className="px-2 border border-black w-48 text-center">NIP</li>
-                            <li className="px-2 border border-black w-16 text-center">EU?</li>
+                            <li className="px-2 border border-black w-16 text-center">Waluta</li>
                             <li className="px-2 border border-black w-32 text-center">Kraj</li>
                             <li className="px-2 border border-black w-64 text-center">Email</li>
                             <li className="px-2 border border-black w-20 text-center">
                                 Cennik kubków
                             </li>
                             <li className="px-2 border border-black w-20 text-center">
-                                Cennik kolorów
+                                Cennik nadruków
                             </li>
                         </ul>
+                        </li>
+                        <li>
                         {clients
                             ?.filter((client) => !client.activated)
                             .map((client) => (
@@ -543,10 +546,10 @@ export const DashboardPages = ({
                                     <li className="px-2 border border-black w-16 text-center">
                                         <select id="eu" disabled={loading} defaultValue="brak">
                                             <option value="brak" hidden disabled>
-                                                {client.eu ? "EU" : "PL"}
+                                               -
                                             </option>
-                                            <option value="PL">PL</option>
-                                            <option value="EU">EU</option>
+                                            <option value="PL">PLN</option>
+                                            <option value="EU">EUR</option>
                                         </select>
                                     </li>
                                     <li className="px-2 border border-black w-32 text-center">
@@ -614,6 +617,7 @@ export const DashboardPages = ({
                                     </button>
                                 </form>
                             ))}
+                            </li>
                     </ul>
                 </div>
             )}
@@ -623,7 +627,8 @@ export const DashboardPages = ({
                     <hr />
                     <br />
                     <ul className="overflow-x-auto px-4 w-full">
-                        <ul className="flex flex-row">
+                        <li>
+                        <ul className="flex flex-row min-w-max">
                             <li className="px-2 border border-black w-48 text-center">
                                 Imię i nazwisko
                             </li>
@@ -640,23 +645,25 @@ export const DashboardPages = ({
                             </li>
                             <li className="px-2 border border-black w-48 text-center">Telefon</li>
                             <li className="px-2 border border-black w-48 text-center">NIP</li>
-                            <li className="px-2 border border-black w-12 text-center">EU?</li>
+                            <li className="px-2 border border-black w-12 text-center">Waluta</li>
                             <li className="px-2 border border-black w-32 text-center">Kraj</li>
                             <li className="px-2 border border-black w-64 text-center">Email</li>
                             <li className="px-2 border border-black w-20 text-center">
                                 Cennik kubków
                             </li>
                             <li className="px-2 border border-black w-20 text-center">
-                                Cennik kolorów
+                                Cennik nadruków
                             </li>
                         </ul>
+                        </li>
+                        <li>
                         {clients
                             ?.filter((client) => client.activated)
                             .map((client) => (
                                 <div
                                     key={client.user_id}
                                     id={client.user_id}
-                                    className="flex flex-row"
+                                    className="flex flex-row min-w-max"
                                 >
                                     <li className="px-2 border border-black w-48 text-center">
                                         {client.first_name} {client.last_name}
@@ -683,7 +690,7 @@ export const DashboardPages = ({
                                         {client.NIP}
                                     </li>
                                     <li className="px-2 border border-black w-12 text-center">
-                                        {client.eu ? "EU" : "PL"}
+                                        {client.eu ? "EUR" : "PLN"}
                                     </li>
                                     <li className="px-2 border border-black w-32 text-center">
                                         {client.country}
@@ -743,6 +750,7 @@ export const DashboardPages = ({
                                     </button>
                                 </div>
                             ))}
+                            </li>
                     </ul>
                 </div>
             )}

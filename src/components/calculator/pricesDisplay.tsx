@@ -41,6 +41,18 @@ export const PricesDisplay = ({
         toast.warn(error);
     }
 
+    let singleCardboardPrice = 0;
+    if (calculatedPrices.cardboard) {
+        if (cupConfig.cardboard === "6pack_klapowy" || cupConfig.cardboard === "6pack_wykrojnik") {
+            const cardboardCount = Math.ceil((amount || 0) / 6);
+            singleCardboardPrice = amount
+                ? (calculatedPrices.cardboard * cardboardCount) / amount
+                : 0;
+        } else {
+            singleCardboardPrice = calculatedPrices.cardboard;
+        }
+    }
+
     return (
         <div className="flex flex-col text-right">
             <p>
@@ -48,7 +60,11 @@ export const PricesDisplay = ({
                 {lang === "1" ? " szt." : " pcs."}
             </p>
             <p>
-                {priceToString(calculatedPrices.unit)}
+                {calculatedPrices.unit === null
+                    ? ""
+                    : priceToString(
+                          Math.round((calculatedPrices.unit + singleCardboardPrice) * 100) / 100
+                      )}
                 {clientPriceUnit}
             </p>
             <p>
@@ -66,13 +82,18 @@ export const PricesDisplay = ({
                     ? calculatedPrices.transport
                         ? priceToString(
                               Math.round(
-                                  calculatedPrices.prep +
-                                      calculatedPrices.unit * amount +
-                                      calculatedPrices.transport
-                              )
+                                  (calculatedPrices.prep +
+                                      (calculatedPrices.unit + singleCardboardPrice) * amount +
+                                      calculatedPrices.transport) *
+                                      100
+                              ) / 100
                           )
                         : priceToString(
-                              Math.round(calculatedPrices.prep + calculatedPrices.unit * amount)
+                              Math.round(
+                                  (calculatedPrices.prep +
+                                      (calculatedPrices.unit + singleCardboardPrice) * amount) *
+                                      100
+                              ) / 100
                           )
                     : "0.00"}
                 {clientPriceUnit}

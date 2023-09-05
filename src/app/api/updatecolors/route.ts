@@ -9,13 +9,12 @@ import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 
 export const POST = async (req: NextRequest) => {
     const res = NextResponse.next();
-    const clientSupabase = createMiddlewareClient<Database>({req, res});
+    const clientSupabase = createMiddlewareClient<Database>({ req, res });
     const auth_id = (await clientSupabase.auth.getSession()).data.session?.user.id;
 
     if (!auth_id) {
         return NextResponse.redirect(new URL("/login", baseUrl));
     }
-
 
     const { pricing_name, sheet_url } = (await req.json()) as {
         auth_id: string;
@@ -29,6 +28,7 @@ export const POST = async (req: NextRequest) => {
         .eq("user_id", auth_id);
 
     if (error1) {
+        console.log(error1);
         return NextResponse.json(error1.message, { status: 500 });
     }
 
@@ -62,6 +62,7 @@ export const POST = async (req: NextRequest) => {
             return NextResponse.json("Serwer nie ma uprawnień do wglądu arkusza", { status: 403 });
         }
 
+        console.log(err);
         return NextResponse.json(err.response.data.error.message, { status: 500 });
     });
 
@@ -75,9 +76,13 @@ export const POST = async (req: NextRequest) => {
         // upsert to db
         const { error: error2 } = await supabase
             .from("color_pricings")
-            .upsert({ ...sheetDataParsed, pricing_name });
+            .upsert(
+                { ...sheetDataParsed, pricing_name },
+                { onConflict: "pricing_name", ignoreDuplicates: false }
+            );
 
         if (error2) {
+            console.log(error2);
             return NextResponse.json(error2.message, { status: 500 });
         }
 
@@ -85,6 +90,7 @@ export const POST = async (req: NextRequest) => {
 
         // handle parser function errors
     } catch (err) {
+        console.log(err);
         return NextResponse.json(err, { status: 500 });
     }
 };

@@ -139,6 +139,7 @@ export const DashboardPages = ({
                 user_id,
                 cup_pricing,
                 color_pricing,
+                // salesman_id,
                 ...{ eu: eu === "EU" ? true : eu === "PL" ? false : undefined },
             }),
         });
@@ -326,8 +327,10 @@ export const DashboardPages = ({
         }
 
         if (
-            (cups_or_colors === "cups" && available_cup_pricings?.includes(pricing_name)) ||
-            (cups_or_colors === "colors" && available_color_pricings?.includes(pricing_name))
+            ((cups_or_colors === "cups" && available_cup_pricings?.includes(pricing_name)) ||
+                (cups_or_colors === "colors" &&
+                    available_color_pricings?.includes(pricing_name))) &&
+            newPricing
         ) {
             toast.warn("Taki cennik już istnieje, proszę wybrać go z listy");
             setLoading(false);
@@ -481,143 +484,167 @@ export const DashboardPages = ({
                     <br />
                     <ul className="overflow-x-auto px-4 w-auto">
                         <li>
-                        <ul className="flex flex-row min-w-max">
-                            <li className="px-2 border border-black w-48 text-center">
-                                Imię i nazwisko
-                            </li>
-                            <li className="px-2 border border-black w-64 text-center">
-                                Nazwa firmy
-                            </li>
-                            <li className="px-2 border border-black w-64 text-center">Adres</li>
-                            <li className="px-2 border border-black w-24 text-center">
-                                Kod pocztowy
-                            </li>
-                            <li className="px-2 border border-black w-32 text-center">Miasto</li>
-                            <li className="px-2 border border-black w-32 text-center">
-                                Województwo / Region
-                            </li>
-                            <li className="px-2 border border-black w-48 text-center">Telefon</li>
-                            <li className="px-2 border border-black w-48 text-center">NIP</li>
-                            <li className="px-2 border border-black w-16 text-center">Waluta</li>
-                            <li className="px-2 border border-black w-32 text-center">Kraj</li>
-                            <li className="px-2 border border-black w-64 text-center">Email</li>
-                            <li className="px-2 border border-black w-20 text-center">
-                                Cennik kubków
-                            </li>
-                            <li className="px-2 border border-black w-20 text-center">
-                                Cennik nadruków
-                            </li>
-                        </ul>
+                            <ul className="flex flex-row min-w-max">
+                                <li className="px-2 border border-black w-48 text-center">
+                                    Imię i nazwisko
+                                </li>
+                                <li className="px-2 border border-black w-64 text-center">
+                                    Nazwa firmy
+                                </li>
+                                <li className="px-2 border border-black w-64 text-center">Adres</li>
+                                <li className="px-2 border border-black w-24 text-center">
+                                    Kod pocztowy
+                                </li>
+                                <li className="px-2 border border-black w-32 text-center">
+                                    Miasto
+                                </li>
+                                <li className="px-2 border border-black w-32 text-center">
+                                    Województwo / Region
+                                </li>
+                                <li className="px-2 border border-black w-48 text-center">
+                                    Telefon
+                                </li>
+                                <li className="px-2 border border-black w-48 text-center">NIP</li>
+                                <li className="px-2 border border-black w-16 text-center">
+                                    Waluta
+                                </li>
+                                <li className="px-2 border border-black w-32 text-center">Kraj</li>
+                                <li className="px-2 border border-black w-64 text-center">Email</li>
+                                <li className="px-2 border border-black w-20 text-center">
+                                    Cennik kubków
+                                </li>
+                                <li className="px-2 border border-black w-20 text-center">
+                                    Cennik nadruków
+                                </li>
+                            </ul>
                         </li>
                         <li>
-                        {clients
-                            ?.filter((client) => !client.activated)
-                            .map((client) => (
-                                <form
-                                    key={client.user_id}
-                                    id={client.user_id}
-                                    onSubmit={(e) => handleActication(client.user_id, e)}
-                                    className="flex flex-row w-max"
-                                >
-                                    <li className="px-2 border border-black w-48 text-center">
-                                        {client.first_name} {client.last_name}
-                                    </li>
-                                    <li className="px-2 border border-black w-64 text-center">
-                                        {client.company_name}
-                                    </li>
-                                    <li className="px-2 border border-black w-64 text-center">
-                                        {client.adress}
-                                    </li>
-                                    <li className="px-2 border border-black w-24 text-center">
-                                        {client.postal_code}
-                                    </li>
-                                    <li className="px-2 border border-black w-32 text-center">
-                                        {client.city}
-                                    </li>
-                                    <li className="px-2 border border-black w-32 text-center">
-                                        {client.region}
-                                    </li>
-                                    <li className="px-2 border border-black w-48 text-center">
-                                        {client.phone}
-                                    </li>
-                                    <li className="px-2 border border-black w-48 text-center">
-                                        {client.NIP}
-                                    </li>
-                                    <li className="px-2 border border-black w-16 text-center">
-                                        <select id="eu" disabled={loading} defaultValue="brak">
-                                            <option value="brak" hidden disabled>
-                                               -
-                                            </option>
-                                            <option value="PL">PLN</option>
-                                            <option value="EU">EUR</option>
-                                        </select>
-                                    </li>
-                                    <li className="px-2 border border-black w-32 text-center">
-                                        {client.country}
-                                    </li>
-                                    <li className="px-2 border border-black w-64 text-center">
-                                        {client.email}
-                                    </li>
-                                    <li className="px-2 border border-black w-20 text-center">
-                                        <select
-                                            id="cup_pricing"
-                                            disabled={loading}
-                                            defaultValue={
-                                                client.cup_pricing ? client.cup_pricing : ""
-                                            }
+                            {clients
+                                ?.filter((client) => !client.activated)
+                                .map((client) => (
+                                    <ul>
+                                        <form
+                                            key={client.user_id}
+                                            id={client.user_id}
+                                            onSubmit={(e) => handleActication(client.user_id, e)}
+                                            className="flex flex-row w-max"
                                         >
-                                            <option value="" key="brak" disabled>
-                                                Brak
-                                            </option>
-                                            {available_cup_pricings.map((cup_pricing) => (
-                                                <option key={cup_pricing} value={cup_pricing}>
-                                                    {cup_pricing}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </li>
-                                    <li className="px-2 border border-black w-20 text-center">
-                                        <select
-                                            id="color_pricing"
-                                            disabled={loading}
-                                            defaultValue={
-                                                client.color_pricing ? client.color_pricing : ""
-                                            }
-                                        >
-                                            <option value="" key="brak" disabled>
-                                                Brak
-                                            </option>
-                                            {available_color_pricings.map((color_pricing) => (
-                                                <option key={color_pricing} value={color_pricing}>
-                                                    {color_pricing}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </li>
-                                    <button
-                                        type="submit"
-                                        disabled={loading}
-                                        className={`px-2 w-20 rounded-md ${
-                                            loading
-                                                ? "bg-slate-400"
-                                                : "bg-green-300 hover:bg-green-400"
-                                        }`}
-                                    >
-                                        Aktywuj
-                                    </button>
-                                    <button
-                                        type="button"
-                                        disabled={loading}
-                                        onClick={() => handleDeleteUser(client.user_id)}
-                                        className={`px-2 w-16 rounded-md ${
-                                            loading ? "bg-slate-400" : "bg-red-300 hover:bg-red-400"
-                                        }`}
-                                    >
-                                        Usuń
-                                    </button>
-                                </form>
-                            ))}
-                            </li>
+                                            <li className="px-2 border border-black w-48 text-center">
+                                                {client.first_name} {client.last_name}
+                                            </li>
+                                            <li className="px-2 border border-black w-64 text-center">
+                                                {client.company_name}
+                                            </li>
+                                            <li className="px-2 border border-black w-64 text-center">
+                                                {client.adress}
+                                            </li>
+                                            <li className="px-2 border border-black w-24 text-center">
+                                                {client.postal_code}
+                                            </li>
+                                            <li className="px-2 border border-black w-32 text-center">
+                                                {client.city}
+                                            </li>
+                                            <li className="px-2 border border-black w-32 text-center">
+                                                {client.region}
+                                            </li>
+                                            <li className="px-2 border border-black w-48 text-center">
+                                                {client.phone}
+                                            </li>
+                                            <li className="px-2 border border-black w-48 text-center">
+                                                {client.NIP}
+                                            </li>
+                                            <li className="px-2 border border-black w-16 text-center">
+                                                <select
+                                                    id="eu"
+                                                    disabled={loading}
+                                                    defaultValue="brak"
+                                                >
+                                                    <option value="brak" hidden disabled>
+                                                        -
+                                                    </option>
+                                                    <option value="PL">PLN</option>
+                                                    <option value="EU">EUR</option>
+                                                </select>
+                                            </li>
+                                            <li className="px-2 border border-black w-32 text-center">
+                                                {client.country}
+                                            </li>
+                                            <li className="px-2 border border-black w-64 text-center">
+                                                {client.email}
+                                            </li>
+                                            <li className="px-2 border border-black w-20 text-center">
+                                                <select
+                                                    id="cup_pricing"
+                                                    disabled={loading}
+                                                    defaultValue={
+                                                        client.cup_pricing ? client.cup_pricing : ""
+                                                    }
+                                                >
+                                                    <option value="" key="brak" disabled>
+                                                        Brak
+                                                    </option>
+                                                    {available_cup_pricings.map((cup_pricing) => (
+                                                        <option
+                                                            key={cup_pricing}
+                                                            value={cup_pricing}
+                                                        >
+                                                            {cup_pricing}
+                                                        </option>
+                                                    ))}
+                                                </select>
+                                            </li>
+                                            <li className="px-2 border border-black w-20 text-center">
+                                                <select
+                                                    id="color_pricing"
+                                                    disabled={loading}
+                                                    defaultValue={
+                                                        client.color_pricing
+                                                            ? client.color_pricing
+                                                            : ""
+                                                    }
+                                                >
+                                                    <option value="" key="brak" disabled>
+                                                        Brak
+                                                    </option>
+                                                    {available_color_pricings.map(
+                                                        (color_pricing) => (
+                                                            <option
+                                                                key={color_pricing}
+                                                                value={color_pricing}
+                                                            >
+                                                                {color_pricing}
+                                                            </option>
+                                                        )
+                                                    )}
+                                                </select>
+                                            </li>
+                                            <button
+                                                type="submit"
+                                                disabled={loading}
+                                                className={`px-2 w-20 rounded-md ${
+                                                    loading
+                                                        ? "bg-slate-400"
+                                                        : "bg-green-300 hover:bg-green-400"
+                                                }`}
+                                            >
+                                                Aktywuj
+                                            </button>
+                                            <button
+                                                type="button"
+                                                disabled={loading}
+                                                onClick={() => handleDeleteUser(client.user_id)}
+                                                className={`px-2 w-16 rounded-md ${
+                                                    loading
+                                                        ? "bg-slate-400"
+                                                        : "bg-red-300 hover:bg-red-400"
+                                                }`}
+                                            >
+                                                Usuń
+                                            </button>
+                                        </form>
+                                    </ul>
+                                ))}
+                        </li>
                     </ul>
                 </div>
             )}
@@ -628,129 +655,140 @@ export const DashboardPages = ({
                     <br />
                     <ul className="overflow-x-auto px-4 w-full">
                         <li>
-                        <ul className="flex flex-row min-w-max">
-                            <li className="px-2 border border-black w-48 text-center">
-                                Imię i nazwisko
-                            </li>
-                            <li className="px-2 border border-black w-64 text-center">
-                                Nazwa firmy
-                            </li>
-                            <li className="px-2 border border-black w-64 text-center">Adres</li>
-                            <li className="px-2 border border-black w-24 text-center">
-                                Kod pocztowy
-                            </li>
-                            <li className="px-2 border border-black w-32 text-center">Miasto</li>
-                            <li className="px-2 border border-black w-32 text-center">
-                                Województwo / Region
-                            </li>
-                            <li className="px-2 border border-black w-48 text-center">Telefon</li>
-                            <li className="px-2 border border-black w-48 text-center">NIP</li>
-                            <li className="px-2 border border-black w-12 text-center">Waluta</li>
-                            <li className="px-2 border border-black w-32 text-center">Kraj</li>
-                            <li className="px-2 border border-black w-64 text-center">Email</li>
-                            <li className="px-2 border border-black w-20 text-center">
-                                Cennik kubków
-                            </li>
-                            <li className="px-2 border border-black w-20 text-center">
-                                Cennik nadruków
-                            </li>
-                        </ul>
+                            <ul className="flex flex-row min-w-max">
+                                <li className="px-2 border border-black w-48 text-center">
+                                    Imię i nazwisko
+                                </li>
+                                <li className="px-2 border border-black w-64 text-center">
+                                    Nazwa firmy
+                                </li>
+                                <li className="px-2 border border-black w-64 text-center">Adres</li>
+                                <li className="px-2 border border-black w-24 text-center">
+                                    Kod pocztowy
+                                </li>
+                                <li className="px-2 border border-black w-32 text-center">
+                                    Miasto
+                                </li>
+                                <li className="px-2 border border-black w-32 text-center">
+                                    Województwo / Region
+                                </li>
+                                <li className="px-2 border border-black w-48 text-center">
+                                    Telefon
+                                </li>
+                                <li className="px-2 border border-black w-48 text-center">NIP</li>
+                                <li className="px-2 border border-black w-12 text-center">
+                                    Waluta
+                                </li>
+                                <li className="px-2 border border-black w-32 text-center">Kraj</li>
+                                <li className="px-2 border border-black w-64 text-center">Email</li>
+                                <li className="px-2 border border-black w-20 text-center">
+                                    Cennik kubków
+                                </li>
+                                <li className="px-2 border border-black w-20 text-center">
+                                    Cennik nadruków
+                                </li>
+                            </ul>
                         </li>
                         <li>
-                        {clients
-                            ?.filter((client) => client.activated)
-                            .map((client) => (
-                                <div
-                                    key={client.user_id}
-                                    id={client.user_id}
-                                    className="flex flex-row min-w-max"
-                                >
-                                    <li className="px-2 border border-black w-48 text-center">
-                                        {client.first_name} {client.last_name}
-                                    </li>
-                                    <li className="px-2 border border-black w-64 text-center">
-                                        {client.company_name}
-                                    </li>
-                                    <li className="px-2 border border-black w-64 text-center">
-                                        {client.adress}
-                                    </li>
-                                    <li className="px-2 border border-black w-24 text-center">
-                                        {client.postal_code}
-                                    </li>
-                                    <li className="px-2 border border-black w-32 text-center">
-                                        {client.city}
-                                    </li>
-                                    <li className="px-2 border border-black w-32 text-center">
-                                        {client.region}
-                                    </li>
-                                    <li className="px-2 border border-black w-48 text-center">
-                                        {client.phone}
-                                    </li>
-                                    <li className="px-2 border border-black w-48 text-center">
-                                        {client.NIP}
-                                    </li>
-                                    <li className="px-2 border border-black w-12 text-center">
-                                        {client.eu ? "EUR" : "PLN"}
-                                    </li>
-                                    <li className="px-2 border border-black w-32 text-center">
-                                        {client.country}
-                                    </li>
-                                    <li className="px-2 border border-black w-64 text-center">
-                                        {client.email}
-                                    </li>
-                                    <li className="px-2 border border-black w-20 text-center">
-                                        <select
-                                            id="cup_pricing"
-                                            disabled={loading}
-                                            onChange={() => handleActication(client.user_id)}
-                                            className={`${loading && "bg-slate-400"}`}
-                                            defaultValue={
-                                                client.cup_pricing ? client.cup_pricing : ""
-                                            }
-                                        >
-                                            <option value="" key="brak" disabled>
-                                                Brak
-                                            </option>
-                                            {available_cup_pricings.map((cup_pricing) => (
-                                                <option key={cup_pricing} value={cup_pricing}>
-                                                    {cup_pricing}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </li>
-                                    <li className="px-2 border border-black w-20 text-center">
-                                        <select
-                                            id="color_pricing"
-                                            disabled={loading}
-                                            onChange={() => handleActication(client.user_id)}
-                                            className={`${loading && "bg-slate-400"}`}
-                                            defaultValue={
-                                                client.color_pricing ? client.color_pricing : ""
-                                            }
-                                        >
-                                            <option value="" key="brak" disabled>
-                                                Brak
-                                            </option>
-                                            {available_color_pricings.map((color_pricing) => (
-                                                <option key={color_pricing} value={color_pricing}>
-                                                    {color_pricing}
-                                                </option>
-                                            ))}
-                                        </select>
-                                    </li>
-                                    <button
-                                        type="button"
-                                        disabled={loading}
-                                        onClick={() => handleDeleteUser(client.user_id)}
-                                        className={`px-2 w-16 rounded-md ${
-                                            loading ? "bg-slate-400" : "bg-red-300 hover:bg-red-400"
-                                        }`}
+                            {clients
+                                ?.filter((client) => client.activated)
+                                .map((client) => (
+                                    <div
+                                        key={client.user_id}
+                                        id={client.user_id}
+                                        className="flex flex-row min-w-max"
                                     >
-                                        Usuń
-                                    </button>
-                                </div>
-                            ))}
-                            </li>
+                                        <li className="px-2 border border-black w-48 text-center">
+                                            {client.first_name} {client.last_name}
+                                        </li>
+                                        <li className="px-2 border border-black w-64 text-center">
+                                            {client.company_name}
+                                        </li>
+                                        <li className="px-2 border border-black w-64 text-center">
+                                            {client.adress}
+                                        </li>
+                                        <li className="px-2 border border-black w-24 text-center">
+                                            {client.postal_code}
+                                        </li>
+                                        <li className="px-2 border border-black w-32 text-center">
+                                            {client.city}
+                                        </li>
+                                        <li className="px-2 border border-black w-32 text-center">
+                                            {client.region}
+                                        </li>
+                                        <li className="px-2 border border-black w-48 text-center">
+                                            {client.phone}
+                                        </li>
+                                        <li className="px-2 border border-black w-48 text-center">
+                                            {client.NIP}
+                                        </li>
+                                        <li className="px-2 border border-black w-12 text-center">
+                                            {client.eu ? "EUR" : "PLN"}
+                                        </li>
+                                        <li className="px-2 border border-black w-32 text-center">
+                                            {client.country}
+                                        </li>
+                                        <li className="px-2 border border-black w-64 text-center">
+                                            {client.email}
+                                        </li>
+                                        <li className="px-2 border border-black w-20 text-center">
+                                            <select
+                                                id="cup_pricing"
+                                                disabled={loading}
+                                                onChange={() => handleActication(client.user_id)}
+                                                className={`${loading && "bg-slate-400"}`}
+                                                defaultValue={
+                                                    client.cup_pricing ? client.cup_pricing : ""
+                                                }
+                                            >
+                                                <option value="" key="brak" disabled>
+                                                    Brak
+                                                </option>
+                                                {available_cup_pricings.map((cup_pricing) => (
+                                                    <option key={cup_pricing} value={cup_pricing}>
+                                                        {cup_pricing}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </li>
+                                        <li className="px-2 border border-black w-20 text-center">
+                                            <select
+                                                id="color_pricing"
+                                                disabled={loading}
+                                                onChange={() => handleActication(client.user_id)}
+                                                className={`${loading && "bg-slate-400"}`}
+                                                defaultValue={
+                                                    client.color_pricing ? client.color_pricing : ""
+                                                }
+                                            >
+                                                <option value="" key="brak" disabled>
+                                                    Brak
+                                                </option>
+                                                {available_color_pricings.map((color_pricing) => (
+                                                    <option
+                                                        key={color_pricing}
+                                                        value={color_pricing}
+                                                    >
+                                                        {color_pricing}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                        </li>
+                                        <button
+                                            type="button"
+                                            disabled={loading}
+                                            onClick={() => handleDeleteUser(client.user_id)}
+                                            className={`px-2 w-16 rounded-md ${
+                                                loading
+                                                    ? "bg-slate-400"
+                                                    : "bg-red-300 hover:bg-red-400"
+                                            }`}
+                                        >
+                                            Usuń
+                                        </button>
+                                    </div>
+                                ))}
+                        </li>
                     </ul>
                 </div>
             )}

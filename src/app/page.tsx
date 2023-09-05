@@ -7,6 +7,8 @@ import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { PostgrestError } from "@supabase/supabase-js";
 import { cookies } from "next/dist/client/components/headers";
 
+export const dynamic = "force-dynamic";
+
 export default async function Home({
     searchParams,
 }: {

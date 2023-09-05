@@ -6,6 +6,8 @@ import { Database } from "@/database/types";
 import { cookies } from "next/dist/client/components/headers";
 import { ToastContainer } from "react-toastify";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
     title: "Kalkulator",
     description: "Kalulator do obliczania cen kubków",

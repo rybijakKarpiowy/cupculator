@@ -69,7 +69,10 @@ export const POST = async (req: NextRequest) => {
 
   const msg = {
     to: activatedUserEmail.email,
-    from: "biuro@kubki.com.pl",
+    from: {
+      name: "Pro Media",
+      email: "biuro@kubki.com.pl",
+    },
     subject: "Your account has been activated",
     text: "Your account has been activated, you can now log in our calculator at https://kubki.com.pl",
     html: "Your account has been activated, you can now log in our calculator at https://kubki.com.pl",

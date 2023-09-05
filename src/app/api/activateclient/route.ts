@@ -48,6 +48,7 @@ export const POST = async (req: NextRequest) => {
     return NextResponse.json(error2.message, { status: 500 });
   }
 
+  // If Client is activated first time, send email
   if (eu !== undefined) {
     const { error: error3 } = await supabase
       .from("users")
@@ -56,37 +57,37 @@ export const POST = async (req: NextRequest) => {
     if (error3) {
       return NextResponse.json(error3.message, { status: 500 });
     }
+
+    const { data: activatedUserEmail, error: error4 } = await supabase
+      .from("users")
+      .select("email, eu")
+      .eq("user_id", user_id)
+      .single();
+    if (error4) {
+      return NextResponse.json(error4.message, { status: 500 });
+    }
+
+    const msg = {
+      to: activatedUserEmail.email,
+      from: {
+        name: "Pro Media",
+        email: "biuro@kubki.com.pl",
+      },
+      subject: "Your account has been activated",
+      text: "Your account has been activated, you can now log in our calculator at https://kubki.com.pl",
+      html: "Your account has been activated, you can now log in our calculator at https://kubki.com.pl",
+    };
+
+    sgmail.setApiKey(process.env.SENDGRID_KEY!);
+    sgmail
+      .send(msg)
+      .then(() => {
+        console.log("Email sent");
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   }
-
-  const { data: activatedUserEmail, error: error3 } = await supabase
-    .from("users")
-    .select("email")
-    .eq("user_id", user_id)
-    .single();
-  if (error3) {
-    return NextResponse.json(error3.message, { status: 500 });
-  }
-
-  const msg = {
-    to: activatedUserEmail.email,
-    from: {
-      name: "Pro Media",
-      email: "biuro@kubki.com.pl",
-    },
-    subject: "Your account has been activated",
-    text: "Your account has been activated, you can now log in our calculator at https://kubki.com.pl",
-    html: "Your account has been activated, you can now log in our calculator at https://kubki.com.pl",
-  };
-
-  sgmail.setApiKey(process.env.SENDGRID_KEY!);
-  sgmail
-    .send(msg)
-    .then(() => {
-      console.log("Email sent");
-    })
-    .catch((error) => {
-      console.error(error);
-    });
 
   return NextResponse.json({ message: "success" }, { status: 200 });
 };

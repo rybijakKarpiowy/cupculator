@@ -522,9 +522,8 @@ export const DashboardPages = ({
                             {clients
                                 ?.filter((client) => !client.activated)
                                 .map((client) => (
-                                    <ul>
+                                    <ul key={client.user_id}>
                                         <form
-                                            key={client.user_id}
                                             id={client.user_id}
                                             onSubmit={(e) => handleActication(client.user_id, e)}
                                             className="flex flex-row w-max"

@@ -20,6 +20,10 @@ export const getUserPricings = async (authId: string, cupLink: string) => {
         console.log("user is null");
         return null;
     }
+    if (!user.cup_pricing || !user.color_pricing) {
+        console.log("user.cup_pricing or user.color_pricing is null");
+        return null;
+    }
 
     // get cups (it is one cup in multiple color variants) and its pricings
     const { data: cupDataRaw, error: error2 } = await supabase

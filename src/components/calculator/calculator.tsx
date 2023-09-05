@@ -104,6 +104,28 @@ export const Calculator = ({
         setForbidden(newForbidden);
     }, [cupConfig]);
 
+    useEffect(() => {
+        if (cupConfig.imprintType === "direct_print") {
+            for (const amount of [amounts.amount1, amounts.amount2, amounts.amount3]) {
+                if (amount && amount < 72) {
+                    toast.warn(
+                        lang === "1"
+                            ? "Minimalna ilość przy nadruku bezpośrednim to 72 sztuki"
+                            : "Minimum amount for direct print is 72 pieces"
+                    );
+                    return;
+                } else if (amount && amount < 216 && cupConfig.imprintColors > 1) {
+                    toast.warn(
+                        lang === "1"
+                            ? "Druk bezpośredni powyżej jednego koloru jest niedostępny dla zamówień poniżej 216 sztuk"
+                            : "Direct print with more that one color is not available for orders of less than 216 cups"
+                    );
+                    return;
+                }
+            }
+        }
+    }, [amounts, cupConfig]);
+
     const amountAlerts = (amount: number | null, inputId: number) => {
         if (!amount) return;
         if (amount < 24) {
@@ -333,7 +355,10 @@ export const Calculator = ({
                                               ...amounts,
                                               amount1: parseInt(e.target.value),
                                           })
-                                        : setAmounts({ ...amounts, amount1: null });
+                                        : setAmounts({
+                                              ...amounts,
+                                              amount1: null,
+                                          });
                                     amountAlerts(parseInt(e.target.value), 1);
                                 }}
                                 onKeyUp={(e) => {
@@ -353,7 +378,10 @@ export const Calculator = ({
                                                   ...amounts,
                                                   amount2: parseInt(e.target.value),
                                               })
-                                            : setAmounts({ ...amounts, amount2: null });
+                                            : setAmounts({
+                                                  ...amounts,
+                                                  amount2: null,
+                                              });
                                         amountAlerts(parseInt(e.target.value), 2);
                                     }}
                                     onKeyUp={(e) => {
@@ -374,7 +402,10 @@ export const Calculator = ({
                                                   ...amounts,
                                                   amount3: parseInt(e.target.value),
                                               })
-                                            : setAmounts({ ...amounts, amount3: null });
+                                            : setAmounts({
+                                                  ...amounts,
+                                                  amount3: null,
+                                              });
                                         amountAlerts(parseInt(e.target.value), 3);
                                     }}
                                     onKeyUp={(e) => {
@@ -389,7 +420,10 @@ export const Calculator = ({
                             {amounts.inputs < 3 && (
                                 <button
                                     onClick={() =>
-                                        setAmounts({ ...amounts, inputs: amounts.inputs + 1 })
+                                        setAmounts({
+                                            ...amounts,
+                                            inputs: amounts.inputs + 1,
+                                        })
                                     }
                                     className="w-[24px] h-[24px] rounded-md bg-green-300 hover:bg-green-400 flex items-center justify-center"
                                 >
@@ -665,15 +699,17 @@ export const Calculator = ({
                                     wkladanie_ulotek_do_kubka: true,
                                     cardboard: true,
                                 });
-                                if ([
-                                    "transfer_plus_1",
-                                    "transfer_plus_2",
-                                    "transfer_plus_round",
-                                    "polylux_1",
-                                    "polylux_2",
-                                    "polylux_round",
-                                    "direct_print"
-                                ].includes(e.target.value)) {
+                                if (
+                                    [
+                                        "transfer_plus_1",
+                                        "transfer_plus_2",
+                                        "transfer_plus_round",
+                                        "polylux_1",
+                                        "polylux_2",
+                                        "polylux_round",
+                                        "direct_print",
+                                    ].includes(e.target.value)
+                                ) {
                                     const imprintColorsSelect = document.getElementById(
                                         "imprintColors"
                                     ) as HTMLSelectElement | null;
@@ -991,7 +1027,10 @@ export const Calculator = ({
                                 type="checkbox"
                                 id="nadruk_zlotem"
                                 onChange={(e) =>
-                                    setCupConfig({ ...cupConfig, nadruk_zlotem: e.target.checked })
+                                    setCupConfig({
+                                        ...cupConfig,
+                                        nadruk_zlotem: e.target.checked,
+                                    })
                                 }
                                 className="cursor-pointer"
                             />

@@ -82,19 +82,11 @@ export const calculatePrices = ({
         case "direct_print":
             if (amountRange === "24") {
                 return {
-                    error:
-                        lang === "1"
-                            ? "Druk bezpośredni jest niedostępny dla zamówień poniżej 72 sztuk"
-                            : "Direct print is not available for orders of less than 72 cups",
                     data: { unit: null, prep: null, transport: null },
                 };
             }
             if ((amountRange === "72" || amountRange === "108") && cupConfig.imprintColors > 1) {
                 return {
-                    error:
-                        lang === "1"
-                            ? "Druk bezpośredni powyżej jednego koloru jest niedostępny dla zamówień poniżej 216 sztuk"
-                            : "Direct print with more that one color is not available for orders of less than 216 cups",
                     data: { unit: null, prep: null, transport: null },
                 };
             }

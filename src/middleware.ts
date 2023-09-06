@@ -2,7 +2,14 @@ import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { Database } from "./database/types";
-import { baseUrl } from "./app/page";
+
+const baseUrl = (
+    process.env.PROD === "true"
+        ? "https://cupculator.vercel.app"
+        : process.env.DEV === "true"
+        ? "https://cupculator-rybijakkarpiowy.vercel.app"
+        : "http://localhost:3000"
+) as string;
 
 export async function middleware(req: NextRequest) {
     const searchParams = new URL(req.url).searchParams;
@@ -27,7 +34,7 @@ export async function middleware(req: NextRequest) {
         if (["/resetpassword", "/account/details"].includes(req.nextUrl.pathname)) {
             if (setBaseParams) {
                 return NextResponse.redirect(
-                    new URL(`/${req.nextUrl.pathname}?cup=${cup}&lang=${lang}`, baseUrl)
+                    new URL(`${req.nextUrl.pathname}?cup=${cup}&lang=${lang}`, baseUrl)
                 );
             }
             return NextResponse.next();
@@ -81,9 +88,7 @@ export async function middleware(req: NextRequest) {
             // @ts-ignore
             data.users_restricted.role === "User"
         ) {
-            return NextResponse.redirect(
-                new URL(`https://kubki.com.pl/Kubki?lang=${lang}`)
-            );
+            return NextResponse.redirect(new URL(`https://kubki.com.pl/Kubki?lang=${lang}`));
         }
 
         if (setBaseParams) {
@@ -104,5 +109,13 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-    matcher: ["/", "/dashboard/:path*", "/login", "/recovery", "/register", "/resetpassword", "/account/details"],
+    matcher: [
+        "/",
+        "/dashboard/:path*",
+        "/login",
+        "/recovery",
+        "/register",
+        "/resetpassword",
+        "/account/details",
+    ],
 };

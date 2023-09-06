@@ -1,8 +1,15 @@
 import { supabase } from "@/database/supabase";
 import { Database } from "@/database/types";
-import { baseUrl } from "@/app/page";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { NextRequest, NextResponse } from "next/server";
+
+const baseUrl = (
+    process.env.PROD === "true"
+        ? "https://cupculator.vercel.app"
+        : process.env.DEV === "true"
+        ? "https://cupculator-rybijakkarpiowy.vercel.app"
+        : "http://localhost:3000"
+) as string;
 
 export const POST = async (req: NextRequest) => {
     const res = NextResponse.next();

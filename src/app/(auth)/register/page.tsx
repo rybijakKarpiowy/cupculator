@@ -1,12 +1,20 @@
 "use client";
 
-import { baseUrl } from "@/app/page";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
+const baseUrl = (
+    process.env.PROD === "true"
+        ? "https://cupculator.vercel.app"
+        : process.env.DEV === "true"
+        ? "https://cupculator-rybijakkarpiowy.vercel.app"
+        : "http://localhost:3000"
+) as string;
+
 
 export default function Register() {
     const [loading, setLoading] = useState(false);

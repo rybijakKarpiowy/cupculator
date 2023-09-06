@@ -890,7 +890,7 @@ export const DashboardPages = ({
                                         className="px-2 border border-black w-64 text-center"
                                         disabled={loading}
                                     >
-                                        <option value="" disabled>
+                                        <option value="" disabled hidden>
                                             Wybierz rolę
                                         </option>
                                         <option value="Admin">Admin</option>
@@ -963,7 +963,7 @@ export const DashboardPages = ({
                             disabled={loading}
                             className="border border-black"
                         >
-                            <option value="" disabled>
+                            <option value="" disabled hidden>
                                 Kubki/nadruki
                             </option>
                             <option value="cups">Kubki</option>
@@ -976,7 +976,7 @@ export const DashboardPages = ({
                             onChange={(e) => setPricing_name(e.target.value as string)}
                             className="border border-black"
                         >
-                            <option value="" disabled>
+                            <option value="" disabled hidden>
                                 Wybierz cennik
                             </option>
                             {cups_or_colors === "cups" &&

@@ -356,6 +356,7 @@ export interface Database {
           color_pricing: string | null
           cup_pricing: string | null
           role: Database["public"]["Enums"]["role_enum"]
+          salesman_id: string | null
           user_id: string
         }
         Insert: {
@@ -363,6 +364,7 @@ export interface Database {
           color_pricing?: string | null
           cup_pricing?: string | null
           role?: Database["public"]["Enums"]["role_enum"]
+          salesman_id?: string | null
           user_id: string
         }
         Update: {
@@ -370,6 +372,7 @@ export interface Database {
           color_pricing?: string | null
           cup_pricing?: string | null
           role?: Database["public"]["Enums"]["role_enum"]
+          salesman_id?: string | null
           user_id?: string
         }
         Relationships: [

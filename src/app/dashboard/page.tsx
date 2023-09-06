@@ -4,10 +4,17 @@ import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/dist/client/components/headers";
 import { User as AuthUser, PostgrestError } from "@supabase/supabase-js";
 import { redirect } from "next/navigation";
-import { baseUrl } from "@/app/page";
 import { Restriction } from "@/lib/checkRestriction";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+
+const baseUrl = (
+    process.env.PROD === "true"
+        ? "https://cupculator.vercel.app"
+        : process.env.DEV === "true"
+        ? "https://cupculator-rybijakkarpiowy.vercel.app"
+        : "http://localhost:3000"
+) as string;
 
 export const dynamic = "force-dynamic";
 
@@ -114,7 +121,8 @@ export default async function Dashboard({
             autoClose: 3000,
         });
         setTimeout(() => {
-        redirect(`/?lang=${lang}&cup=${cup}`)}, 3000);
+            redirect(`/?lang=${lang}&cup=${cup}`);
+        }, 3000);
     }
     if (!restrictions) {
         toast.error("Coś poszło nie tak (brak wykluczeń)", {

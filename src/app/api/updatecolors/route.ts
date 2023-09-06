@@ -3,9 +3,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { JWT } from "google-auth-library";
 import { GoogleSpreadsheet } from "google-spreadsheet";
 import { colorSheetParser } from "@/lib/colorSheetParser";
-import { baseUrl } from "@/app/page";
 import { Database } from "@/database/types";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
+
+const baseUrl = (
+    process.env.PROD === "true"
+        ? "https://cupculator.vercel.app"
+        : process.env.DEV === "true"
+        ? "https://cupculator-rybijakkarpiowy.vercel.app"
+        : "http://localhost:3000"
+) as string;
 
 export const POST = async (req: NextRequest) => {
     const res = NextResponse.next();
@@ -43,7 +50,7 @@ export const POST = async (req: NextRequest) => {
     const scopes = ["https://www.googleapis.com/auth/spreadsheets"];
     const jwt = new JWT({
         email: process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL,
-        key: process.env.GOOGLE_PRIVATE_KEY,
+        key: process.env.GOOGLE_PRIVATE_KEY!.replace(/\\n/g, "\n"),
         scopes,
     });
 
@@ -52,6 +59,7 @@ export const POST = async (req: NextRequest) => {
 
     const doc = new GoogleSpreadsheet(id, jwt);
     await doc.loadInfo().catch((err) => {
+        console.log(err);
         const statusCode = err.response.data.error.code;
 
         if (statusCode === 404) {
@@ -62,7 +70,6 @@ export const POST = async (req: NextRequest) => {
             return NextResponse.json("Serwer nie ma uprawnień do wglądu arkusza", { status: 403 });
         }
 
-        console.log(err);
         return NextResponse.json(err.response.data.error.message, { status: 500 });
     });
 

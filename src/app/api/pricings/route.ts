@@ -1,6 +1,13 @@
 import { supabase } from "@/database/supabase";
-import { baseUrl } from "@/app/page";
 import { NextRequest, NextResponse } from "next/server";
+
+const baseUrl = (
+    process.env.PROD === "true"
+        ? "https://cupculator.vercel.app"
+        : process.env.DEV === "true"
+        ? "https://cupculator-rybijakkarpiowy.vercel.app"
+        : "http://localhost:3000"
+) as string;
 
 export const POST = async (req: NextRequest) => {
     const { auth_id } = await req.json();

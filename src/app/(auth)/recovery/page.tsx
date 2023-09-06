@@ -1,6 +1,5 @@
 "use client";
 
-import { baseUrl } from "@/app/page";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -23,7 +22,7 @@ export default function Recovery() {
         const email = (document.getElementById("email") as HTMLInputElement).value;
 
         const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
-            redirectTo: `${baseUrl}/resetpassword?cup=${cup}&lang=${lang}`,
+            redirectTo: `/resetpassword?cup=${cup}&lang=${lang}`,
         });
 
         if (error) {

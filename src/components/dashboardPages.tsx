@@ -56,8 +56,6 @@ export const DashboardPages = ({
         if (cupsOrColorsDiv) cupsOrColorsDiv.value = cups_or_colors;
         const pricingNameDiv = document.querySelector("#pricing_name") as HTMLSelectElement;
         if (pricingNameDiv) pricingNameDiv.value = pricing_name;
-
-        if (pricing_name === "new") setNewPricing(true);
     }, [cups_or_colors, pricing_name]);
 
     const changeAdditionalValue = async (
@@ -579,7 +577,7 @@ export const DashboardPages = ({
                                                         client.cup_pricing ? client.cup_pricing : ""
                                                     }
                                                 >
-                                                    <option value="" key="brak" disabled>
+                                                    <option value="" key="brak" disabled hidden>
                                                         Brak
                                                     </option>
                                                     {available_cup_pricings.map((cup_pricing) => (
@@ -602,7 +600,7 @@ export const DashboardPages = ({
                                                             : ""
                                                     }
                                                 >
-                                                    <option value="" key="brak" disabled>
+                                                    <option value="" key="brak" disabled hidden>
                                                         Brak
                                                     </option>
                                                     {available_color_pricings.map(
@@ -740,7 +738,7 @@ export const DashboardPages = ({
                                                     client.cup_pricing ? client.cup_pricing : ""
                                                 }
                                             >
-                                                <option value="" key="brak" disabled>
+                                                <option value="" key="brak" disabled hidden>
                                                     Brak
                                                 </option>
                                                 {available_cup_pricings.map((cup_pricing) => (
@@ -760,7 +758,7 @@ export const DashboardPages = ({
                                                     client.color_pricing ? client.color_pricing : ""
                                                 }
                                             >
-                                                <option value="" key="brak" disabled>
+                                                <option value="" key="brak" disabled hidden>
                                                     Brak
                                                 </option>
                                                 {available_color_pricings.map((color_pricing) => (
@@ -955,7 +953,7 @@ export const DashboardPages = ({
                     <h2>Aktualizuj/dodaj cennik</h2>
                     <hr />
                     <br />
-                    <div className="flex flex-row gap-4 px-4">
+                    <div className="px-4 mb-4">
                         <select
                             id="cups_or_colors"
                             defaultValue=""
@@ -969,11 +967,18 @@ export const DashboardPages = ({
                             <option value="cups">Kubki</option>
                             <option value="colors">Nadruki</option>
                         </select>
+                    </div>
+                    <div className="flex flex-row gap-4 px-4 mb-4">
+                        <p>Aktualizuj/dodaj cennik:</p>
                         <select
                             id="pricing_name"
                             defaultValue=""
                             disabled={!cups_or_colors || loading}
-                            onChange={(e) => setPricing_name(e.target.value as string)}
+                            onChange={(e) => {
+                                if (e.target.value === "new") setNewPricing(true);
+                                else setNewPricing(false);
+                                setPricing_name(e.target.value as string);
+                            }}
                             className="border border-black"
                         >
                             <option value="" disabled hidden>
@@ -1008,7 +1013,7 @@ export const DashboardPages = ({
                             id="sheet_url"
                             disabled={!cups_or_colors || !pricing_name || loading}
                             placeholder="Link do arkusza google"
-                            className="w-96 border border-black"
+                            className="w-96 border border-black px-2"
                         />
                         <button
                             onClick={() => handleAddPricing()}
@@ -1019,6 +1024,81 @@ export const DashboardPages = ({
                         >
                             Wyślij
                         </button>
+                    </div>
+                    <div className="flex flex-row gap-4 px-4">
+                        <p>Zmień nazwę cennika:</p>
+                        <form
+                            className="flex flex-row gap-4"
+                            onSubmit={async (e) => {
+                                e.preventDefault();
+                                setLoading(true);
+
+                                const pricing_name = (
+                                    e.target as HTMLFormElement
+                                ).elements.namedItem("change_pricing_name") as HTMLSelectElement;
+                                const new_pricing_name = (
+                                    e.target as HTMLFormElement
+                                ).elements.namedItem("new_change_pricing_name") as HTMLInputElement;
+
+                                const res = await fetch("/api/changepricingname", {
+                                    method: "POST",
+                                    body: JSON.stringify({
+                                        pricing_name: pricing_name.value,
+                                        new_pricing_name: new_pricing_name.value,
+                                        cups_or_colors,
+                                    }),
+                                });
+                                if (res.ok) {
+                                    toast.success("Nazwa cennika została zmieniona");
+                                    setPricing_name("");
+                                    setCups_or_colors("");
+                                    setNewPricing(false);
+                                } else {
+                                    toast.error("Wystąpił błąd");
+                                }
+                                setLoading(false);
+                                return;
+                            }}
+                        >
+                            <select
+                                defaultValue=""
+                                id="change_pricing_name"
+                                disabled={!cups_or_colors || loading}
+                                className="border border-black ml-[13px]"
+                            >
+                                <option value="" disabled hidden>
+                                    Wybierz cennik
+                                </option>
+                                {cups_or_colors === "cups" &&
+                                    available_cup_pricings.map((pricing) => (
+                                        <option key={pricing} value={pricing}>
+                                            {pricing}
+                                        </option>
+                                    ))}
+                                {cups_or_colors === "colors" &&
+                                    available_color_pricings.map((pricing) => (
+                                        <option key={pricing} value={pricing}>
+                                            {pricing}
+                                        </option>
+                                    ))}
+                            </select>
+                            <input
+                                id="new_change_pricing_name"
+                                type="text"
+                                placeholder="Nowa nazwa cennika"
+                                disabled={!cups_or_colors || loading}
+                                className="w-96 border border-black px-2"
+                            />
+                            <button
+                                type="submit"
+                                disabled={!cups_or_colors || loading}
+                                className={`px-2 w-24 rounded-md ${
+                                    loading ? "bg-slate-400" : "bg-green-300 hover:bg-green-400"
+                                }`}
+                            >
+                                Wyślij
+                            </button>
+                        </form>
                     </div>
                 </>
             )}

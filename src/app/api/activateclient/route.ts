@@ -25,9 +25,10 @@ export const POST = async (req: NextRequest) => {
         user_id: string;
         cup_pricing: string;
         color_pricing: string;
+        salesman_id: string;
         eu?: boolean;
     };
-    const { user_id, cup_pricing, color_pricing, eu } = data;
+    const { user_id, cup_pricing, color_pricing, salesman_id, eu } = data;
 
     const { data: roleData, error: error1 } = await supabase
         .from("users_restricted")
@@ -51,8 +52,8 @@ export const POST = async (req: NextRequest) => {
         .update({
             cup_pricing,
             color_pricing,
+            salesman_id,
             activated: true,
-            // salesman_id
         })
         .eq("user_id", user_id);
     if (error2) {

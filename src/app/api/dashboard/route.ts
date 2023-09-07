@@ -53,7 +53,7 @@ export const POST = async (req: NextRequest) => {
 
     const clients = users?.filter((user) => user.role === "User");
     const adminsAndSalesmen = users?.filter(
-        (user) => user.role === "Admin" || user.role === "Salesman" // consider getting data from endpoint with service key
+        (user) => user.role === "Admin" || user.role === "Salesman"
     );
 
     const userInfo = users?.find((user) => user.user_id === auth_id);

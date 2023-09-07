@@ -102,15 +102,18 @@ export const DashboardPages = ({
         setLoading(true);
         let cup_pricing = "";
         let color_pricing = "";
+        let salesman_id = "";
         let eu = "" as "EU" | "PL" | "brak" | boolean;
 
         if (e) {
             e.preventDefault();
-            cup_pricing = (e.currentTarget.querySelector("#cup_pricing") as HTMLInputElement)
+            cup_pricing = (e.currentTarget.querySelector("#cup_pricing") as HTMLSelectElement)
                 ?.value;
-            color_pricing = (e.currentTarget.querySelector("#color_pricing") as HTMLInputElement)
+            color_pricing = (e.currentTarget.querySelector("#color_pricing") as HTMLSelectElement)
                 ?.value;
-            eu = (e.currentTarget.querySelector("#eu") as HTMLInputElement)?.value as
+            salesman_id = (e.currentTarget.querySelector("#assigned_salesman") as HTMLSelectElement)
+                ?.value;
+            eu = (e.currentTarget.querySelector("#eu") as HTMLSelectElement)?.value as
                 | "EU"
                 | "PL"
                 | "brak";
@@ -121,12 +124,14 @@ export const DashboardPages = ({
             }
         } else {
             const clientDiv = document.querySelector(`#${user_id}`);
-            cup_pricing = (clientDiv?.querySelector("#cup_pricing") as HTMLInputElement)?.value;
-            color_pricing = (clientDiv?.querySelector("#color_pricing") as HTMLInputElement).value;
+            cup_pricing = (clientDiv?.querySelector("#cup_pricing") as HTMLSelectElement)?.value;
+            color_pricing = (clientDiv?.querySelector("#color_pricing") as HTMLSelectElement).value;
+            salesman_id = (clientDiv?.querySelector("#assigned_salesman") as HTMLSelectElement)
+                .value;
         }
 
-        if (!cup_pricing || !color_pricing) {
-            toast.warn("Uzupełnij cennik klienta");
+        if (!cup_pricing || !color_pricing || !salesman_id) {
+            toast.warn("Uzupełnij cennik klienta i przypisz handlowca");
             setLoading(false);
             return;
         }
@@ -137,7 +142,7 @@ export const DashboardPages = ({
                 user_id,
                 cup_pricing,
                 color_pricing,
-                // salesman_id,
+                salesman_id,
                 ...{ eu: eu === "EU" ? true : eu === "PL" ? false : undefined },
             }),
         });
@@ -151,6 +156,7 @@ export const DashboardPages = ({
                     client.activated = true;
                     client.cup_pricing = cup_pricing;
                     client.color_pricing = color_pricing;
+                    client.salesman_id = salesman_id;
 
                     setClients([...clients]);
                     return;
@@ -186,6 +192,14 @@ export const DashboardPages = ({
                     return;
                 }
             });
+            if (role === "Admin") {
+                clients?.forEach((client) => {
+                    if (client.salesman_id === user_id) {
+                        client.salesman_id = null;
+                        setClients([...clients]);
+                    }
+                });
+            }
             setLoading(false);
             return;
         }
@@ -508,11 +522,14 @@ export const DashboardPages = ({
                                 </li>
                                 <li className="px-2 border border-black w-32 text-center">Kraj</li>
                                 <li className="px-2 border border-black w-64 text-center">Email</li>
-                                <li className="px-2 border border-black w-20 text-center">
+                                <li className="px-2 border border-black w-32 text-center">
                                     Cennik kubków
                                 </li>
-                                <li className="px-2 border border-black w-20 text-center">
+                                <li className="px-2 border border-black w-32 text-center">
                                     Cennik nadruków
+                                </li>
+                                <li className="px-2 border border-black w-60 text-center">
+                                    Przypisany Handlowiec
                                 </li>
                             </ul>
                         </li>
@@ -569,7 +586,7 @@ export const DashboardPages = ({
                                             <li className="px-2 border border-black w-64 text-center">
                                                 {client.email}
                                             </li>
-                                            <li className="px-2 border border-black w-20 text-center">
+                                            <li className="px-2 border border-black w-32 text-center">
                                                 <select
                                                     id="cup_pricing"
                                                     disabled={loading}
@@ -590,7 +607,7 @@ export const DashboardPages = ({
                                                     ))}
                                                 </select>
                                             </li>
-                                            <li className="px-2 border border-black w-20 text-center">
+                                            <li className="px-2 border border-black w-32 text-center">
                                                 <select
                                                     id="color_pricing"
                                                     disabled={loading}
@@ -613,6 +630,29 @@ export const DashboardPages = ({
                                                             </option>
                                                         )
                                                     )}
+                                                </select>
+                                            </li>
+                                            <li className="px-2 border border-black w-60 text-center">
+                                                <select
+                                                    id="assigned_salesman"
+                                                    disabled={loading}
+                                                    defaultValue={
+                                                        client.salesman_id ? client.salesman_id : ""
+                                                    }
+                                                >
+                                                    <option value="" key="brak" disabled hidden>
+                                                        Brak
+                                                    </option>
+                                                    {adminsAndSalesmen
+                                                        ?.filter((item) => item.role === "Salesman")
+                                                        .map((salesman) => (
+                                                            <option
+                                                                key={salesman.user_id}
+                                                                value={salesman.user_id}
+                                                            >
+                                                                {salesman.email}
+                                                            </option>
+                                                        ))}
                                                 </select>
                                             </li>
                                             <button
@@ -678,11 +718,14 @@ export const DashboardPages = ({
                                 </li>
                                 <li className="px-2 border border-black w-32 text-center">Kraj</li>
                                 <li className="px-2 border border-black w-64 text-center">Email</li>
-                                <li className="px-2 border border-black w-20 text-center">
+                                <li className="px-2 border border-black w-32 text-center">
                                     Cennik kubków
                                 </li>
-                                <li className="px-2 border border-black w-20 text-center">
+                                <li className="px-2 border border-black w-32 text-center">
                                     Cennik nadruków
+                                </li>
+                                <li className="px-2 border border-black w-60 text-center">
+                                    Przypisany Handlowiec
                                 </li>
                             </ul>
                         </li>
@@ -728,7 +771,7 @@ export const DashboardPages = ({
                                         <li className="px-2 border border-black w-64 text-center">
                                             {client.email}
                                         </li>
-                                        <li className="px-2 border border-black w-20 text-center">
+                                        <li className="px-2 border border-black w-32 text-center">
                                             <select
                                                 id="cup_pricing"
                                                 disabled={loading}
@@ -748,7 +791,7 @@ export const DashboardPages = ({
                                                 ))}
                                             </select>
                                         </li>
-                                        <li className="px-2 border border-black w-20 text-center">
+                                        <li className="px-2 border border-black w-32 text-center">
                                             <select
                                                 id="color_pricing"
                                                 disabled={loading}
@@ -769,6 +812,31 @@ export const DashboardPages = ({
                                                         {color_pricing}
                                                     </option>
                                                 ))}
+                                            </select>
+                                        </li>
+                                        <li className="px-2 border border-black w-60 text-center">
+                                            <select
+                                                id="assigned_salesman"
+                                                disabled={loading}
+                                                onChange={() => handleActication(client.user_id)}
+                                                className={`${loading && "bg-slate-400"}`}
+                                                defaultValue={
+                                                    client.salesman_id ? client.salesman_id : ""
+                                                }
+                                            >
+                                                <option value="" key="brak" disabled hidden>
+                                                    Brak
+                                                </option>
+                                                {adminsAndSalesmen
+                                                    ?.filter((item) => item.role === "Salesman")
+                                                    .map((salesman) => (
+                                                        <option
+                                                            key={salesman.user_id}
+                                                            value={salesman.user_id}
+                                                        >
+                                                            {salesman.email}
+                                                        </option>
+                                                    ))}
                                             </select>
                                         </li>
                                         <button

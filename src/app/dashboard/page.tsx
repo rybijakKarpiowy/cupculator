@@ -157,6 +157,7 @@ export interface Client {
     activated?: boolean | undefined;
     color_pricing?: string | null | undefined;
     cup_pricing?: string | null | undefined;
+    salesman_id: string | null;
     role: "User" | "Salesman" | "Admin";
     email: string;
     user_id: string;

@@ -61,9 +61,18 @@ export const POST = async (req: NextRequest) => {
                 cup_pricing: users_restricted.cup_pricing,
                 // @ts-ignore
                 color_pricing: users_restricted.color_pricing,
+                // @ts-ignore
+                salesman_id: users_restricted.salesman_id,
             };
         })
         .filter((user) => user !== null);
 
+    if (roleData[0].role === "Salesman") {
+        // If the user is a salesman, filter out the users that are not assigned to him
+        const salesmansUsers = allUsersData.filter((user) => user?.salesman_id === auth_id);
+        return NextResponse.json(salesmansUsers, { status: 200 });
+    }
+
+    // If the user is an admin, return all users
     return NextResponse.json(allUsersData, { status: 200 });
 };

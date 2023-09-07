@@ -101,7 +101,7 @@ export default function Register() {
             email: userData.email,
             password: userData.password,
             options: {
-                emailRedirectTo: new URL("/", baseUrl).href
+                emailRedirectTo: new URL(`/?cup=${cup}&lang=${lang}`, baseUrl).href,
             },
         });
 

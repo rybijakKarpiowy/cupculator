@@ -24,6 +24,7 @@ export async function middleware(req: NextRequest) {
     const session = await supabase.auth.getSession();
 
     if (session.data.session) {
+        // Continue middleware
         if (["/resetpassword", "/account/details"].includes(req.nextUrl.pathname)) {
             if (setBaseParams) {
                 return NextResponse.redirect(

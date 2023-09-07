@@ -15,7 +15,6 @@ const baseUrl = (
         : "http://localhost:3000"
 ) as string;
 
-
 export default function Register() {
     const [loading, setLoading] = useState(false);
 
@@ -102,7 +101,7 @@ export default function Register() {
             email: userData.email,
             password: userData.password,
             options: {
-                emailRedirectTo: new URL("/", baseUrl).toString(),
+                emailRedirectTo: new URL("/", baseUrl).href
             },
         });
 

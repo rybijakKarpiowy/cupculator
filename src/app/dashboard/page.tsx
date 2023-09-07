@@ -7,14 +7,7 @@ import { redirect } from "next/navigation";
 import { Restriction } from "@/lib/checkRestriction";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-
-const baseUrl = (
-    process.env.PROD === "true"
-        ? "https://cupculator.vercel.app"
-        : process.env.DEV === "true"
-        ? "https://cupculator-rybijakkarpiowy.vercel.app"
-        : "http://localhost:3000"
-) as string;
+import { baseUrl } from "@/app/baseUrl";
 
 export const dynamic = "force-dynamic";
 

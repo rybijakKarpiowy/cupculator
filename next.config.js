@@ -11,6 +11,10 @@ const nextConfig = {
           },
         ]
     },
+    env: {
+        PROD: process.env.PROD,
+        DEV: process.env.DEV,
+    },
 };
 
 module.exports = nextConfig;

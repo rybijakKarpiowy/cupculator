@@ -2,14 +2,7 @@ import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
 import { Database } from "./database/types";
-
-const baseUrl = (
-    process.env.PROD === "true"
-        ? "https://cupculator.vercel.app"
-        : process.env.DEV === "true"
-        ? "https://cupculator-rybijakkarpiowy.vercel.app"
-        : "http://localhost:3000"
-) as string;
+import { baseUrl } from "@/app/baseUrl";
 
 export async function middleware(req: NextRequest) {
     const searchParams = new URL(req.url).searchParams;

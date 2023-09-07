@@ -2,14 +2,7 @@ import { supabase } from "@/database/supabase";
 import { Database } from "@/database/types";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { NextRequest, NextResponse } from "next/server";
-
-const baseUrl = (
-    process.env.PROD === "true"
-        ? "https://cupculator.vercel.app"
-        : process.env.DEV === "true"
-        ? "https://cupculator-rybijakkarpiowy.vercel.app"
-        : "http://localhost:3000"
-) as string;
+import { baseUrl } from "@/app/baseUrl";
 
 export const POST = async (req: NextRequest) => {
     const res = NextResponse.next();
@@ -48,7 +41,7 @@ export const POST = async (req: NextRequest) => {
         email,
         password,
         options: {
-            emailRedirectTo: new URL("/", baseUrl).toString(),
+            emailRedirectTo: new URL("/", baseUrl).href,
         },
     });
 

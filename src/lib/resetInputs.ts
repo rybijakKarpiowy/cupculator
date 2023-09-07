@@ -4,6 +4,7 @@ export const resetInputs = (document: Document, toReset: ToReset) => {
         soft_touch,
         pro_color,
         imprintType,
+        imprintColors,
         nadruk_na_wewnatrz_sciance,
         nadruk_na_uchu,
         nadruk_na_spodzie,
@@ -49,7 +50,14 @@ export const resetInputs = (document: Document, toReset: ToReset) => {
         }
         const imprintColors = document.getElementById("imprintColors") as HTMLSelectElement | null;
         if (imprintColors) {
-            imprintColors.value = "";
+            imprintColors.value = "1";
+        }
+    }
+
+    if (imprintColors) {
+        const imprintColors = document.getElementById("imprintColors") as HTMLSelectElement | null;
+        if (imprintColors) {
+            imprintColors.value = "1";
         }
     }
 
@@ -206,6 +214,7 @@ interface ToReset {
     soft_touch?: boolean;
     pro_color?: boolean;
     imprintType?: boolean;
+    imprintColors?: boolean;
     nadruk_na_wewnatrz_sciance?: boolean;
     nadruk_na_uchu?: boolean;
     nadruk_na_spodzie?: boolean;

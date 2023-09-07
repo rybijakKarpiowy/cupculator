@@ -127,6 +127,10 @@ export const calculatePrices = ({
                     prepCost += nextColor.prepCost * (cupConfig.imprintColors - 6);
                 }
             }
+            if (selectedCup.digital_print) {
+                imprintCost += colorPricing.digital_print.prices[amountRange];
+                prepCost += colorPricing.digital_print.prepCost;
+            }
             break;
         case "polylux_2":
             nextColor = colorPricing.polylux.find((item) => item.colorCount === "kolejny");

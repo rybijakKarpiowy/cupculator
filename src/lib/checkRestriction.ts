@@ -96,15 +96,17 @@ export const checkRestriction = ({
                         cupConfig.imprintType === "deep_effect_2"
                     )
                         return true;
-
+                    break;
                 case "deep_effect_plus":
                     if (
                         cupConfig.imprintType === "deep_effect_1" ||
                         cupConfig.imprintType === "deep_effect_2"
                     )
                         return true;
+                    break;
                 case "digital_print":
                     if (cupConfig.imprintType === "digital_print") return true;
+                    break;
                 case "polylux":
                     if (
                         cupConfig.imprintType === "polylux_1" ||
@@ -112,6 +114,7 @@ export const checkRestriction = ({
                         cupConfig.imprintType === "polylux_round"
                     )
                         return true;
+                    break;
                 case "transfer_plus":
                     if (
                         cupConfig.imprintType === "transfer_plus_1" ||
@@ -119,8 +122,10 @@ export const checkRestriction = ({
                         cupConfig.imprintType === "transfer_plus_round"
                     )
                         return true;
+                    break;
                 case "direct_print":
                     if (cupConfig.imprintType === "direct_print") return true;
+                    break;
                 default:
                     continue;
             }

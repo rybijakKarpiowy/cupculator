@@ -647,7 +647,11 @@ export const Calculator = ({
                     <div className="flex flex-row justify-between items-center">
                         {lang === "1" ? "Wybierz nadruk: " : "Select print type: "}
                         <select
-                            defaultValue={(!selectedCup.digital_print && selectedCup.transfer_plus) ? "transfer_plus_1" : ""}
+                            defaultValue={
+                                !selectedCup.digital_print && selectedCup.transfer_plus
+                                    ? "transfer_plus_1"
+                                    : ""
+                            }
                             id="imprintType"
                             onChange={(e) => {
                                 if (e.target.value === cupConfig.imprintType) return;
@@ -672,6 +676,7 @@ export const Calculator = ({
                                     wkladanie_ulotek_do_kubka: false,
                                 });
                                 resetInputs(document, {
+                                    imprintColors: true,
                                     nadruk_na_wewnatrz_sciance: true,
                                     nadruk_na_uchu: true,
                                     nadruk_na_spodzie: true,
@@ -711,9 +716,7 @@ export const Calculator = ({
                         >
                             <option value="">{lang === "1" ? "Brak" : "None"}</option>
                             {selectedCup.direct_print && !forbidden.direct_print && (
-                                <option value="direct_print">
-                                    Direct print
-                                </option>
+                                <option value="direct_print">Direct print</option>
                             )}
                             {selectedCup.transfer_plus && !forbidden.transfer_plus && (
                                 <>
@@ -734,19 +737,30 @@ export const Calculator = ({
                                     </option>
                                 </>
                             )}
-                            {selectedCup.polylux && !forbidden.polylux && (
-                                <>
+                            {selectedCup.polylux &&
+                                !forbidden.polylux &&
+                                !selectedCup.digital_print && (
+                                    <>
+                                        <option value="polylux_1">
+                                            Polylux {lang === "1" ? "1 strona" : "1 side"}
+                                        </option>
+                                        <option value="polylux_2">
+                                            Polylux {lang === "1" ? "2 strony" : "2 sides"}
+                                        </option>
+                                        <option value="polylux_round">
+                                            Polylux {lang === "1" ? "tapeta" : "wallpaper"}
+                                        </option>
+                                    </>
+                                )}
+                            {selectedCup.polylux &&
+                                !forbidden.polylux &&
+                                selectedCup.digital_print && (
                                     <option value="polylux_1">
-                                        Polylux {lang === "1" ? "1 strona" : "1 side"}
+                                        {lang === "1"
+                                            ? "Nadruk cyfrowy + Polylux"
+                                            : "Digital print + Polylux"}
                                     </option>
-                                    <option value="polylux_2">
-                                        Polylux {lang === "1" ? "2 strony" : "2 sides"}
-                                    </option>
-                                    <option value="polylux_round">
-                                        Polylux {lang === "1" ? "tapeta" : "wallpaper"}
-                                    </option>
-                                </>
-                            )}
+                                )}
                             {selectedCup.deep_effect && !forbidden.deep_effect && (
                                 <>
                                     <option value="deep_effect_1">
@@ -781,7 +795,7 @@ export const Calculator = ({
                             "deep_effect_plus_1",
                             "deep_effect_plus_2",
                         ].includes(cupConfig.imprintType) && (
-                            <div className="flex flex-row justify-between items-center">
+                            <div className="flex flex-row justify-between items-center relative">
                                 {lang === "1"
                                     ? "Liczba kolorów nadruku: "
                                     : "Number of print colors: "}
@@ -840,6 +854,14 @@ export const Calculator = ({
                                             )
                                         )}
                                 </select>
+                                {selectedCup.digital_print &&
+                                    cupConfig.imprintType === "polylux_1" && (
+                                        <span className="absolute left-0 -bottom-4 text-xs text-slate-600">
+                                            {lang === "1"
+                                                ? "Liczba kolorów dotyczy tylko polylux"
+                                                : "Number of colors applies to polylux only"}
+                                        </span>
+                                    )}
                             </div>
                         )}
                 </div>

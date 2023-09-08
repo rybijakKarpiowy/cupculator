@@ -4,6 +4,8 @@ import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/database/types";
 import sgmail from "@sendgrid/mail";
 import { baseUrl } from "@/app/baseUrl";
+import { activationEu } from "@/app/emails/activationEu";
+import { activationPl } from "@/app/emails/activationPl";
 
 export const POST = async (req: NextRequest) => {
     const res = NextResponse.next();
@@ -79,8 +81,11 @@ export const POST = async (req: NextRequest) => {
                 email: "biuro@kubki.com.pl",
             },
             subject: "Your account has been activated",
-            text: "Your account has been activated, you can now log in our calculator at https://kubki.com.pl",
-            html: "Your account has been activated, you can now log in our calculator at https://kubki.com.pl",
+            text:
+                eu === true
+                    ? "Your account has been activated, you can now log in our calculator at https://kubki.com.pl"
+                    : "Twoje konto zostało aktywowane, możesz teraz zalogować się do naszego kalkulatora na stronie https://kubki.com.pl",
+            html: eu === true ? activationEu : activationPl,
         };
 
         sgmail.setApiKey(process.env.SENDGRID_KEY!);

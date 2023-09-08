@@ -7,6 +7,7 @@ import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { ProductsCardTab } from "./dashboardPages/productsCardTab";
 
 export const DashboardPages = ({
     clientsInput,
@@ -38,6 +39,7 @@ export const DashboardPages = ({
         | "pricings"
         | "additionalValues"
         | "restrictions"
+        | "productsCard"
     >("activationRequests");
     const [loading, setLoading] = useState(false);
     const [addAdmin, setAddAdmin] = useState(false);
@@ -48,8 +50,23 @@ export const DashboardPages = ({
     const [newPricing, setNewPricing] = useState(false);
     const [additionalValuesState, setAdditionalValuesState] = useState(additionalValues);
     const [restrictionsState, setRestrictionsState] = useState<Restriction[]>(restrictions);
+    const [cupsData, setCupsData] = useState<Database["public"]["Tables"]["cups"]["Row"][]>([]);
 
     const supabase = createClientComponentClient<Database>();
+
+    (async () => {
+        const {data, error} = await supabase.from("cups").select("*");
+        if (error) {
+            console.error(error);
+            return;
+        }
+        if (!data || data.length === 0) {
+            console.error("No data");
+            return;
+        }
+        setCupsData(data);
+    })()
+
 
     useEffect(() => {
         const cupsOrColorsDiv = document.querySelector("#cups_or_colors") as HTMLSelectElement;
@@ -483,6 +500,14 @@ export const DashboardPages = ({
                             onClick={() => setChosenTab("restrictions")}
                         >
                             Wykluczenia
+                        </button>
+                        <button
+                            className={`${
+                                chosenTab === "productsCard" ? "bg-slate-400" : "bg-slate-300"
+                            } px-2 rounded-md`}
+                            onClick={() => setChosenTab("productsCard")}
+                        >
+                            Karta produktów
                         </button>
                     </>
                 )}
@@ -1108,6 +1133,12 @@ export const DashboardPages = ({
                                     e.target as HTMLFormElement
                                 ).elements.namedItem("new_change_pricing_name") as HTMLInputElement;
 
+                                if (!pricing_name.value || !new_pricing_name.value) {
+                                    toast.warn("Wypełnij wszystkie pola");
+                                    setLoading(false);
+                                    return;
+                                }
+
                                 const res = await fetch("/api/changepricingname", {
                                     method: "POST",
                                     body: JSON.stringify({
@@ -1117,7 +1148,9 @@ export const DashboardPages = ({
                                     }),
                                 });
                                 if (res.ok) {
-                                    toast.success("Nazwa cennika została zmieniona");
+                                    toast.success(
+                                        "Nazwa cennika została zmieniona, odśwież stronę aby zobaczyć zmiany"
+                                    );
                                     setPricing_name("");
                                     setCups_or_colors("");
                                     setNewPricing(false);
@@ -1450,6 +1483,7 @@ export const DashboardPages = ({
                     </ul>
                 </div>
             )}
+            {user?.role === "Admin" && chosenTab === "productsCard" && <ProductsCardTab cupsData={cupsData} />}
         </div>
     );
 };

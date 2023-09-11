@@ -12,6 +12,7 @@ import { PricesDisplay } from "./pricesDisplay";
 import { Restriction, getNewForbidden } from "@/lib/checkRestriction";
 import { PalletQuantities } from "./palletQuantities";
 import { resetInputs } from "@/lib/resetInputs";
+import { translateColor } from "@/lib/translateColor";
 
 export const Calculator = ({
     cupData,
@@ -325,7 +326,7 @@ export const Calculator = ({
                             .sort((a, b) => a.color.localeCompare(b.color))
                             .map((cup) => (
                                 <option key={cup.code} value={cup.code}>
-                                    {cup.color}
+                                    {lang === "1" ? cup.color : translateColor(cup.color)}
                                 </option>
                             ))}
                     </select>
@@ -752,15 +753,6 @@ export const Calculator = ({
                                         </option>
                                     </>
                                 )}
-                            {selectedCup.polylux &&
-                                !forbidden.polylux &&
-                                selectedCup.digital_print && (
-                                    <option value="polylux_1">
-                                        {lang === "1"
-                                            ? "Nadruk cyfrowy + Polylux"
-                                            : "Digital print + Polylux"}
-                                    </option>
-                                )}
                             {selectedCup.deep_effect && !forbidden.deep_effect && (
                                 <>
                                     <option value="deep_effect_1">
@@ -786,6 +778,15 @@ export const Calculator = ({
                                     {lang === "1" ? "Nadruk cyfrowy" : "Digital print"}
                                 </option>
                             )}
+                            {selectedCup.polylux &&
+                                !forbidden.polylux &&
+                                selectedCup.digital_print && (
+                                    <option value="polylux_1">
+                                        {lang === "1"
+                                            ? "Nadruk cyfrowy + Polylux"
+                                            : "Digital print + Polylux"}
+                                    </option>
+                                )}
                         </select>
                     </div>
                     {cupConfig.imprintType &&

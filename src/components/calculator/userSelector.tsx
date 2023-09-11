@@ -59,13 +59,17 @@ export const UserSelector = ({
                 <option value="" disabled hidden>
                     Wybierz klienta
                 </option>
-                {allUsersData.map((user) => {
-                    return (
-                        <option key={user.user_id} value={user.user_id}>
-                            {user.company_name}
-                        </option>
-                    );
-                })}
+                {allUsersData
+                    .sort((a, b) =>
+                        a.company_name.localeCompare(b.company_name, "pl", { sensitivity: "base" })
+                    )
+                    .map((user) => {
+                        return (
+                            <option key={user.user_id} value={user.user_id}>
+                                {user.company_name}
+                            </option>
+                        );
+                    })}
             </select>
             {loading && <div>{lang === "1" ? "Ładowanie..." : "Loading..."}</div>}
             {isError && cup !== "null" && (

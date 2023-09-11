@@ -1,6 +1,5 @@
 "use client";
 
-import { Database } from "@/database/types";
 import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import Image from "next/image";
 import Link from "next/link";
@@ -60,11 +59,7 @@ export const Navbar = ({
                         className="lg:-ml-[15px] float-left p-[15px] text-lg leading-5 h-[50px]"
                         href={`https://kubki.com.pl/?lang=${lang}`}
                     >
-                        <Image
-                            className="h-[80px] w-auto"
-                            src={logo20years}
-                            alt="Kubki.com.pl"
-                        />
+                        <Image className="h-[80px] w-auto" src={logo20years} alt="Kubki.com.pl" />
                     </Link>
                 </div>
 
@@ -184,11 +179,18 @@ export const Navbar = ({
                         </>
                     )}
                     {authUser && (role == "Admin" || role == "Salesman") && (
-                        <li className="absolute block h-[33px] -right-[158px] top-[47px]">
-                            <Link href={`/dashboard?cup=${cup}&lang=${lang}`} className="tab">
-                                Panel
-                            </Link>
-                        </li>
+                        <ul>
+                            <li className="absolute block h-[33px] -right-[158px] top-[47px]">
+                                <Link href={`/dashboard?cup=${cup}&lang=${lang}`} className="tab">
+                                    Panel
+                                </Link>
+                            </li>
+                            <li className="absolute block h-[33px] -right-[260px] top-[47px]">
+                                <Link href={`/?cup=${cup}&lang=${lang}`} className="tab">
+                                    Kalkulator
+                                </Link>
+                            </li>
+                        </ul>
                     )}
                 </div>
             </div>

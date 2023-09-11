@@ -55,7 +55,7 @@ export const DashboardPages = ({
     const supabase = createClientComponentClient<Database>();
 
     (async () => {
-        const {data, error} = await supabase.from("cups").select("*");
+        const { data, error } = await supabase.from("cups").select("*");
         if (error) {
             console.error(error);
             return;
@@ -65,8 +65,7 @@ export const DashboardPages = ({
             return;
         }
         setCupsData(data);
-    })()
-
+    })();
 
     useEffect(() => {
         const cupsOrColorsDiv = document.querySelector("#cups_or_colors") as HTMLSelectElement;
@@ -622,14 +621,16 @@ export const DashboardPages = ({
                                                     <option value="" key="brak" disabled hidden>
                                                         Brak
                                                     </option>
-                                                    {available_cup_pricings.map((cup_pricing) => (
-                                                        <option
-                                                            key={cup_pricing}
-                                                            value={cup_pricing}
-                                                        >
-                                                            {cup_pricing}
-                                                        </option>
-                                                    ))}
+                                                    {available_cup_pricings
+                                                        .sort()
+                                                        .map((cup_pricing) => (
+                                                            <option
+                                                                key={cup_pricing}
+                                                                value={cup_pricing}
+                                                            >
+                                                                {cup_pricing}
+                                                            </option>
+                                                        ))}
                                                 </select>
                                             </li>
                                             <li className="px-2 border border-black w-32 text-center">
@@ -645,16 +646,16 @@ export const DashboardPages = ({
                                                     <option value="" key="brak" disabled hidden>
                                                         Brak
                                                     </option>
-                                                    {available_color_pricings.map(
-                                                        (color_pricing) => (
+                                                    {available_color_pricings
+                                                        .sort()
+                                                        .map((color_pricing) => (
                                                             <option
                                                                 key={color_pricing}
                                                                 value={color_pricing}
                                                             >
                                                                 {color_pricing}
                                                             </option>
-                                                        )
-                                                    )}
+                                                        ))}
                                                 </select>
                                             </li>
                                             <li className="px-2 border border-black w-60 text-center">
@@ -670,6 +671,9 @@ export const DashboardPages = ({
                                                     </option>
                                                     {adminsAndSalesmen
                                                         ?.filter((item) => item.role === "Salesman")
+                                                        .sort((a, b) =>
+                                                            a.email.localeCompare(b.email)
+                                                        )
                                                         .map((salesman) => (
                                                             <option
                                                                 key={salesman.user_id}
@@ -809,11 +813,16 @@ export const DashboardPages = ({
                                                 <option value="" key="brak" disabled hidden>
                                                     Brak
                                                 </option>
-                                                {available_cup_pricings.map((cup_pricing) => (
-                                                    <option key={cup_pricing} value={cup_pricing}>
-                                                        {cup_pricing}
-                                                    </option>
-                                                ))}
+                                                {available_cup_pricings
+                                                    .sort()
+                                                    .map((cup_pricing) => (
+                                                        <option
+                                                            key={cup_pricing}
+                                                            value={cup_pricing}
+                                                        >
+                                                            {cup_pricing}
+                                                        </option>
+                                                    ))}
                                             </select>
                                         </li>
                                         <li className="px-2 border border-black w-32 text-center">
@@ -829,14 +838,16 @@ export const DashboardPages = ({
                                                 <option value="" key="brak" disabled hidden>
                                                     Brak
                                                 </option>
-                                                {available_color_pricings.map((color_pricing) => (
-                                                    <option
-                                                        key={color_pricing}
-                                                        value={color_pricing}
-                                                    >
-                                                        {color_pricing}
-                                                    </option>
-                                                ))}
+                                                {available_color_pricings
+                                                    .sort()
+                                                    .map((color_pricing) => (
+                                                        <option
+                                                            key={color_pricing}
+                                                            value={color_pricing}
+                                                        >
+                                                            {color_pricing}
+                                                        </option>
+                                                    ))}
                                             </select>
                                         </li>
                                         <li className="px-2 border border-black w-60 text-center">
@@ -854,6 +865,7 @@ export const DashboardPages = ({
                                                 </option>
                                                 {adminsAndSalesmen
                                                     ?.filter((item) => item.role === "Salesman")
+                                                    .sort((a, b) => a.email.localeCompare(b.email))
                                                     .map((salesman) => (
                                                         <option
                                                             key={salesman.user_id}
@@ -1078,7 +1090,7 @@ export const DashboardPages = ({
                                 Wybierz cennik
                             </option>
                             {cups_or_colors === "cups" &&
-                                available_cup_pricings.map((pricing) => (
+                                available_cup_pricings.sort().map((pricing) => (
                                     <option key={pricing} value={pricing}>
                                         {pricing}
                                     </option>
@@ -1177,7 +1189,7 @@ export const DashboardPages = ({
                                         </option>
                                     ))}
                                 {cups_or_colors === "colors" &&
-                                    available_color_pricings.map((pricing) => (
+                                    available_color_pricings.sort().map((pricing) => (
                                         <option key={pricing} value={pricing}>
                                             {pricing}
                                         </option>
@@ -1483,7 +1495,9 @@ export const DashboardPages = ({
                     </ul>
                 </div>
             )}
-            {user?.role === "Admin" && chosenTab === "productsCard" && <ProductsCardTab cupsData={cupsData} />}
+            {user?.role === "Admin" && chosenTab === "productsCard" && (
+                <ProductsCardTab cupsData={cupsData} />
+            )}
         </div>
     );
 };

@@ -78,7 +78,7 @@ export const PricesDisplay = ({
                 </p>
             )}
             <p>
-                {calculatedPrices.prep && calculatedPrices.unit && amount
+                {calculatedPrices.prep !== null && calculatedPrices.unit !== null && amount
                     ? calculatedPrices.transport
                         ? priceToString(
                               Math.round(

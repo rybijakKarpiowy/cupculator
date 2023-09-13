@@ -472,6 +472,7 @@ export const Calculator = ({
                                         ...cupConfig,
                                         trend_color: e.target
                                             .value as CupConfigInterface["trend_color"],
+                                        pro_color: false,
                                         imprintType: "",
                                         imprintColors: 0,
                                         nadruk_wewnatrz_na_sciance: 0,
@@ -490,6 +491,7 @@ export const Calculator = ({
                                         wkladanie_ulotek_do_kubka: false,
                                     });
                                     resetInputs(document, {
+                                        pro_color: true,
                                         imprintType: true,
                                         nadruk_na_wewnatrz_sciance: true,
                                         nadruk_na_uchu: true,
@@ -588,7 +590,7 @@ export const Calculator = ({
                             </select>
                         </div>
                     )}
-                    {selectedCup.pro_color && (
+                    {selectedCup.pro_color && !(cupConfig.trend_color === "inside") && (
                         <div className="flex flex-row justify-between items-center">
                             Pro Color:
                             <select
@@ -953,7 +955,7 @@ export const Calculator = ({
                             </p>
                         </div>
                     )}
-                    {selectedCup.nadruk_na_dnie && !forbidden.nadruk_na_dnie && (
+                    {selectedCup.nadruk_na_dnie && cupConfig.trend_color !== "inside" && !forbidden.nadruk_na_dnie && (
                         <div className="flex flex-row gap-2 items-center mx-4">
                             <input
                                 type="checkbox"

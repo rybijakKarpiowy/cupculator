@@ -1391,6 +1391,7 @@ export const DashboardPages = ({
                                         "deep_effect",
                                         "deep_effect_plus",
                                         "digital_print",
+                                        "pro_color",
                                     ].map((iT) => (
                                         <option key={iT} value={iT}>
                                             {iT}

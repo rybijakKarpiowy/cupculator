@@ -60,11 +60,11 @@ export const PricesDisplay = ({
                 {lang === "1" ? " szt." : " pcs."}
             </p>
             <p>
-                {calculatedPrices.unit === null
-                    ? ""
-                    : priceToString(
-                          Math.round((calculatedPrices.unit + singleCardboardPrice) * 100) / 100
-                      )}
+                {calculatedPrices.unit === null ? "" : priceToString(calculatedPrices.unit)}
+                {clientPriceUnit}
+            </p>
+            <p>
+                {singleCardboardPrice ? priceToString(singleCardboardPrice) : "0.00"}
                 {clientPriceUnit}
             </p>
             <p>

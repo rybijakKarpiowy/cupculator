@@ -219,7 +219,7 @@ export const Calculator = ({
                     <div className="flex flex-col relative w-80">
                         <p>{lang === "1" ? "Ilość: " : "Amount: "}</p>
                         <p>{lang === "1" ? "Jednostkowa cena produktu: " : "Price per unit: "}</p>
-                        <p>{lang === "1" ? "Koszt kartonika: " : "Packaging cost: "}</p>
+                        <p>{lang === "1" ? "Koszt kartonika/szt: " : "Packaging cost per unit: "}</p>
                         <p>{lang === "1" ? "Koszt przygotowalni: " : "Set up cost: "}</p>
                         {clientPriceUnit === "zł" && (
                             <p>{lang === "1" ? "Koszt transportu: " : "Transport cost: "}</p>

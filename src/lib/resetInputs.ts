@@ -1,4 +1,4 @@
-export const resetInputs = (document: Document, toReset: ToReset) => {
+export const resetInputs = async (document: Document, toReset: ToReset) => {
     const {
         trend_color,
         soft_touch,
@@ -62,15 +62,16 @@ export const resetInputs = (document: Document, toReset: ToReset) => {
     }
 
     if (nadruk_na_wewnatrz_sciance) {
-        const nadruk_na_wewnatrz_sciance = document.getElementById(
-            "nadruk_na_wewnatrz_sciance"
-        ) as HTMLInputElement | null;
+        const nadruk_na_wewnatrz_sciance = (await document.getElementById(
+            "nadruk_wewnatrz_na_sciance"
+        )) as HTMLInputElement | null;
+        console.log(nadruk_na_wewnatrz_sciance);
         if (nadruk_na_wewnatrz_sciance) {
             nadruk_na_wewnatrz_sciance.checked = false;
         }
-        const nadruk_wewnatrz_na_sciance_select = document.getElementById(
+        const nadruk_wewnatrz_na_sciance_select = (await document.getElementById(
             "nadruk_wewnatrz_na_sciance_select"
-        ) as HTMLSelectElement | null;
+        )) as HTMLSelectElement | null;
         if (nadruk_wewnatrz_na_sciance_select) {
             nadruk_wewnatrz_na_sciance_select.value = "1";
         }

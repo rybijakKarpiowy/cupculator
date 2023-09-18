@@ -13,6 +13,7 @@ import { Restriction, getNewForbidden } from "@/lib/checkRestriction";
 import { PalletQuantities } from "./palletQuantities";
 import { resetInputs } from "@/lib/resetInputs";
 import { translateColor } from "@/lib/translateColor";
+import { downloadPdf } from "@/lib/downloadPdf";
 
 export const Calculator = ({
     cupData,
@@ -29,6 +30,7 @@ export const Calculator = ({
     additionalValues: Database["public"]["Tables"]["additional_values"]["Row"];
     restrictions: Restriction[];
 }) => {
+    const [loading, setLoading] = useState(false);
     const [selectedCup, setSelectedCup] = useState<Cup>(
         cupData.sort((a, b) => a.color.localeCompare(b.color))[0]
     );
@@ -219,7 +221,9 @@ export const Calculator = ({
                     <div className="flex flex-col relative w-80">
                         <p>{lang === "1" ? "Ilość: " : "Amount: "}</p>
                         <p>{lang === "1" ? "Jednostkowa cena produktu: " : "Price per unit: "}</p>
-                        <p>{lang === "1" ? "Koszt kartonika/szt: " : "Packaging cost per unit: "}</p>
+                        <p>
+                            {lang === "1" ? "Koszt kartonika/szt: " : "Packaging cost per unit: "}
+                        </p>
                         <p>{lang === "1" ? "Koszt przygotowalni: " : "Set up cost: "}</p>
                         {clientPriceUnit === "zł" && (
                             <p>{lang === "1" ? "Koszt transportu: " : "Transport cost: "}</p>
@@ -1323,7 +1327,7 @@ export const Calculator = ({
                                 {lang === "1" ? "Opakowanie zbiorcze" : "Bulk packaging"}
                             </option>
                             <option value="singular">
-                                {lang === "1" ? "Kartoniki jednostkowe" : "Unit cartons"}
+                                {lang === "1" ? "Kartoniki jednostkowe" : "Single boxes"}
                             </option>
                             {selectedCup.category !== "filiżanka" && (
                                 <>
@@ -1337,7 +1341,6 @@ export const Calculator = ({
                             )}
                         </select>
                     </div>
-
                     <PalletQuantities
                         lang={lang}
                         selectedCardboard={cupConfig.cardboard}
@@ -1360,6 +1363,29 @@ export const Calculator = ({
                         keep={amounts.inputs > 2}
                     />
                 </div>
+            </div>
+            <div className="mt-5 w-full flex justify-center">
+                <button
+                    className={`px-2 py-1 rounded-md ${
+                        loading || (!amounts.amount1 && !amounts.amount2 && !amounts.amount3)
+                            ? "bg-slate-400"
+                            : "bg-green-300 hover:bg-green-400"
+                    }`}
+                    onClick={() =>
+                        downloadPdf({
+                            amounts,
+                            cupConfig,
+                            selectedCup,
+                            lang,
+                            additionalValues,
+                            colorPricing,
+                            clientPriceUnit,
+                        })
+                    }
+                    disabled={loading || (!amounts.amount1 && !amounts.amount2 && !amounts.amount3)}
+                >
+                    {lang === "1" ? "Pobierz potwierdzenie" : "Download confirmation"}
+                </button>
             </div>
         </div>
     );

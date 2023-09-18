@@ -1,3 +1,5 @@
+"use client";
+
 import { Cup } from "@/app/api/updatecups/route";
 import { Database } from "@/database/types";
 import { ColorPricing } from "@/lib/colorPricingType";
@@ -7,6 +9,7 @@ import { CupConfigInterface } from "./calculator";
 import { calculatePrices } from "@/lib/calculatePrices";
 import { priceToString } from "@/lib/priceToString";
 import { getPalletQuantities } from "@/lib/getPalletQuantities";
+import { useState } from "react";
 
 export const PdfPage = ({
     amounts,
@@ -16,6 +19,7 @@ export const PdfPage = ({
     cupConfig,
     lang,
     clientPriceUnit,
+    iconImg,
 }: {
     amounts: {
         amount1: number | null;
@@ -29,7 +33,14 @@ export const PdfPage = ({
     cupConfig: CupConfigInterface;
     lang: "1" | "2";
     clientPriceUnit: "zł" | "EUR";
+    iconImg: Blob | null;
 }) => {
+    const [imageSourceUrl, setImageSourceUrl] = useState<string | null>(null);
+
+    if (iconImg && !imageSourceUrl) {
+        setImageSourceUrl(URL.createObjectURL(iconImg));
+    }
+
     let calculatedPrices = {
         1: {
             unit: null as number | null,
@@ -156,8 +167,8 @@ export const PdfPage = ({
                 </Text>
                 <View style={{ display: "flex", flexDirection: "row" }}>
                     <Image
-                        src={selectedCup.icon ? selectedCup.icon : "/noimage.png"}
-                        style={{ height: "125px", width: "100px", objectFit: "cover" }}
+                        src={imageSourceUrl || "/noimage.png"}
+                        style={{ height: "125px", width: "100px", objectFit: "contain" }}
                     />
                     <View style={{ display: "flex", flexDirection: "column", marginLeft: 10 }}>
                         <Text style={styles.p}>{selectedCup.code}</Text>

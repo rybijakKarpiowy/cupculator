@@ -30,6 +30,17 @@ export const downloadPdf = async ({
 }) => {
     const fileName = `${selectedCup.name}-${lang === "1" ? "cena" : "price"}.pdf`;
 
+    let iconImg: Blob | null = null;
+    if (selectedCup.icon) {
+        const res = await fetch("/api/geticon", {
+            method: "POST",
+            body: JSON.stringify({ icon: selectedCup.icon }),
+        });
+        if (res.ok) {
+            iconImg = await res.blob();
+        }
+    }
+
     const DownloadDocument = () => {
         return (
             <Document>
@@ -41,6 +52,7 @@ export const downloadPdf = async ({
                     cupConfig={cupConfig}
                     lang={lang}
                     clientPriceUnit={clientPriceUnit}
+                    iconImg={iconImg}
                 />
             </Document>
         );

@@ -1367,7 +1367,7 @@ export const Calculator = ({
             <div className="mt-5 w-full flex justify-center">
                 <button
                     className={`px-2 py-1 rounded-md ${
-                        loading || !amounts.amount1
+                        loading || (!amounts.amount1 && !amounts.amount2 && !amounts.amount3)
                             ? "bg-slate-400"
                             : "bg-green-300 hover:bg-green-400"
                     }`}
@@ -1382,7 +1382,7 @@ export const Calculator = ({
                             clientPriceUnit,
                         })
                     }
-                    disabled={loading || !amounts.amount1}
+                    disabled={loading || (!amounts.amount1 && !amounts.amount2 && !amounts.amount3)}
                 >
                     {lang === "1" ? "Pobierz potwierdzenie" : "Download confirmation"}
                 </button>

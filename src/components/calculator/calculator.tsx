@@ -1327,7 +1327,7 @@ export const Calculator = ({
                                 {lang === "1" ? "Opakowanie zbiorcze" : "Bulk packaging"}
                             </option>
                             <option value="singular">
-                                {lang === "1" ? "Kartoniki jednostkowe" : "Unit cartons"}
+                                {lang === "1" ? "Kartoniki jednostkowe" : "Single boxes"}
                             </option>
                             {selectedCup.category !== "filiżanka" && (
                                 <>

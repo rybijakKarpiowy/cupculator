@@ -33,39 +33,15 @@ export const downloadPdf = async ({
     const DownloadDocument = () => {
         return (
             <Document>
-                {amounts.inputs >= 1 && amounts.amount1 && (
-                    <PdfPage
-                        amount={amounts.amount1!}
-                        selectedCup={selectedCup}
-                        colorPricing={colorPricing}
-                        additionalValues={additionalValues}
-                        cupConfig={cupConfig}
-                        lang={lang}
-                        clientPriceUnit={clientPriceUnit}
-                    />
-                )}
-                {amounts.inputs >= 2 && amounts.amount2 && (
-                    <PdfPage
-                        amount={amounts.amount2}
-                        selectedCup={selectedCup}
-                        colorPricing={colorPricing}
-                        additionalValues={additionalValues}
-                        cupConfig={cupConfig}
-                        lang={lang}
-                        clientPriceUnit={clientPriceUnit}
-                    />
-                )}
-                {amounts.inputs >= 3 && amounts.amount3 && (
-                    <PdfPage
-                        amount={amounts.amount3}
-                        selectedCup={selectedCup}
-                        colorPricing={colorPricing}
-                        additionalValues={additionalValues}
-                        cupConfig={cupConfig}
-                        lang={lang}
-                        clientPriceUnit={clientPriceUnit}
-                    />
-                )}
+                <PdfPage
+                    amounts={amounts}
+                    selectedCup={selectedCup}
+                    colorPricing={colorPricing}
+                    additionalValues={additionalValues}
+                    cupConfig={cupConfig}
+                    lang={lang}
+                    clientPriceUnit={clientPriceUnit}
+                />
             </Document>
         );
     };

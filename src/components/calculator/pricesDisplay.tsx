@@ -46,7 +46,7 @@ export const PricesDisplay = ({
         if (cupConfig.cardboard === "6pack_klapowy" || cupConfig.cardboard === "6pack_wykrojnik") {
             const cardboardCount = Math.ceil((amount || 0) / 6);
             singleCardboardPrice = amount
-                ? (calculatedPrices.cardboard * cardboardCount) / amount
+                ? Math.round(((calculatedPrices.cardboard * cardboardCount) / amount) * 100) / 100
                 : 0;
         } else {
             singleCardboardPrice = calculatedPrices.cardboard;

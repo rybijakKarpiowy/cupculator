@@ -9,7 +9,7 @@ import { priceToString } from "@/lib/priceToString";
 import { getPalletQuantities } from "@/lib/getPalletQuantities";
 
 export const PdfPage = ({
-    amount,
+    amounts,
     selectedCup,
     colorPricing,
     additionalValues,
@@ -17,7 +17,12 @@ export const PdfPage = ({
     lang,
     clientPriceUnit,
 }: {
-    amount: number;
+    amounts: {
+        amount1: number | null;
+        amount2: number | null;
+        amount3: number | null;
+        inputs: number;
+    };
     selectedCup: Cup;
     colorPricing: ColorPricing;
     additionalValues: Database["public"]["Tables"]["additional_values"]["Row"];
@@ -25,51 +30,88 @@ export const PdfPage = ({
     lang: "1" | "2";
     clientPriceUnit: "zł" | "EUR";
 }) => {
-    const { data: calculatedPrices } = calculatePrices({
-        amount,
-        selectedCup,
-        colorPricing,
-        additionalValues,
-        cupConfig,
-        lang,
-        clientPriceUnit,
-    });
+    let calculatedPrices = {
+        1: {
+            unit: null as number | null,
+            prep: null as number | null,
+            transport: null as number | null,
+            cardboard: null as number | null,
+            singleCardboardPrice: null as number | null,
+        },
+        2: {
+            unit: null as number | null,
+            prep: null as number | null,
+            transport: null as number | null,
+            cardboard: null as number | null,
+            singleCardboardPrice: null as number | null,
+        },
+        3: {
+            unit: null as number | null,
+            prep: null as number | null,
+            transport: null as number | null,
+            cardboard: null as number | null,
+            singleCardboardPrice: null as number | null,
+        },
+    };
 
-    let singleCardboardPrice = 0;
-    if (calculatedPrices.cardboard) {
-        if (cupConfig.cardboard === "6pack_klapowy" || cupConfig.cardboard === "6pack_wykrojnik") {
-            const cardboardCount = Math.ceil((amount || 0) / 6);
-            singleCardboardPrice = amount
-                ? (calculatedPrices.cardboard * cardboardCount) / amount
-                : 0;
-        } else {
-            singleCardboardPrice = calculatedPrices.cardboard;
+    for (let i = 1; i <= 3; i++) {
+        if (!amounts[`amount${i as 1 | 2 | 3}`]) continue;
+        const { data } = calculatePrices({
+            amount: amounts[`amount${i as 1 | 2 | 3}`],
+            selectedCup,
+            colorPricing,
+            additionalValues,
+            cupConfig,
+            lang,
+            clientPriceUnit,
+        });
+        let singleCardboardPrice = 0;
+        if (data.cardboard) {
+            if (
+                cupConfig.cardboard === "6pack_klapowy" ||
+                cupConfig.cardboard === "6pack_wykrojnik"
+            ) {
+                const cardboardCount = Math.ceil((amounts[`amount${i as 1 | 2 | 3}`] || 0) / 6);
+                singleCardboardPrice = amounts[`amount${i as 1 | 2 | 3}`]
+                    ? Math.round(
+                          ((data.cardboard * cardboardCount) /
+                              amounts[`amount${i as 1 | 2 | 3}`]!) *
+                              100
+                      ) / 100
+                    : 0;
+            } else {
+                singleCardboardPrice = data.cardboard;
+            }
         }
+
+        calculatedPrices[i as 1 | 2 | 3] = {
+            unit: data.unit,
+            prep: data.prep,
+            transport: data.transport,
+            cardboard: data.cardboard,
+            singleCardboardPrice,
+        };
     }
 
-    const palletQuantities = getPalletQuantities(amount, selectedCup, cupConfig.cardboard);
+    const palletQuantities = {
+        1: getPalletQuantities(amounts.amount1, selectedCup, cupConfig.cardboard),
+        2: getPalletQuantities(amounts.amount2, selectedCup, cupConfig.cardboard),
+        3: getPalletQuantities(amounts.amount3, selectedCup, cupConfig.cardboard),
+    };
 
     Font.register({
-        family: "Abhaya Libre",
+        family: "Calibri",
         fonts: [
             {
-                src: "/fonts/AbhayaLibre-Regular.ttf",
+                src: "/fonts/Calibri.ttf",
             },
             {
-                src: "/fonts/AbhayaLibre-Bold.ttf",
+                src: "/fonts/calibrib.ttf",
                 fontWeight: "bold",
             },
             {
-                src: "/fonts/AbhayaLibre-Medium.ttf",
-                fontWeight: "medium",
-            },
-            {
-                src: "/fonts/AbhayaLibre-SemiBold.ttf",
-                fontWeight: "semibold",
-            },
-            {
-                src: "/fonts/AbhayaLibre-ExtraBold.ttf",
-                fontWeight: "ultrabold",
+                src: "/fonts/calibril.ttf",
+                fontWeight: "light",
             },
         ],
     });
@@ -78,11 +120,16 @@ export const PdfPage = ({
         page: {
             flexDirection: "column",
             backgroundColor: "#fff",
-            fontFamily: "Abhaya Libre",
+            fontFamily: "Calibri",
             height: "100%",
+            padding: 20,
         },
         p: {
-            fontSize: 12,
+            fontSize: 10,
+            color: "#000",
+        },
+        psmall: {
+            fontSize: 9,
             color: "#000",
         },
     });
@@ -96,15 +143,11 @@ export const PdfPage = ({
             <View
                 style={{
                     flexDirection: "row",
-                    justifyContent: "space-between",
                 }}
             >
                 <Text style={{ ...styles.p, margin: 10 }}>
                     {lang === "1" ? "Data: " : "Date: "}
                     {new Date().toLocaleDateString("pl-PL")}
-                </Text>
-                <Text style={{ ...styles.p, margin: 10, color: "#c00418" }}>
-                    {lang === "1" ? "Oferta jest ważna 14 dni" : "Offer is valid for 14 days"}
                 </Text>
             </View>
             <View style={{ display: "flex", flexDirection: "column", marginLeft: 10 }}>
@@ -126,10 +169,33 @@ export const PdfPage = ({
                     </View>
                 </View>
                 <View style={{ display: "flex", flexDirection: "column" }}>
-                    <Text style={styles.p}>
-                        {lang === "1" ? "Ilość: " : "Amount: "}
-                        {amount}
-                    </Text>
+                    <View
+                        style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            width: "100%",
+                            justifyContent: "space-between",
+                        }}
+                    >
+                        {amounts.amount1 && (
+                            <Text style={styles.p}>
+                                {lang === "1" ? "Ilość: " : "Amount: "}
+                                {amounts.amount1}
+                            </Text>
+                        )}
+                        {amounts.amount2 && (
+                            <Text style={styles.p}>
+                                {lang === "1" ? "Ilość: " : "Amount: "}
+                                {amounts.amount2}
+                            </Text>
+                        )}
+                        {amounts.amount3 && (
+                            <Text style={styles.p}>
+                                {lang === "1" ? "Ilość: " : "Amount: "}
+                                {amounts.amount3}
+                            </Text>
+                        )}
+                    </View>
                     <Text style={styles.p}>
                         {lang === "1" ? "Nadruk: " : "Print type: "}
                         {cupConfig.imprintType === "direct_print" &&
@@ -230,8 +296,8 @@ export const PdfPage = ({
                                 <Text style={styles.p}>
                                     •{" "}
                                     {lang === "1"
-                                        ? `Nadruk wewnątrz na ściance: ${cupConfig.nadruk_wewnatrz_na_sciance}`
-                                        : `Print on the wall inside: ${cupConfig.nadruk_wewnatrz_na_sciance}`}
+                                        ? `Nadruk wewnątrz na ściance: ${cupConfig.nadruk_wewnatrz_na_sciance} szt.`
+                                        : `Print on the wall inside: ${cupConfig.nadruk_wewnatrz_na_sciance} pcs.`}
                                 </Text>
                             )}
                             {cupConfig.nadruk_na_uchu && (
@@ -336,7 +402,7 @@ export const PdfPage = ({
                     <Text style={styles.p}>
                         {lang === "1" ? "Sposób pakowania: " : "Packaging type: "}
                         {cupConfig.cardboard === "singular" &&
-                            (lang === "1" ? "Kartoniki jednostkowe" : "Unit cartons")}
+                            (lang === "1" ? "Kartoniki jednostkowe" : "Single boxes")}
                         {cupConfig.cardboard === "6pack_klapowy" &&
                             (lang === "1" ? "6-pak klapowy" : "6-pack flap")}
                         {cupConfig.cardboard === "6pack_wykrojnik" &&
@@ -344,90 +410,322 @@ export const PdfPage = ({
                         {!cupConfig.cardboard &&
                             (lang === "1" ? "Opakowanie zbiorcze" : "Bulk packaging")}
                     </Text>
+                    <Text
+                        style={{
+                            ...styles.p,
+                            fontWeight: "bold",
+                            marginTop: 20,
+                            marginBottom: 8,
+                        }}
+                    >
+                        {lang === "1" ? "Cena" : "Price"}
+                    </Text>
                 </View>
-                <Text
+                <View
                     style={{
-                        ...styles.p,
-                        fontWeight: "bold",
-                        marginTop: 20,
-                        marginBottom: 8,
+                        display: "flex",
+                        flexDirection: "row",
+                        justifyContent: "space-between",
                     }}
                 >
-                    {lang === "1" ? "Cena" : "Price"}
-                </Text>
-                <Text style={styles.p}>
-                    {lang === "1"
-                        ? "Produkt z nadrukiem (1 szt, netto): "
-                        : "Product with imprint (1 pcs, netto): "}
-                    {calculatedPrices.unit === null ? "" : priceToString(calculatedPrices.unit)}
-                    {clientPriceUnit}
-                </Text>
-                <Text style={styles.p}>
-                    {lang === "1" ? "Opakowanie (1 szt, netto): " : "Packaging (1 pcs, netto): "}
-                    {singleCardboardPrice ? priceToString(singleCardboardPrice) : "0.00"}
-                    {clientPriceUnit}
-                </Text>
-                <Text style={styles.p}>
-                    {lang === "1" ? "Przygotowalnia: " : "Set-up: "}
-                    {priceToString(calculatedPrices.prep)}
-                    {clientPriceUnit}
-                </Text>
-                <Text style={styles.p}>
-                    {"Transport: "}
-                    {clientPriceUnit === "zł"
-                        ? `${priceToString(calculatedPrices.transport)} ${clientPriceUnit}`
-                        : "Please contact your advisor"}
-                </Text>
-                <Text style={styles.p}>
-                    {lang === "1"
-                        ? "Całkowita wartość kalkulacji netto: "
-                        : "Total sum of the calculation netto: "}
-                    {calculatedPrices.prep !== null && calculatedPrices.unit !== null && amount
-                        ? calculatedPrices.transport
-                            ? priceToString(
-                                  Math.round(
-                                      (calculatedPrices.prep +
-                                          (calculatedPrices.unit + singleCardboardPrice) * amount +
-                                          calculatedPrices.transport) *
-                                          100
-                                  ) / 100
-                              )
-                            : priceToString(
-                                  Math.round(
-                                      (calculatedPrices.prep +
-                                          (calculatedPrices.unit + singleCardboardPrice) * amount) *
-                                          100
-                                  ) / 100
-                              )
-                        : "0.00"}
-                    {clientPriceUnit}
-                </Text>
-                <Text style={{ ...styles.p, marginTop: 20, marginBottom: 8, fontWeight: "bold" }}>
-                    {lang === "1" ? "Dane logistyczne" : "Logistic details"}
-                </Text>
-                <Text style={styles.p}>
-                    {lang === "1" ? "Liczba palet MINI: " : "Quantity of pallets MINI: "}
-                    {palletQuantities.mini}
-                </Text>
-                <Text style={styles.p}>
-                    {lang === "1" ? "Liczba półpalet: " : "Quantity of half-pallets: "}
-                    {palletQuantities.half}
-                </Text>
-                <Text style={styles.p}>
-                    {lang === "1" ? "Liczba palet EUR: " : "Quantity of pallets EUR: "}
-                    {palletQuantities.full}
-                </Text>
+                    {amounts.amount1 && (
+                        <View style={{ display: "flex", flexDirection: "column" }}>
+                            <Text style={styles.psmall}>
+                                {lang === "1"
+                                    ? "Produkt z nadrukiem (1 szt. netto): "
+                                    : "Product with imprint (1 pcs. net): "}
+                                {calculatedPrices[1].unit === null
+                                    ? ""
+                                    : priceToString(calculatedPrices[1].unit)}
+                                {clientPriceUnit}
+                            </Text>
+                            <Text style={styles.psmall}>
+                                {lang === "1"
+                                    ? "Opakowanie (1 szt. netto): "
+                                    : "Packaging (1 pcs. net): "}
+                                {calculatedPrices[1].singleCardboardPrice
+                                    ? priceToString(calculatedPrices[1].singleCardboardPrice)
+                                    : "0.00"}
+                                {clientPriceUnit}
+                            </Text>
+                            <Text style={styles.psmall}>
+                                {lang === "1" ? "Przygotowalnia: " : "Set-up: "}
+                                {priceToString(calculatedPrices[1].prep)}
+                                {clientPriceUnit}
+                            </Text>
+                            <Text style={styles.psmall}>
+                                {"Transport: "}
+                                {clientPriceUnit === "zł"
+                                    ? `${priceToString(
+                                          calculatedPrices[1].transport
+                                      )} ${clientPriceUnit}`
+                                    : "Please contact your advisor"}
+                            </Text>
+                            <Text style={styles.psmall}>
+                                {lang === "1"
+                                    ? "Całkowita wartość kalkulacji netto: "
+                                    : "Total sum of the calculation net: "}
+                                {calculatedPrices[1].prep !== null &&
+                                calculatedPrices[1].unit !== null &&
+                                amounts.amount1
+                                    ? calculatedPrices[1].transport
+                                        ? priceToString(
+                                              Math.round(
+                                                  (calculatedPrices[1].prep +
+                                                      (calculatedPrices[1].unit +
+                                                          (calculatedPrices[1]
+                                                              .singleCardboardPrice || 0)) *
+                                                          amounts.amount1 +
+                                                      calculatedPrices[1].transport) *
+                                                      100
+                                              ) / 100
+                                          )
+                                        : priceToString(
+                                              Math.round(
+                                                  (calculatedPrices[1].prep +
+                                                      (calculatedPrices[1].unit +
+                                                          (calculatedPrices[1]
+                                                              .singleCardboardPrice || 0)) *
+                                                          amounts.amount1) *
+                                                      100
+                                              ) / 100
+                                          )
+                                    : "0.00"}
+                                {clientPriceUnit}
+                            </Text>
+                            <Text
+                                style={{
+                                    ...styles.p,
+                                    marginTop: 20,
+                                    marginBottom: 8,
+                                    fontWeight: "bold",
+                                }}
+                            >
+                                {lang === "1" ? "Dane logistyczne" : "Logistic details"}
+                            </Text>
+                            <Text style={styles.p}>
+                                {lang === "1"
+                                    ? "Liczba palet MINI: "
+                                    : "Quantity of pallets MINI: "}
+                                {palletQuantities[1].mini}
+                            </Text>
+                            <Text style={styles.p}>
+                                {lang === "1" ? "Liczba półpalet: " : "Quantity of half-pallets: "}
+                                {palletQuantities[1].half}
+                            </Text>
+                            <Text style={styles.p}>
+                                {lang === "1" ? "Liczba palet EURO: " : "Quantity of pallets EUR: "}
+                                {palletQuantities[1].full}
+                            </Text>
+                        </View>
+                    )}
+                    {amounts.amount2 && (
+                        <View style={{ display: "flex", flexDirection: "column" }}>
+                            <Text style={styles.psmall}>
+                                {lang === "1"
+                                    ? "Produkt z nadrukiem (1 szt. netto): "
+                                    : "Product with imprint (1 pcs. net): "}
+                                {calculatedPrices[2].unit === null
+                                    ? ""
+                                    : priceToString(calculatedPrices[2].unit)}
+                                {clientPriceUnit}
+                            </Text>
+                            <Text style={styles.psmall}>
+                                {lang === "1"
+                                    ? "Opakowanie (1 szt. netto): "
+                                    : "Packaging (1 pcs. net): "}
+                                {calculatedPrices[2].singleCardboardPrice
+                                    ? priceToString(calculatedPrices[2].singleCardboardPrice)
+                                    : "0.00"}
+                                {clientPriceUnit}
+                            </Text>
+                            <Text style={styles.psmall}>
+                                {lang === "1" ? "Przygotowalnia: " : "Set-up: "}
+                                {priceToString(calculatedPrices[2].prep)}
+                                {clientPriceUnit}
+                            </Text>
+                            <Text style={styles.psmall}>
+                                {"Transport: "}
+                                {clientPriceUnit === "zł"
+                                    ? `${priceToString(
+                                          calculatedPrices[2].transport
+                                      )} ${clientPriceUnit}`
+                                    : "Please contact your advisor"}
+                            </Text>
+                            <Text style={styles.psmall}>
+                                {lang === "1"
+                                    ? "Całkowita wartość kalkulacji netto: "
+                                    : "Total sum of the calculation net: "}
+                                {calculatedPrices[2].prep !== null &&
+                                calculatedPrices[2].unit !== null &&
+                                amounts.amount2
+                                    ? calculatedPrices[2].transport
+                                        ? priceToString(
+                                              Math.round(
+                                                  (calculatedPrices[2].prep +
+                                                      (calculatedPrices[2].unit +
+                                                          (calculatedPrices[2]
+                                                              .singleCardboardPrice || 0)) *
+                                                          amounts.amount2 +
+                                                      calculatedPrices[2].transport) *
+                                                      100
+                                              ) / 100
+                                          )
+                                        : priceToString(
+                                              Math.round(
+                                                  (calculatedPrices[2].prep +
+                                                      (calculatedPrices[2].unit +
+                                                          (calculatedPrices[2]
+                                                              .singleCardboardPrice || 0)) *
+                                                          amounts.amount2) *
+                                                      100
+                                              ) / 100
+                                          )
+                                    : "0.00"}
+                                {clientPriceUnit}
+                            </Text>
+                            <Text
+                                style={{
+                                    ...styles.p,
+                                    marginTop: 20,
+                                    marginBottom: 8,
+                                    fontWeight: "bold",
+                                }}
+                            >
+                                {lang === "1" ? "Dane logistyczne" : "Logistic details"}
+                            </Text>
+                            <Text style={styles.p}>
+                                {lang === "1"
+                                    ? "Liczba palet MINI: "
+                                    : "Quantity of pallets MINI: "}
+                                {palletQuantities[2].mini}
+                            </Text>
+                            <Text style={styles.p}>
+                                {lang === "1" ? "Liczba półpalet: " : "Quantity of half-pallets: "}
+                                {palletQuantities[2].half}
+                            </Text>
+                            <Text style={styles.p}>
+                                {lang === "1" ? "Liczba palet EURO: " : "Quantity of pallets EUR: "}
+                                {palletQuantities[2].full}
+                            </Text>
+                        </View>
+                    )}
+                    {amounts.amount3 && (
+                        <View style={{ display: "flex", flexDirection: "column" }}>
+                            <Text style={styles.psmall}>
+                                {lang === "1"
+                                    ? "Produkt z nadrukiem (1 szt. netto): "
+                                    : "Product with imprint (1 pcs. net): "}
+                                {calculatedPrices[3].unit === null
+                                    ? ""
+                                    : priceToString(calculatedPrices[3].unit)}
+                                {clientPriceUnit}
+                            </Text>
+                            <Text style={styles.psmall}>
+                                {lang === "1"
+                                    ? "Opakowanie (1 szt. netto): "
+                                    : "Packaging (1 pcs. net): "}
+                                {calculatedPrices[3].singleCardboardPrice
+                                    ? priceToString(calculatedPrices[3].singleCardboardPrice)
+                                    : "0.00"}
+                                {clientPriceUnit}
+                            </Text>
+                            <Text style={styles.psmall}>
+                                {lang === "1" ? "Przygotowalnia: " : "Set-up: "}
+                                {priceToString(calculatedPrices[3].prep)}
+                                {clientPriceUnit}
+                            </Text>
+                            <Text style={styles.psmall}>
+                                {"Transport: "}
+                                {clientPriceUnit === "zł"
+                                    ? `${priceToString(
+                                          calculatedPrices[3].transport
+                                      )} ${clientPriceUnit}`
+                                    : "Please contact your advisor"}
+                            </Text>
+                            <Text style={styles.psmall}>
+                                {lang === "1"
+                                    ? "Całkowita wartość kalkulacji netto: "
+                                    : "Total sum of the calculation net: "}
+                                {calculatedPrices[3].prep !== null &&
+                                calculatedPrices[3].unit !== null &&
+                                amounts.amount3
+                                    ? calculatedPrices[3].transport
+                                        ? priceToString(
+                                              Math.round(
+                                                  (calculatedPrices[3].prep +
+                                                      (calculatedPrices[3].unit +
+                                                          (calculatedPrices[3]
+                                                              .singleCardboardPrice || 0)) *
+                                                          amounts.amount3 +
+                                                      calculatedPrices[3].transport) *
+                                                      100
+                                              ) / 100
+                                          )
+                                        : priceToString(
+                                              Math.round(
+                                                  (calculatedPrices[3].prep +
+                                                      (calculatedPrices[3].unit +
+                                                          (calculatedPrices[3]
+                                                              .singleCardboardPrice || 0)) *
+                                                          amounts.amount3) *
+                                                      100
+                                              ) / 100
+                                          )
+                                    : "0.00"}
+                                {clientPriceUnit}
+                            </Text>
+                            <Text
+                                style={{
+                                    ...styles.p,
+                                    marginTop: 20,
+                                    marginBottom: 8,
+                                    fontWeight: "bold",
+                                }}
+                            >
+                                {lang === "1" ? "Dane logistyczne" : "Logistic details"}
+                            </Text>
+                            <Text style={styles.p}>
+                                {lang === "1"
+                                    ? "Liczba palet MINI: "
+                                    : "Quantity of pallets MINI: "}
+                                {palletQuantities[3].mini}
+                            </Text>
+                            <Text style={styles.p}>
+                                {lang === "1" ? "Liczba półpalet: " : "Quantity of half-pallets: "}
+                                {palletQuantities[3].half}
+                            </Text>
+                            <Text style={styles.p}>
+                                {lang === "1" ? "Liczba palet EURO: " : "Quantity of pallets EUR: "}
+                                {palletQuantities[3].full}
+                            </Text>
+                        </View>
+                    )}
+                </View>
             </View>
-            <View style={{ display: "flex", flexDirection: "column", alignSelf: "flex-end" }}>
+            <View
+                style={{
+                    display: "flex",
+                    flexDirection: "column",
+                    position: "absolute",
+                    bottom: 0,
+                    justifyContent: "center",
+                    alignItems: "center",
+                    width: "100%",
+                }}
+            >
+                <Text style={{ ...styles.p, margin: 10, color: "#c00418" }}>
+                    {lang === "1" ? "Oferta jest ważna 14 dni" : "Offer is valid for 14 days"}
+                </Text>
                 <Text style={styles.p}>
                     {lang === "1"
-                        ? "Cena do potwierdzenia po przesłaniu plików graficznych."
-                        : "We will confirm the price aer sending the vector files for checking."}
+                        ? "Cena zostanie potwierdzona po przesłaniu plików graficznych."
+                        : "We will confirm the price after sending the vector files for checking."}
                 </Text>
                 {clientPriceUnit === "zł" && (
                     <Text style={styles.p}>
                         {lang === "1"
-                            ? "Do podanych cen neo należy doliczyć podatek VAT (23%)."
+                            ? "Do podanych cen netto należy doliczyć podatek VAT (23%)."
                             : "The prices do not include VAT (23%)."}
                     </Text>
                 )}

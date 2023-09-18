@@ -156,7 +156,7 @@ export const PdfPage = ({
                 </Text>
                 <View style={{ display: "flex", flexDirection: "row" }}>
                     <Image
-                        src={"/noimage.png"}
+                        src={selectedCup.icon ? selectedCup.icon : "/noimage.png"}
                         style={{ height: "125px", width: "100px", objectFit: "cover" }}
                     />
                     <View style={{ display: "flex", flexDirection: "column", marginLeft: 10 }}>

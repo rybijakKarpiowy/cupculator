@@ -14,6 +14,7 @@ import { PalletQuantities } from "./palletQuantities";
 import { resetInputs } from "@/lib/resetInputs";
 import { translateColor } from "@/lib/translateColor";
 import { downloadPdf } from "@/lib/downloadPdf";
+import { copyCalcToClip } from "@/lib/copyCalcToClip";
 
 export const Calculator = ({
     cupData,
@@ -1364,7 +1365,7 @@ export const Calculator = ({
                     />
                 </div>
             </div>
-            <div className="mt-5 w-full flex justify-center">
+            <div className="mt-5 w-full flex justify-center gap-8">
                 <button
                     className={`px-2 py-1 rounded-md ${
                         loading || (!amounts.amount1 && !amounts.amount2 && !amounts.amount3)
@@ -1385,6 +1386,40 @@ export const Calculator = ({
                     disabled={loading || (!amounts.amount1 && !amounts.amount2 && !amounts.amount3)}
                 >
                     {lang === "1" ? "Pobierz potwierdzenie" : "Download confirmation"}
+                </button>
+                <button
+                    className={`px-2 py-1 rounded-md ${
+                        loading || (!amounts.amount1 && !amounts.amount2 && !amounts.amount3)
+                            ? "bg-slate-400"
+                            : "bg-green-300 hover:bg-green-400"
+                    }`}
+                    onClick={() => {
+                        const res = copyCalcToClip({
+                            amounts,
+                            cupConfig,
+                            selectedCup,
+                            lang,
+                            additionalValues,
+                            colorPricing,
+                            clientPriceUnit,
+                        });
+
+                        if (res) {
+                            toast.success(
+                                lang === "1" ? "Skopiowano do schowka" : "Copied to clipboard"
+                            );
+                            return;
+                        }
+
+                        toast.error(
+                            lang === "1"
+                                ? "Wystąpił błąd podczas kopiowania do schowka"
+                                : "An error occurred while copying to clipboard"
+                        );
+                    }}
+                    disabled={loading || (!amounts.amount1 && !amounts.amount2 && !amounts.amount3)}
+                >
+                    {lang === "1" ? "Skopiuj do schowka" : "Copy to clipboard"}
                 </button>
             </div>
         </div>

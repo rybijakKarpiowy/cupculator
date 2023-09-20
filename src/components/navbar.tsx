@@ -18,7 +18,7 @@ export const Navbar = ({
 }) => {
     const searchParams = useSearchParams();
     const lang = searchParams.get("lang") || "1";
-    const cup = searchParams.get("cup") || "";
+    const cup = searchParams.get("cup")?.replace("%20", "_") || "";
 
     const supabase = createClientComponentClient();
 

@@ -80,7 +80,7 @@ export const POST = async (req: NextRequest) => {
     const preparedData = rawData
         .map((row, i) => {
             const rowId = `${i + offset + 1}`;
-            if (row.length < 64) {
+            if (row.length < 30) {
                 lastCellEmpty.push(rowId);
                 return null;
             }
@@ -93,56 +93,14 @@ export const POST = async (req: NextRequest) => {
                 category: row[5].replace(" ", ""),
                 icon: row[6],
                 volume: row[7],
-                supplier: row[8],
-                supplier_code: row[9],
-                mini_pallet: row[32] ? parseInt(row[32]) : null,
-                half_pallet: row[33] ? parseInt(row[33]) : null,
-                full_pallet: row[34] ? parseInt(row[34]) : null,
-                mini_pallet_singular: row[35] ? parseInt(row[35]) : null,
-                half_pallet_singular: row[36] ? parseInt(row[36]) : null,
-                full_pallet_singular: row[37] ? parseInt(row[37]) : null,
-                deep_effect: row[38] === "1" ? true : row[38] === "0" ? false : null,
-                deep_effect_plus: row[39] === "1" ? true : row[39] === "0" ? false : null,
-                digital_print: row[40] === "1" ? true : row[40] === "0" ? false : null,
-                direct_print: row[41] === "1" ? true : row[41] === "0" ? false : null,
-                polylux: row[42] === "1" ? true : row[42] === "0" ? false : null,
-                transfer_plus: row[43] === "1" ? true : row[43] === "0" ? false : null,
-                nadruk_apla: row[44] === "1" ? true : row[44] === "0" ? false : null,
-                nadruk_dookola_pod_uchem: row[45] === "1" ? true : row[45] === "0" ? false : null,
-                nadruk_na_dnie: row[46] === "1" ? true : row[46] === "0" ? false : null,
-                nadruk_na_powloce_magicznej_1_kolor:
-                    row[47] === "1" ? true : row[47] === "0" ? false : null,
-                nadruk_na_spodzie: row[48] === "1" ? true : row[48] === "0" ? false : null,
-                nadruk_na_uchu: row[49] === "1" ? true : row[49] === "0" ? false : null,
-                nadruk_przez_rant: row[50] === "1" ? true : row[50] === "0" ? false : null,
-                nadruk_wewnatrz_na_sciance: row[51] === "1" ? true : row[51] === "0" ? false : null,
-                nadruk_zlotem_do_25cm2: row[52] === "1" ? true : row[52] === "0" ? false : null,
-                nadruk_zlotem_do_50cm2: row[53] === "1" ? true : row[53] === "0" ? false : null,
-                naklejka_papierowa_z_nadrukiem:
-                    row[54] === "1" ? true : row[54] === "0" ? false : null,
-                personalizacja: row[55] === "1" ? true : row[55] === "0" ? false : null,
-                pro_color: row[56] === "1" ? true : row[56] === "0" ? false : null,
-                soft_touch: row[57] === "1" ? true : row[57] === "0" ? false : null,
-                trend_color: row[58] === "1" ? true : row[58] === "0" ? false : null,
-                trend_color_lowered_edge: row[59] === "1" ? true : row[59] === "0" ? false : null,
-                wkladanie_ulotek_do_kubka: row[60] === "1" ? true : row[60] === "0" ? false : null,
-                zdobienie_paskiem_bez_laczenia:
-                    row[61] === "1" ? true : row[61] === "0" ? false : null,
-                zdobienie_paskiem_z_laczeniem:
-                    row[62] === "1" ? true : row[62] === "0" ? false : null,
-                zdobienie_tapeta_na_barylce_II_stopien_trudnosci:
-                    row[63] === "1" ? true : row[63] === "0" ? false : null,
-                zdobienie_tapeta_na_barylce_I_stopien_trudnosci:
-                    row[64] === "1" ? true : row[64] === "0" ? false : null,
-                digital_print_additional: row[65] === "1" ? true : row[65] === "0" ? false : null,
                 prices: {
-                    price_24: parseFloat(row[10].replace("zł", "").trim().replace(",", ".")),
-                    price_72: parseFloat(row[11].replace("zł", "").trim().replace(",", ".")),
-                    price_108: parseFloat(row[12].replace("zł", "").trim().replace(",", ".")),
-                    price_216: parseFloat(row[13].replace("zł", "").trim().replace(",", ".")),
-                    price_504: parseFloat(row[14].replace("zł", "").trim().replace(",", ".")),
-                    price_1008: parseFloat(row[15].replace("zł", "").trim().replace(",", ".")),
-                    price_2520: parseFloat(row[16].replace("zł", "").trim().replace(",", ".")),
+                    price_24: parseFloat(row[8].replace("zł", "").trim().replace(",", ".")),
+                    price_72: parseFloat(row[9].replace("zł", "").trim().replace(",", ".")),
+                    price_108: parseFloat(row[10].replace("zł", "").trim().replace(",", ".")),
+                    price_216: parseFloat(row[11].replace("zł", "").trim().replace(",", ".")),
+                    price_504: parseFloat(row[12].replace("zł", "").trim().replace(",", ".")),
+                    price_1008: parseFloat(row[13].replace("zł", "").trim().replace(",", ".")),
+                    price_2520: parseFloat(row[14].replace("zł", "").trim().replace(",", ".")),
                 },
             };
 
@@ -164,9 +122,7 @@ export const POST = async (req: NextRequest) => {
                 !obj.link ||
                 !obj.material ||
                 !obj.category ||
-                !obj.volume ||
-                !obj.supplier ||
-                !obj.supplier_code
+                !obj.volume
             ) {
                 incompleteCups.push(rowId);
                 return null;
@@ -207,7 +163,7 @@ export const POST = async (req: NextRequest) => {
             return obj;
         })
         // remove rows that are not cups
-        .filter((row) => row !== null) as Cup[];
+        .filter((row) => row !== null);
 
     if (preparedData.length === 0) {
         return NextResponse.json(
@@ -242,12 +198,12 @@ export const POST = async (req: NextRequest) => {
     }
 
     const cupData = preparedData.map((row) => {
-        const { prices, ...rest } = row;
+        const { prices, ...rest } = row!;
         return rest;
     });
 
     // upsert cups from sheet and get their ids
-    const {data: dbCupIds, error: error2 } = await supabase
+    const { data: dbCupIds, error: error2 } = await supabase
         .from("cups")
         .upsert(cupData, {
             onConflict: "code",
@@ -261,7 +217,7 @@ export const POST = async (req: NextRequest) => {
 
     const sheetCupIds = preparedData
         .map((row) => {
-            const { code } = row;
+            const { code } = row!;
             const dbCupId = dbCupIds.find((cup) => cup.code === code)?.id;
             return dbCupId;
         })
@@ -281,7 +237,7 @@ export const POST = async (req: NextRequest) => {
 
     // update all cup pricings that are in the sheet
     const cupPricingsData = preparedData.map((row) => {
-        const { code, prices } = row;
+        const { code, prices } = row!;
         const dbCupId = dbCupIds.find((cup) => cup.code === code)?.id as number;
         return {
             cup_id: dbCupId,

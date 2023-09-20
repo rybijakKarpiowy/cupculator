@@ -7,7 +7,7 @@ import { baseUrl } from "@/app/baseUrl";
 export async function middleware(req: NextRequest) {
     const searchParams = new URL(req.url).searchParams;
     let lang = searchParams.get("lang");
-    let cup = searchParams.get("cup")?.replace("%20", "_");
+    let cup = searchParams.get("cup")?.replace(" ", "_");
     let setBaseParams = false;
 
     if (!lang || lang === "" || lang === "null" || lang === "undefined") {

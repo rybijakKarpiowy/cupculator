@@ -277,6 +277,34 @@ export interface Database {
         }
         Relationships: []
       }
+      lomag_warehouses: {
+        Row: {
+          amount: number
+          cup_id: number
+          updated_at: string
+          warehouse: string
+        }
+        Insert: {
+          amount?: number
+          cup_id: number
+          updated_at?: string
+          warehouse: string
+        }
+        Update: {
+          amount?: number
+          cup_id?: number
+          updated_at?: string
+          warehouse?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lomag_warehouses_cup_id_fkey"
+            columns: ["cup_id"]
+            referencedRelation: "cups"
+            referencedColumns: ["id"]
+          }
+        ]
+      }
       restrictions: {
         Row: {
           anotherValue: string
@@ -294,6 +322,37 @@ export interface Database {
           imprintType?: string
         }
         Relationships: []
+      }
+      scraped_warehouses: {
+        Row: {
+          amount: number
+          code_link: string
+          cup_id: number
+          provider: string
+          updated_at: string
+        }
+        Insert: {
+          amount?: number
+          code_link: string
+          cup_id: number
+          provider: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          code_link?: string
+          cup_id?: number
+          provider?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "scraped_warehouses_cup_id_fkey"
+            columns: ["cup_id"]
+            referencedRelation: "cups"
+            referencedColumns: ["id"]
+          }
+        ]
       }
       users: {
         Row: {
@@ -358,6 +417,9 @@ export interface Database {
           role: Database["public"]["Enums"]["role_enum"]
           salesman_id: string | null
           user_id: string
+          warehouse_acces:
+            | Database["public"]["Enums"]["warehouse_acces_enum"]
+            | null
         }
         Insert: {
           activated?: boolean
@@ -366,6 +428,9 @@ export interface Database {
           role?: Database["public"]["Enums"]["role_enum"]
           salesman_id?: string | null
           user_id: string
+          warehouse_acces?:
+            | Database["public"]["Enums"]["warehouse_acces_enum"]
+            | null
         }
         Update: {
           activated?: boolean
@@ -374,6 +439,9 @@ export interface Database {
           role?: Database["public"]["Enums"]["role_enum"]
           salesman_id?: string | null
           user_id?: string
+          warehouse_acces?:
+            | Database["public"]["Enums"]["warehouse_acces_enum"]
+            | null
         }
         Relationships: [
           {
@@ -417,6 +485,7 @@ export interface Database {
     }
     Enums: {
       role_enum: "User" | "Salesman" | "Admin"
+      warehouse_acces_enum: "None" | "Actual" | "Fictional"
     }
     CompositeTypes: {
       [_ in never]: never

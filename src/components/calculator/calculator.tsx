@@ -23,6 +23,7 @@ export const Calculator = ({
     clientPriceUnit,
     additionalValues,
     restrictions,
+    warehouseAcces,
 }: {
     cupData: Cup[];
     colorPricing: ColorPricing;
@@ -30,6 +31,9 @@ export const Calculator = ({
     clientPriceUnit: "zł" | "EUR";
     additionalValues: Database["public"]["Tables"]["additional_values"]["Row"];
     restrictions: Restriction[];
+    warehouseAcces:
+        | Database["public"]["Tables"]["users_restricted"]["Row"]["warehouse_acces"]
+        | "Salesman";
 }) => {
     const [loading, setLoading] = useState(false);
     const [selectedCup, setSelectedCup] = useState<Cup>(

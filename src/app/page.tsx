@@ -17,7 +17,6 @@ export default async function Home({
 }) {
     const lang = (searchParams.lang || "1") as "1" | "2";
     const cup = searchParams.cup?.replace(" ", "_") as string;
-    console.log(cup, "cup")
 
     const supabase = createServerComponentClient<Database>({ cookies });
     const authUser = (await supabase.auth.getUser()).data.user;
@@ -102,6 +101,8 @@ export default async function Home({
                 clientPriceUnit={userData.eu ? "EUR" : "zł"}
                 additionalValues={additionalValues}
                 restrictions={restrictions}
+                // @ts-ignore
+                warehouseAcces={userData.users_restricted.warehouse_acces}
             />
         );
     }
@@ -135,6 +136,7 @@ export default async function Home({
             lang={lang}
             additionalValues={additionalValues}
             restrictions={restrictions}
+            warehouseAcces={"Salesman"}
         />
     );
 }

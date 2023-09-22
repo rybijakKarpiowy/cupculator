@@ -101,15 +101,31 @@ export const copyCalcToClip = ({
 
         const text = `${lang === "1" ? "Data: " : "Date: "}${new Date().toLocaleDateString(
             "pl-PL"
-        )}\n\n${lang === "1" ? "Specyfikacja:" : "Specification:"}\n\n${selectedCup.code}\n${
-            selectedCup.name
-        }\n${selectedCup.volume}\n${
+        )}\n\n${selectedCup.code}\n${selectedCup.name} ${
             lang === "1" ? selectedCup.color : translateColor(selectedCup.color)
-        }\n\n${
-            amounts.amount1 ? `${lang === "1" ? "Ilość: " : "Amount: "}${amounts.amount1}\t` : ""
-        }${amounts.amount2 ? `${lang === "1" ? "Ilość: " : "Amount: "}${amounts.amount2}\t` : ""}${
-            amounts.amount3 ? `${lang === "1" ? "Ilość: " : "Amount: "}${amounts.amount3}\t` : ""
-        }\n${lang === "1" ? "Nadruk: " : "Print type: "}${
+        }${cupConfig.imprintType ? " + " : ""}${
+            [
+                "direct_print",
+                "transfer_plus_1",
+                "transfer_plus_2",
+                "transfer_plus_round",
+                "polylux_1",
+                "polylux_2",
+                "polylux_round",
+            ].includes(cupConfig.imprintType)
+                ? `${cupConfig.imprintColors} ${
+                      lang === "1"
+                          ? cupConfig.imprintColors === 1
+                              ? "kolor"
+                              : [2, 3, 4].includes(cupConfig.imprintColors)
+                              ? "kolory"
+                              : "kolorów"
+                          : cupConfig.imprintColors === 1
+                          ? "color"
+                          : "colors"
+                  } `
+                : ""
+        }${
             cupConfig.imprintType === "direct_print"
                 ? lang === "1"
                     ? "Nadruk bezpośredni"
@@ -181,27 +197,9 @@ export const copyCalcToClip = ({
                     ? "Deep Effect Plus 2 strony"
                     : "Deep Effect Plus 2 sides"
                 : ""
-        }${!cupConfig.imprintType ? "Brak" : ""}\n${
-            cupConfig.imprintType === "digital_print"
-                ? lang === "1"
-                    ? "Liczba kolorów: Pełny kolor\n"
-                    : "Number of colors: Full color\n"
-                : ""
         }${
-            [
-                "direct_print",
-                "transfer_plus_1",
-                "transfer_plus_2",
-                "transfer_plus_round",
-                "polylux_1",
-                "polylux_2",
-                "polylux_round",
-            ].includes(cupConfig.imprintType)
-                ? `${lang === "1" ? "Liczba kolorów: " : "Number of colors: "}${
-                      cupConfig.imprintColors
-                  }\n`
-                : ""
-        }${"TrendColor: "}${
+            !cupConfig.imprintType ? (lang === "1" ? ", brak nadruku" : ", no imprint") : ""
+        }\n${"TrendColor: "}${
             cupConfig.trend_color === "inside" ? (lang === "1" ? "Wewnątrz" : "Inside") : ""
         }${cupConfig.trend_color === "outside" ? (lang === "1" ? "Na zewnątrz" : "Outside") : ""}${
             cupConfig.trend_color === "both"
@@ -337,115 +335,31 @@ export const copyCalcToClip = ({
                 : ""
         }${
             !cupConfig.cardboard ? (lang === "1" ? "Opakowanie zbiorcze" : "Bulk packaging") : ""
-        }\n\n\n${lang === "1" ? "Cena:" : "Price:"}\n\n${
+        }\n\n${
             amounts.amount1
-                ? `${
-                      lang === "1"
-                          ? "Produkt z nadrukiem (1 szt. netto): "
-                          : "Product with imprint (1 pcs. net): "
-                  }${
+                ? `${lang === "1" ? "Ilość " : "Amount "}${amounts.amount1} ${
+                      lang === "1" ? "szt." : "pcs."
+                  }: ${
                       calculatedPrices[1].unit === null
                           ? ""
                           : priceToString(calculatedPrices[1].unit)
-                  }${clientPriceUnit}\t`
-                : ""
-        }${
-            amounts.amount2
-                ? `${
-                      lang === "1"
-                          ? "Produkt z nadrukiem (1 szt. netto): "
-                          : "Product with imprint (1 pcs. net): "
-                  }${
-                      calculatedPrices[2].unit === null
-                          ? ""
-                          : priceToString(calculatedPrices[2].unit)
-                  }${clientPriceUnit}\t`
-                : ""
-        }${
-            amounts.amount3
-                ? `${
-                      lang === "1"
-                          ? "Produkt z nadrukiem (1 szt. netto): "
-                          : "Product with imprint (1 pcs. net): "
-                  }${
-                      calculatedPrices[3].unit === null
-                          ? ""
-                          : priceToString(calculatedPrices[3].unit)
-                  }${clientPriceUnit}\t`
-                : ""
-        }\n${
-            amounts.amount1
-                ? `${lang === "1" ? "Opakowanie (1 szt. netto): " : "Packaging (1 pcs. net): "}${
+                  }${clientPriceUnit} ${lang === "1" ? "netto / szt." : "net / pcs."}\n${
                       calculatedPrices[1].singleCardboardPrice
-                          ? priceToString(calculatedPrices[1].singleCardboardPrice)
-                          : "0.00"
-                  }${clientPriceUnit}\t`
-                : ""
-        }${
-            amounts.amount2
-                ? `${lang === "1" ? "Opakowanie (1 szt. netto): " : "Packaging (1 pcs. net): "}${
-                      calculatedPrices[2].singleCardboardPrice
-                          ? priceToString(calculatedPrices[2].singleCardboardPrice)
-                          : "0.00"
-                  }${clientPriceUnit}\t`
-                : ""
-        }${
-            amounts.amount3
-                ? `${lang === "1" ? "Opakowanie (1 szt. netto): " : "Packaging (1 pcs. net): "}${
-                      calculatedPrices[3].singleCardboardPrice
-                          ? priceToString(calculatedPrices[3].singleCardboardPrice)
-                          : "0.00"
-                  }${clientPriceUnit}\t`
-                : ""
-        }\n${
-            amounts.amount1
-                ? `${lang === "1" ? "Przygotowalnia: " : "Set-up: "}${priceToString(
-                      calculatedPrices[1].prep
-                  )}${clientPriceUnit}\t`
-                : ""
-        }${
-            amounts.amount2
-                ? `${lang === "1" ? "Przygotowalnia: " : "Set-up: "}${priceToString(
-                      calculatedPrices[2].prep
-                  )}${clientPriceUnit}\t`
-                : ""
-        }${
-            amounts.amount3
-                ? `${lang === "1" ? "Przygotowalnia: " : "Set-up: "}${priceToString(
-                      calculatedPrices[3].prep
-                  )}${clientPriceUnit}\t`
-                : ""
-        }\n${
-            amounts.amount1
-                ? `${"Transport: "}${
+                          ? `+ ${lang === "1" ? "opakowanie" : "packaging"}: ${priceToString(
+                                calculatedPrices[1].singleCardboardPrice
+                            )}${clientPriceUnit} ${lang === "1" ? "netto / szt." : "net / pcs."}\n`
+                          : ""
+                  }+ ${lang === "1" ? "przygotowalnia" : "set-up"}: ${
+                      calculatedPrices[1].prep ? priceToString(calculatedPrices[1].prep) : "0.00"
+                  }${clientPriceUnit} ${lang === "1" ? "netto" : "net"}\n${
                       clientPriceUnit === "zł"
-                          ? `${priceToString(calculatedPrices[1].transport)} ${clientPriceUnit}`
-                          : "Please contact your advisor"
-                  }\t`
-                : ""
-        }${
-            amounts.amount2
-                ? `${"Transport: "}${
-                      clientPriceUnit === "zł"
-                          ? `${priceToString(calculatedPrices[2].transport)} ${clientPriceUnit}`
-                          : "Please contact your advisor"
-                  }\t`
-                : ""
-        }${
-            amounts.amount3
-                ? `${"Transport: "}${
-                      clientPriceUnit === "zł"
-                          ? `${priceToString(calculatedPrices[3].transport)} ${clientPriceUnit}`
-                          : "Please contact your advisor"
-                  }\t`
-                : ""
-        }\n${
-            amounts.amount1
-                ? `${
-                      lang === "1"
-                          ? "Całkowita wartość kalkulacji netto: "
-                          : "Total sum of the calculation net: "
-                  }${
+                          ? `+ transport: ${
+                                calculatedPrices[1].transport
+                                    ? priceToString(calculatedPrices[1].transport)
+                                    : "0.00"
+                            }${clientPriceUnit} ${lang === "1" ? "netto" : "net"}\n`
+                          : ""
+                  }${lang === "1" ? "Suma: " : "Total: "}${
                       calculatedPrices[1].prep !== null &&
                       calculatedPrices[1].unit !== null &&
                       amounts[`amount${1}`]
@@ -470,15 +384,33 @@ export const copyCalcToClip = ({
                                     ) / 100
                                 )
                           : "0.00"
-                  }${clientPriceUnit}\t`
+                  }${clientPriceUnit} ${lang === "1" ? "netto" : "net"}\n\n`
                 : ""
         }${
             amounts.amount2
-                ? `${
-                      lang === "1"
-                          ? "Całkowita wartość kalkulacji netto: "
-                          : "Total sum of the calculation net: "
-                  }${
+                ? `${lang === "1" ? "Ilość " : "Amount "}${amounts.amount2} ${
+                      lang === "1" ? "szt." : "pcs."
+                  }: ${
+                      calculatedPrices[2].unit === null
+                          ? ""
+                          : priceToString(calculatedPrices[2].unit)
+                  }${clientPriceUnit} ${lang === "1" ? "netto / szt." : "net / pcs."}\n${
+                      calculatedPrices[1].singleCardboardPrice
+                          ? `+ ${lang === "1" ? "opakowanie" : "packaging"}: ${priceToString(
+                                calculatedPrices[1].singleCardboardPrice
+                            )}${clientPriceUnit} ${lang === "1" ? "netto / szt." : "net / pcs."}\n`
+                          : ""
+                  }+ ${lang === "1" ? "przygotowalnia" : "set-up"}: ${
+                      calculatedPrices[2].prep ? priceToString(calculatedPrices[2].prep) : "0.00"
+                  }${clientPriceUnit} ${lang === "1" ? "netto" : "net"}\n${
+                      clientPriceUnit === "zł"
+                          ? `+ transport: ${
+                                calculatedPrices[2].transport
+                                    ? priceToString(calculatedPrices[2].transport)
+                                    : "0.00"
+                            }${clientPriceUnit} ${lang === "1" ? "netto" : "net"}\n`
+                          : ""
+                  }${lang === "1" ? "Suma: " : "Total: "}${
                       calculatedPrices[2].prep !== null &&
                       calculatedPrices[2].unit !== null &&
                       amounts[`amount${2}`]
@@ -503,15 +435,33 @@ export const copyCalcToClip = ({
                                     ) / 100
                                 )
                           : "0.00"
-                  }${clientPriceUnit}\t`
+                  }${clientPriceUnit} ${lang === "1" ? "netto" : "net"}\n\n`
                 : ""
         }${
             amounts.amount3
-                ? `${
-                      lang === "1"
-                          ? "Całkowita wartość kalkulacji netto: "
-                          : "Total sum of the calculation net: "
-                  }${
+                ? `${lang === "1" ? "Ilość " : "Amount "}${amounts.amount3} ${
+                      lang === "1" ? "szt." : "pcs."
+                  }: ${
+                      calculatedPrices[3].unit === null
+                          ? ""
+                          : priceToString(calculatedPrices[3].unit)
+                  }${clientPriceUnit} ${lang === "1" ? "netto / szt." : "net / pcs."}\n${
+                      calculatedPrices[1].singleCardboardPrice
+                          ? `+ ${lang === "1" ? "opakowanie" : "packaging"}: ${priceToString(
+                                calculatedPrices[1].singleCardboardPrice
+                            )}${clientPriceUnit} ${lang === "1" ? "netto / szt." : "net / pcs."}\n`
+                          : ""
+                  }+ ${lang === "1" ? "przygotowalnia" : "set-up"}: ${
+                      calculatedPrices[3].prep ? priceToString(calculatedPrices[3].prep) : "0.00"
+                  }${clientPriceUnit} ${lang === "1" ? "netto" : "net"}\n${
+                      clientPriceUnit === "zł"
+                          ? `+ transport: ${
+                                calculatedPrices[3].transport
+                                    ? priceToString(calculatedPrices[3].transport)
+                                    : "0.00"
+                            }${clientPriceUnit} ${lang === "1" ? "netto" : "net"}\n`
+                          : ""
+                  }${lang === "1" ? "Suma: " : "Total: "}${
                       calculatedPrices[3].prep !== null &&
                       calculatedPrices[3].unit !== null &&
                       amounts[`amount${3}`]
@@ -536,61 +486,7 @@ export const copyCalcToClip = ({
                                     ) / 100
                                 )
                           : "0.00"
-                  }${clientPriceUnit}\t`
-                : ""
-        }\n\n\n${lang === "1" ? "Dane logistyczne:" : "Logistic details:"}\n\n${
-            amounts.amount1
-                ? `${lang === "1" ? "Liczba palet MINI: " : "Quantity of pallets MINI: "}${
-                      palletQuantities[1].mini
-                  }\t`
-                : ""
-        }${
-            amounts.amount2
-                ? `${lang === "1" ? "Liczba palet MINI: " : "Quantity of pallets MINI: "}${
-                      palletQuantities[2].mini
-                  }\t`
-                : ""
-        }${
-            amounts.amount3
-                ? `${lang === "1" ? "Liczba palet MINI: " : "Quantity of pallets MINI: "}${
-                      palletQuantities[3].mini
-                  }\t`
-                : ""
-        }\n${
-            amounts.amount1
-                ? `${lang === "1" ? "Liczba półpalet: " : "Quantity of half-pallets: "}${
-                      palletQuantities[1].half
-                  }\t`
-                : ""
-        }${
-            amounts.amount2
-                ? `${lang === "1" ? "Liczba półpalet: " : "Quantity of half-pallets: "}${
-                      palletQuantities[2].half
-                  }\t`
-                : ""
-        }${
-            amounts.amount3
-                ? `${lang === "1" ? "Liczba półpalet: " : "Quantity of half-pallets: "}${
-                      palletQuantities[3].half
-                  }\t`
-                : ""
-        }\n${
-            amounts.amount1
-                ? `${lang === "1" ? "Liczba palet EURO: " : "Quantity of pallets EUR: "}${
-                      palletQuantities[1].full
-                  }\t`
-                : ""
-        }${
-            amounts.amount2
-                ? `${lang === "1" ? "Liczba palet EURO: " : "Quantity of pallets EUR: "}${
-                      palletQuantities[2].full
-                  }\t`
-                : ""
-        }${
-            amounts.amount3
-                ? `${lang === "1" ? "Liczba palet EURO: " : "Quantity of pallets EUR: "}${
-                      palletQuantities[3].full
-                  }\t`
+                  }${clientPriceUnit} ${lang === "1" ? "netto" : "net"}\n\n`
                 : ""
         }`.trim();
 

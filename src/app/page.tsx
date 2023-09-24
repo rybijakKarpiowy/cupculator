@@ -17,7 +17,6 @@ export default async function Home({
 }) {
     const lang = (searchParams.lang || "1") as "1" | "2";
     const cup = searchParams.cup?.replace(" ", "_") as string;
-    console.log(cup, "cup")
 
     const supabase = createServerComponentClient<Database>({ cookies });
     const authUser = (await supabase.auth.getUser()).data.user;

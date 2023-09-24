@@ -1393,8 +1393,8 @@ export const Calculator = ({
                             ? "bg-slate-400"
                             : "bg-green-300 hover:bg-green-400"
                     }`}
-                    onClick={() => {
-                        const res = copyCalcToClip({
+                    onClick={async () => {
+                        const res = await copyCalcToClip({
                             amounts,
                             cupConfig,
                             selectedCup,

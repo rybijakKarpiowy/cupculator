@@ -7,7 +7,7 @@ import { getPalletQuantities } from "./getPalletQuantities";
 import { translateColor } from "./translateColor";
 import { priceToString } from "./priceToString";
 
-export const copyCalcToClip = ({
+export const copyCalcToClip = async ({
     amounts,
     selectedCup,
     colorPricing,
@@ -101,7 +101,7 @@ export const copyCalcToClip = ({
 
         const text = `${lang === "1" ? "Data: " : "Date: "}${new Date().toLocaleDateString(
             "pl-PL"
-        )}\n\n${selectedCup.code}\n${selectedCup.name} ${
+        )}\n\n${selectedCup.code}\n<b>${selectedCup.name} ${
             lang === "1" ? selectedCup.color : translateColor(selectedCup.color)
         }${cupConfig.imprintType ? " + " : ""}${
             [
@@ -197,39 +197,54 @@ export const copyCalcToClip = ({
                     ? "Deep Effect Plus 2 strony"
                     : "Deep Effect Plus 2 sides"
                 : ""
+        }${!cupConfig.imprintType ? (lang === "1" ? ", brak nadruku" : ", no imprint") : ""}</b>\n${
+            cupConfig.trend_color
+                ? `${"TrendColor: "}${
+                      cupConfig.trend_color === "inside"
+                          ? lang === "1"
+                              ? "Wewnątrz"
+                              : "Inside"
+                          : ""
+                  }${
+                      cupConfig.trend_color === "outside"
+                          ? lang === "1"
+                              ? "Na zewnątrz"
+                              : "Outside"
+                          : ""
+                  }${
+                      cupConfig.trend_color === "both"
+                          ? lang === "1"
+                              ? "Wewnątrz i na zewnątrz"
+                              : "Inside and outside"
+                          : ""
+                  }${
+                      cupConfig.trend_color === "lowered_edge"
+                          ? lang === "1"
+                              ? "Z obniżonym ranten"
+                              : "With lowered edge"
+                          : ""
+                  }\n`
+                : ""
+        }${cupConfig.pro_color ? `${"ProColor: "}${lang === "1" ? "Wewnątrz" : "Inside"}\n` : ""}${
+            cupConfig.soft_touch ? `${"SoftTouch: "}${lang === "1" ? "Zewnątrz" : "Outside"}\n` : ""
         }${
-            !cupConfig.imprintType ? (lang === "1" ? ", brak nadruku" : ", no imprint") : ""
-        }\n${"TrendColor: "}${
-            cupConfig.trend_color === "inside" ? (lang === "1" ? "Wewnątrz" : "Inside") : ""
-        }${cupConfig.trend_color === "outside" ? (lang === "1" ? "Na zewnątrz" : "Outside") : ""}${
-            cupConfig.trend_color === "both"
-                ? lang === "1"
-                    ? "Wewnątrz i na zewnątrz"
-                    : "Inside and outside"
+            cupConfig.nadruk_wewnatrz_na_sciance ||
+            cupConfig.nadruk_na_uchu ||
+            cupConfig.nadruk_na_spodzie ||
+            cupConfig.nadruk_na_dnie ||
+            cupConfig.nadruk_przez_rant ||
+            cupConfig.nadruk_apla ||
+            (cupConfig.nadruk_zlotem && cupConfig.nadruk_zlotem !== true) ||
+            cupConfig.personalizacja ||
+            (cupConfig.zdobienie_paskiem && cupConfig.zdobienie_paskiem !== true) ||
+            cupConfig.nadruk_na_powloce_magicznej_1_kolor ||
+            (cupConfig.zdobienie_tapeta_na_barylce &&
+                cupConfig.zdobienie_tapeta_na_barylce !== true) ||
+            cupConfig.naklejka_papierowa_z_nadrukiem ||
+            cupConfig.wkladanie_ulotek_do_kubka
+                ? `${lang === "1" ? "Dodatkowe zdobienia: " : "Additional decorations: "}\n`
                 : ""
         }${
-            cupConfig.trend_color === "lowered_edge"
-                ? lang === "1"
-                    ? "Z obniżonym ranten"
-                    : "With lowered edge"
-                : ""
-        }${!cupConfig.trend_color ? (lang === "1" ? "Brak" : "None") : ""}\n${"ProColor: "}${
-            cupConfig.pro_color
-                ? lang === "1"
-                    ? "Wewnątrz"
-                    : "Inside"
-                : lang === "1"
-                ? "Brak"
-                : "None"
-        }\n${"SoftTouch: "}${
-            cupConfig.soft_touch
-                ? lang === "1"
-                    ? "Zewnątrz"
-                    : "Outside"
-                : lang === "1"
-                ? "Brak"
-                : "None"
-        }\n${lang === "1" ? "Dodatkowe zdobienia: " : "Additional decorations: "}\n${
             cupConfig.nadruk_wewnatrz_na_sciance
                 ? `${"• "}${
                       lang === "1"
@@ -337,13 +352,13 @@ export const copyCalcToClip = ({
             !cupConfig.cardboard ? (lang === "1" ? "Opakowanie zbiorcze" : "Bulk packaging") : ""
         }\n\n${
             amounts.amount1
-                ? `${lang === "1" ? "Ilość " : "Amount "}${amounts.amount1} ${
+                ? `<b>${lang === "1" ? "Ilość " : "Amount "}${amounts.amount1} ${
                       lang === "1" ? "szt." : "pcs."
                   }: ${
                       calculatedPrices[1].unit === null
                           ? ""
                           : priceToString(calculatedPrices[1].unit)
-                  }${clientPriceUnit} ${lang === "1" ? "netto / szt." : "net / pcs."}\n${
+                  }${clientPriceUnit} ${lang === "1" ? "netto / szt." : "net / pcs."}</b>\n${
                       calculatedPrices[1].singleCardboardPrice
                           ? `+ ${lang === "1" ? "opakowanie" : "packaging"}: ${priceToString(
                                 calculatedPrices[1].singleCardboardPrice
@@ -388,13 +403,13 @@ export const copyCalcToClip = ({
                 : ""
         }${
             amounts.amount2
-                ? `${lang === "1" ? "Ilość " : "Amount "}${amounts.amount2} ${
+                ? `<b>${lang === "1" ? "Ilość " : "Amount "}${amounts.amount2} ${
                       lang === "1" ? "szt." : "pcs."
                   }: ${
                       calculatedPrices[2].unit === null
                           ? ""
                           : priceToString(calculatedPrices[2].unit)
-                  }${clientPriceUnit} ${lang === "1" ? "netto / szt." : "net / pcs."}\n${
+                  }${clientPriceUnit} ${lang === "1" ? "netto / szt." : "net / pcs."}</b>\n${
                       calculatedPrices[1].singleCardboardPrice
                           ? `+ ${lang === "1" ? "opakowanie" : "packaging"}: ${priceToString(
                                 calculatedPrices[1].singleCardboardPrice
@@ -439,13 +454,13 @@ export const copyCalcToClip = ({
                 : ""
         }${
             amounts.amount3
-                ? `${lang === "1" ? "Ilość " : "Amount "}${amounts.amount3} ${
+                ? `<b>${lang === "1" ? "Ilość " : "Amount "}${amounts.amount3} ${
                       lang === "1" ? "szt." : "pcs."
                   }: ${
                       calculatedPrices[3].unit === null
                           ? ""
                           : priceToString(calculatedPrices[3].unit)
-                  }${clientPriceUnit} ${lang === "1" ? "netto / szt." : "net / pcs."}\n${
+                  }${clientPriceUnit} ${lang === "1" ? "netto / szt." : "net / pcs."}</b>\n${
                       calculatedPrices[1].singleCardboardPrice
                           ? `+ ${lang === "1" ? "opakowanie" : "packaging"}: ${priceToString(
                                 calculatedPrices[1].singleCardboardPrice
@@ -486,11 +501,23 @@ export const copyCalcToClip = ({
                                     ) / 100
                                 )
                           : "0.00"
-                  }${clientPriceUnit} ${lang === "1" ? "netto" : "net"}\n\n`
+                  }${clientPriceUnit} ${lang === "1" ? "netto" : "net"}\n`
                 : ""
-        }`.trim();
+        }`;
 
-        navigator.clipboard.writeText(text);
+        const para = document.createElement("p");
+        para.innerHTML = text.replaceAll("\n", "<br>");
+        const listener = (e: ClipboardEvent) => {
+            e.preventDefault();
+            e.clipboardData?.setData("text/html", para.innerHTML);
+            e.clipboardData?.setData(
+                "text/plain",
+                text.replaceAll("<b>", "").replaceAll("</b>", "")
+            );
+        };
+        document.addEventListener("copy", listener);
+        document.execCommand("copy");
+        document.removeEventListener("copy", listener);
 
         return text;
     } catch (error) {

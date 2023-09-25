@@ -2,11 +2,12 @@ import { Calculator } from "@/components/calculator/calculator";
 import { UserSelector } from "@/components/calculator/userSelector";
 import { Database } from "@/database/types";
 import { Restriction } from "@/lib/checkRestriction";
-import { getUserPricings } from "@/lib/getUserPricings";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { PostgrestError } from "@supabase/supabase-js";
 import { cookies } from "next/dist/client/components/headers";
 import { baseUrl } from "@/app/baseUrl";
+import { Cup } from "./api/updatecups/route";
+import { ColorPricing } from "@/lib/colorPricingType";
 
 export const dynamic = "force-dynamic";
 
@@ -83,14 +84,30 @@ export default async function Home({
             );
         }
 
-        const pricingsData = await getUserPricings(authId, cup);
-        if (!pricingsData) {
+        const pricingsDataRes = await fetch("/api/getuserpricings", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ user_id: authId, cupLink: cup }),
+        });
+
+        if (!pricingsDataRes.ok) {
+            console.log(await pricingsDataRes.text());
             return (
                 <div className="text-center text-2xl mt-72">
-                    {lang === "1" ? "Wystąpił błąd" : "An error occured"}
+                    {lang === "1"
+                        ? "Wystąpił błąd, w celu uzyskania kalkulacji skontaktuj się z działem handlowym"
+                        : "An error occured, please contact the sales department for a calculation"}
                 </div>
             );
         }
+
+        const pricingsData = (await pricingsDataRes.json()) as {
+            cupData: Cup[];
+            colorPricing: ColorPricing;
+        };
+
         const { cupData, colorPricing } = pricingsData;
 
         return (

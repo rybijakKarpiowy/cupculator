@@ -179,34 +179,7 @@ export const PdfPage = ({
                         </Text>
                     </View>
                 </View>
-                <View style={{ display: "flex", flexDirection: "column" }}>
-                    <View
-                        style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            width: "100%",
-                            justifyContent: "space-between",
-                        }}
-                    >
-                        {amounts.amount1 && (
-                            <Text style={styles.p}>
-                                {lang === "1" ? "Ilość: " : "Amount: "}
-                                {amounts.amount1}
-                            </Text>
-                        )}
-                        {amounts.amount2 && (
-                            <Text style={styles.p}>
-                                {lang === "1" ? "Ilość: " : "Amount: "}
-                                {amounts.amount2}
-                            </Text>
-                        )}
-                        {amounts.amount3 && (
-                            <Text style={styles.p}>
-                                {lang === "1" ? "Ilość: " : "Amount: "}
-                                {amounts.amount3}
-                            </Text>
-                        )}
-                    </View>
+                <View style={{ display: "flex", flexDirection: "column", marginBottom: 20 }}>
                     <Text style={styles.p}>
                         {lang === "1" ? "Nadruk: " : "Print type: "}
                         {cupConfig.imprintType === "direct_print" &&
@@ -421,16 +394,6 @@ export const PdfPage = ({
                         {!cupConfig.cardboard &&
                             (lang === "1" ? "Opakowanie zbiorcze" : "Bulk packaging")}
                     </Text>
-                    <Text
-                        style={{
-                            ...styles.p,
-                            fontWeight: "bold",
-                            marginTop: 20,
-                            marginBottom: 8,
-                        }}
-                    >
-                        {lang === "1" ? "Cena" : "Price"}
-                    </Text>
                 </View>
                 <View
                     style={{
@@ -441,41 +404,52 @@ export const PdfPage = ({
                 >
                     {amounts.amount1 && (
                         <View style={{ display: "flex", flexDirection: "column" }}>
+                            <Text style={{ ...styles.p, fontWeight: "bold" }}>
+                                {lang === "1" ? "Ilość: " : "Amount: "}
+                                {amounts.amount1}
+                            </Text>
+                            <Text
+                                style={{
+                                    ...styles.p,
+                                    marginTop: 12,
+                                    marginBottom: 6,
+                                    fontWeight: "bold",
+                                }}
+                            >
+                                {lang === "1" ? "Cena" : "Price"}
+                            </Text>
                             <Text style={styles.psmall}>
                                 {lang === "1"
                                     ? "Produkt z nadrukiem (1 szt. netto): "
-                                    : "Product with imprint (1 pcs. net): "}
+                                    : "Product with imprint (1 pcs.): "}
                                 {calculatedPrices[1].unit === null
                                     ? ""
-                                    : priceToString(calculatedPrices[1].unit)}
-                                {clientPriceUnit}
+                                    : priceToString(calculatedPrices[1].unit, clientPriceUnit)}
                             </Text>
                             <Text style={styles.psmall}>
                                 {lang === "1"
                                     ? "Opakowanie (1 szt. netto): "
-                                    : "Packaging (1 pcs. net): "}
-                                {calculatedPrices[1].singleCardboardPrice
-                                    ? priceToString(calculatedPrices[1].singleCardboardPrice)
-                                    : "0.00"}
-                                {clientPriceUnit}
+                                    : "Packaging (1 pcs.): "}
+                                {priceToString(
+                                    calculatedPrices[1].singleCardboardPrice,
+                                    clientPriceUnit
+                                )}
                             </Text>
                             <Text style={styles.psmall}>
                                 {lang === "1" ? "Przygotowalnia: " : "Set-up: "}
-                                {priceToString(calculatedPrices[1].prep)}
-                                {clientPriceUnit}
+                                {priceToString(calculatedPrices[1].prep, clientPriceUnit)}
                             </Text>
                             <Text style={styles.psmall}>
                                 {"Transport: "}
                                 {clientPriceUnit === "zł"
                                     ? `${priceToString(
-                                          calculatedPrices[1].transport
-                                      )} ${clientPriceUnit}`
+                                          calculatedPrices[1].transport,
+                                          clientPriceUnit
+                                      )}`
                                     : "Please contact your advisor"}
                             </Text>
                             <Text style={styles.psmall}>
-                                {lang === "1"
-                                    ? "Całkowita wartość kalkulacji netto: "
-                                    : "Total sum of the calculation net: "}
+                                {lang === "1" ? "Całkowita wartość netto: " : "Total: "}
                                 {calculatedPrices[1].prep !== null &&
                                 calculatedPrices[1].unit !== null &&
                                 amounts.amount1
@@ -489,7 +463,8 @@ export const PdfPage = ({
                                                           amounts.amount1 +
                                                       calculatedPrices[1].transport) *
                                                       100
-                                              ) / 100
+                                              ) / 100,
+                                              clientPriceUnit
                                           )
                                         : priceToString(
                                               Math.round(
@@ -499,10 +474,10 @@ export const PdfPage = ({
                                                               .singleCardboardPrice || 0)) *
                                                           amounts.amount1) *
                                                       100
-                                              ) / 100
+                                              ) / 100,
+                                              clientPriceUnit
                                           )
-                                    : "0.00"}
-                                {clientPriceUnit}
+                                    : priceToString(0, clientPriceUnit)}
                             </Text>
                             <Text
                                 style={{
@@ -532,41 +507,52 @@ export const PdfPage = ({
                     )}
                     {amounts.amount2 && (
                         <View style={{ display: "flex", flexDirection: "column" }}>
+                            <Text style={{ ...styles.p, fontWeight: "bold" }}>
+                                {lang === "1" ? "Ilość: " : "Amount: "}
+                                {amounts.amount2}
+                            </Text>
+                            <Text
+                                style={{
+                                    ...styles.p,
+                                    marginTop: 12,
+                                    marginBottom: 6,
+                                    fontWeight: "bold",
+                                }}
+                            >
+                                {lang === "1" ? "Cena" : "Price"}
+                            </Text>
                             <Text style={styles.psmall}>
                                 {lang === "1"
                                     ? "Produkt z nadrukiem (1 szt. netto): "
-                                    : "Product with imprint (1 pcs. net): "}
+                                    : "Product with imprint (1 pcs.): "}
                                 {calculatedPrices[2].unit === null
                                     ? ""
-                                    : priceToString(calculatedPrices[2].unit)}
-                                {clientPriceUnit}
+                                    : priceToString(calculatedPrices[2].unit, clientPriceUnit)}
                             </Text>
                             <Text style={styles.psmall}>
                                 {lang === "1"
                                     ? "Opakowanie (1 szt. netto): "
-                                    : "Packaging (1 pcs. net): "}
-                                {calculatedPrices[2].singleCardboardPrice
-                                    ? priceToString(calculatedPrices[2].singleCardboardPrice)
-                                    : "0.00"}
-                                {clientPriceUnit}
+                                    : "Packaging (1 pcs.): "}
+                                {priceToString(
+                                    calculatedPrices[2].singleCardboardPrice,
+                                    clientPriceUnit
+                                )}
                             </Text>
                             <Text style={styles.psmall}>
                                 {lang === "1" ? "Przygotowalnia: " : "Set-up: "}
-                                {priceToString(calculatedPrices[2].prep)}
-                                {clientPriceUnit}
+                                {priceToString(calculatedPrices[2].prep, clientPriceUnit)}
                             </Text>
                             <Text style={styles.psmall}>
                                 {"Transport: "}
                                 {clientPriceUnit === "zł"
                                     ? `${priceToString(
-                                          calculatedPrices[2].transport
-                                      )} ${clientPriceUnit}`
+                                          calculatedPrices[2].transport,
+                                          clientPriceUnit
+                                      )}`
                                     : "Please contact your advisor"}
                             </Text>
                             <Text style={styles.psmall}>
-                                {lang === "1"
-                                    ? "Całkowita wartość kalkulacji netto: "
-                                    : "Total sum of the calculation net: "}
+                                {lang === "1" ? "Całkowita wartość netto: " : "Total: "}
                                 {calculatedPrices[2].prep !== null &&
                                 calculatedPrices[2].unit !== null &&
                                 amounts.amount2
@@ -580,7 +566,8 @@ export const PdfPage = ({
                                                           amounts.amount2 +
                                                       calculatedPrices[2].transport) *
                                                       100
-                                              ) / 100
+                                              ) / 100,
+                                              clientPriceUnit
                                           )
                                         : priceToString(
                                               Math.round(
@@ -590,10 +577,10 @@ export const PdfPage = ({
                                                               .singleCardboardPrice || 0)) *
                                                           amounts.amount2) *
                                                       100
-                                              ) / 100
+                                              ) / 100,
+                                              clientPriceUnit
                                           )
-                                    : "0.00"}
-                                {clientPriceUnit}
+                                    : priceToString(0, clientPriceUnit)}
                             </Text>
                             <Text
                                 style={{
@@ -623,41 +610,52 @@ export const PdfPage = ({
                     )}
                     {amounts.amount3 && (
                         <View style={{ display: "flex", flexDirection: "column" }}>
+                            <Text style={{ ...styles.p, fontWeight: "bold" }}>
+                                {lang === "1" ? "Ilość: " : "Amount: "}
+                                {amounts.amount3}
+                            </Text>
+                            <Text
+                                style={{
+                                    ...styles.p,
+                                    marginTop: 12,
+                                    marginBottom: 6,
+                                    fontWeight: "bold",
+                                }}
+                            >
+                                {lang === "1" ? "Cena" : "Price"}
+                            </Text>
                             <Text style={styles.psmall}>
                                 {lang === "1"
                                     ? "Produkt z nadrukiem (1 szt. netto): "
-                                    : "Product with imprint (1 pcs. net): "}
+                                    : "Product with imprint (1 pcs.): "}
                                 {calculatedPrices[3].unit === null
                                     ? ""
-                                    : priceToString(calculatedPrices[3].unit)}
-                                {clientPriceUnit}
+                                    : priceToString(calculatedPrices[3].unit, clientPriceUnit)}
                             </Text>
                             <Text style={styles.psmall}>
                                 {lang === "1"
                                     ? "Opakowanie (1 szt. netto): "
-                                    : "Packaging (1 pcs. net): "}
-                                {calculatedPrices[3].singleCardboardPrice
-                                    ? priceToString(calculatedPrices[3].singleCardboardPrice)
-                                    : "0.00"}
-                                {clientPriceUnit}
+                                    : "Packaging (1 pcs.): "}
+                                {priceToString(
+                                    calculatedPrices[3].singleCardboardPrice,
+                                    clientPriceUnit
+                                )}
                             </Text>
                             <Text style={styles.psmall}>
                                 {lang === "1" ? "Przygotowalnia: " : "Set-up: "}
-                                {priceToString(calculatedPrices[3].prep)}
-                                {clientPriceUnit}
+                                {priceToString(calculatedPrices[3].prep, clientPriceUnit)}
                             </Text>
                             <Text style={styles.psmall}>
                                 {"Transport: "}
                                 {clientPriceUnit === "zł"
                                     ? `${priceToString(
-                                          calculatedPrices[3].transport
-                                      )} ${clientPriceUnit}`
+                                          calculatedPrices[3].transport,
+                                          clientPriceUnit
+                                      )}`
                                     : "Please contact your advisor"}
                             </Text>
                             <Text style={styles.psmall}>
-                                {lang === "1"
-                                    ? "Całkowita wartość kalkulacji netto: "
-                                    : "Total sum of the calculation net: "}
+                                {lang === "1" ? "Całkowita wartość netto: " : "Total: "}
                                 {calculatedPrices[3].prep !== null &&
                                 calculatedPrices[3].unit !== null &&
                                 amounts.amount3
@@ -671,7 +669,8 @@ export const PdfPage = ({
                                                           amounts.amount3 +
                                                       calculatedPrices[3].transport) *
                                                       100
-                                              ) / 100
+                                              ) / 100,
+                                              clientPriceUnit
                                           )
                                         : priceToString(
                                               Math.round(
@@ -681,16 +680,16 @@ export const PdfPage = ({
                                                               .singleCardboardPrice || 0)) *
                                                           amounts.amount3) *
                                                       100
-                                              ) / 100
+                                              ) / 100,
+                                              clientPriceUnit
                                           )
-                                    : "0.00"}
-                                {clientPriceUnit}
+                                    : priceToString(0, clientPriceUnit)}
                             </Text>
                             <Text
                                 style={{
                                     ...styles.p,
                                     marginTop: 20,
-                                    marginBottom: 8,
+                                    marginBottom: 6,
                                     fontWeight: "bold",
                                 }}
                             >

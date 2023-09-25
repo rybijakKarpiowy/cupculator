@@ -80,7 +80,7 @@ export const POST = async (req: NextRequest) => {
     const preparedData = rawData
         .map((row, i) => {
             const rowId = `${i + offset + 1}`;
-            if (row.length < 30) {
+            if (row.length < 32) {
                 lastCellEmpty.push(rowId);
                 return null;
             }
@@ -94,13 +94,13 @@ export const POST = async (req: NextRequest) => {
                 icon: row[6],
                 volume: row[7],
                 prices: {
-                    price_24: parseFloat(row[8].replace("zł", "").trim().replace(",", ".")),
-                    price_72: parseFloat(row[9].replace("zł", "").trim().replace(",", ".")),
-                    price_108: parseFloat(row[10].replace("zł", "").trim().replace(",", ".")),
-                    price_216: parseFloat(row[11].replace("zł", "").trim().replace(",", ".")),
-                    price_504: parseFloat(row[12].replace("zł", "").trim().replace(",", ".")),
-                    price_1008: parseFloat(row[13].replace("zł", "").trim().replace(",", ".")),
-                    price_2520: parseFloat(row[14].replace("zł", "").trim().replace(",", ".")),
+                    price_24: parseFloat(row[10].replace("zł", "").trim().replace(",", ".")),
+                    price_72: parseFloat(row[11].replace("zł", "").trim().replace(",", ".")),
+                    price_108: parseFloat(row[12].replace("zł", "").trim().replace(",", ".")),
+                    price_216: parseFloat(row[13].replace("zł", "").trim().replace(",", ".")),
+                    price_504: parseFloat(row[14].replace("zł", "").trim().replace(",", ".")),
+                    price_1008: parseFloat(row[15].replace("zł", "").trim().replace(",", ".")),
+                    price_2520: parseFloat(row[16].replace("zł", "").trim().replace(",", ".")),
                 },
             };
 

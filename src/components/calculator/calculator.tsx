@@ -31,6 +31,7 @@ export const Calculator = ({
     additionalValues: Database["public"]["Tables"]["additional_values"]["Row"];
     restrictions: Restriction[];
 }) => {
+    console.log(cupData[0])
     const [loading, setLoading] = useState(false);
     const [selectedCup, setSelectedCup] = useState<Cup>(
         cupData.sort((a, b) => a.color.localeCompare(b.color))[0]

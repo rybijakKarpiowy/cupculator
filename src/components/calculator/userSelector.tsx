@@ -3,7 +3,6 @@
 import { Cup } from "@/app/api/updatecups/route";
 import { pricingsInterface } from "@/app/page";
 import { Database } from "@/database/types";
-import { getUserPricings } from "@/lib/getUserPricings";
 import { ChangeEvent, useState } from "react";
 import { Calculator } from "./calculator";
 import { ColorPricing } from "@/lib/colorPricingType";
@@ -37,7 +36,26 @@ export const UserSelector = ({
             allUsersData.find((user) => user.user_id === selectedUser)?.eu ? "EUR" : "zł"
         );
 
-        const pricingsData = await getUserPricings(selectedUser, cup);
+        const pricingsDataRes = await fetch("/api/getuserpricings", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ user_id: selectedUser, cupLink: cup }),
+        });
+
+        if (!pricingsDataRes.ok) {
+            console.log(await pricingsDataRes.text());
+            setIsError(true);
+            setLoading(false);
+            return;
+        }
+
+        const pricingsData = (await pricingsDataRes.json()) as {
+            cupData: Cup[];
+            colorPricing: ColorPricing;
+        } | null;
+
         if (!pricingsData) {
             setIsError(true);
             setLoading(false);

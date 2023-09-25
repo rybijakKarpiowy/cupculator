@@ -44,10 +44,11 @@ export const getUserPricings = async (authId: string, cupLink: string) => {
     // leave only one cup pricing per cup
     const cupData = cupDataRaw.map((cup) => {
         const cupPricingsRaw = cup.cup_pricings;
+        console.log(cupPricingsRaw, "cupPricingsRaw")
         const cupPricingsFiltered = cupPricingsRaw.filter((cupPricing) => {
             return cupPricing.pricing_name === user.cup_pricing;
         });
-
+        console.log(cupPricingsFiltered, "cupPricingsFiltered")
         const { cup_pricings, ...rest } = cup;
         if (cupPricingsFiltered.length === 0) {
             return {

@@ -31,7 +31,6 @@ export const Calculator = ({
     additionalValues: Database["public"]["Tables"]["additional_values"]["Row"];
     restrictions: Restriction[];
 }) => {
-    console.log(cupData[0])
     const [loading, setLoading] = useState(false);
     const [selectedCup, setSelectedCup] = useState<Cup>(
         cupData.sort((a, b) => a.color.localeCompare(b.color))[0]
@@ -100,6 +99,19 @@ export const Calculator = ({
         naklejka_papierowa_z_nadrukiem: false,
         wkladanie_ulotek_do_kubka: false,
     });
+
+    useEffect(() => {
+        for (const price of Object.values(selectedCup.prices)) {
+            if (!price) {
+                toast.warn(
+                    lang === "1"
+                        ? "Brak cen dla wybranego kubka. Skontaktuj się z działem handlowym"
+                        : "No prices for selected cup. Contact sales department"
+                );
+                return;
+            }
+        }
+    }, [selectedCup]);
 
     useEffect(() => {
         const newForbidden = getNewForbidden({

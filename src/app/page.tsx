@@ -96,7 +96,9 @@ export default async function Home({
             console.log(await pricingsDataRes.text());
             return (
                 <div className="text-center text-2xl mt-72">
-                    {lang === "1" ? "Wystąpił błąd" : "An error occured"}
+                    {lang === "1"
+                        ? "Wystąpił błąd, w celu uzyskania kalkulacji skontaktuj się z działem handlowym"
+                        : "An error occured, please contact the sales department for a calculation"}
                 </div>
             );
         }
@@ -104,15 +106,8 @@ export default async function Home({
         const pricingsData = (await pricingsDataRes.json()) as {
             cupData: Cup[];
             colorPricing: ColorPricing;
-        } | null;
+        };
 
-        if (!pricingsData) {
-            return (
-                <div className="text-center text-2xl mt-72">
-                    {lang === "1" ? "Wystąpił błąd" : "An error occured"}
-                </div>
-            );
-        }
         const { cupData, colorPricing } = pricingsData;
 
         return (

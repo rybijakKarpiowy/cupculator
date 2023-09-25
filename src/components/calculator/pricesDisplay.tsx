@@ -60,21 +60,19 @@ export const PricesDisplay = ({
                 {lang === "1" ? " szt." : " pcs."}
             </p>
             <p>
-                {calculatedPrices.unit === null ? "" : priceToString(calculatedPrices.unit)}
-                {clientPriceUnit}
+                {calculatedPrices.unit === null
+                    ? ""
+                    : priceToString(calculatedPrices.unit, clientPriceUnit)}
             </p>
             <p>
-                {singleCardboardPrice ? priceToString(singleCardboardPrice) : "0.00"}
-                {clientPriceUnit}
+                {priceToString(singleCardboardPrice, clientPriceUnit)}
             </p>
             <p>
-                {priceToString(calculatedPrices.prep)}
-                {clientPriceUnit}
+                {priceToString(calculatedPrices.prep, clientPriceUnit)}
             </p>
             {clientPriceUnit === "zł" && (
                 <p>
-                    {priceToString(calculatedPrices.transport)}
-                    {clientPriceUnit}
+                    {priceToString(calculatedPrices.transport, clientPriceUnit)}
                 </p>
             )}
             <p>
@@ -86,17 +84,18 @@ export const PricesDisplay = ({
                                       (calculatedPrices.unit + singleCardboardPrice) * amount +
                                       calculatedPrices.transport) *
                                       100
-                              ) / 100
+                              ) / 100,
+                              clientPriceUnit
                           )
                         : priceToString(
                               Math.round(
                                   (calculatedPrices.prep +
                                       (calculatedPrices.unit + singleCardboardPrice) * amount) *
                                       100
-                              ) / 100
+                              ) / 100,
+                              clientPriceUnit
                           )
-                    : "0.00"}
-                {clientPriceUnit}
+                    : priceToString(0, clientPriceUnit)}
             </p>
         </div>
     );

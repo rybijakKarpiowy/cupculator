@@ -1,13 +1,19 @@
-export const priceToString = (price: number|null) => {
-    if (price === null) {
-        return "0.00";
+export const priceToString = (price: number | null | undefined, clientPriceUnit: "zł" | "EUR") => {
+    if (!price) {
+        return `${clientPriceUnit === "zł" ? "0,00" : "0.00"} ${clientPriceUnit}`;
     }
-    const priceString = price.toString();
+
+    let priceString = price.toString();
     if (priceString.split(".").length === 1) {
-        return priceString + ".00";
+        priceString = priceString + ".00";
     }
     if (priceString.split(".")[1].length === 1) {
-        return priceString + "0";
+        priceString = priceString + "0";
     }
-    return priceString;
-}
+
+    if (clientPriceUnit === "zł") {
+        priceString = priceString.replace(".", ",");
+    }
+
+    return `${priceString} ${clientPriceUnit}`;
+};

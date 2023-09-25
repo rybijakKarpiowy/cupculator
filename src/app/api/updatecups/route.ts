@@ -80,7 +80,7 @@ export const POST = async (req: NextRequest) => {
     const preparedData = rawData
         .map((row, i) => {
             const rowId = `${i + offset + 1}`;
-            if (row.length < 30) {
+            if (row.length < 32) {
                 lastCellEmpty.push(rowId);
                 return null;
             }

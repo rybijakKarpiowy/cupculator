@@ -357,22 +357,23 @@ export const copyCalcToClip = async ({
                   }: ${
                       calculatedPrices[1].unit === null
                           ? ""
-                          : priceToString(calculatedPrices[1].unit)
-                  }${clientPriceUnit} ${lang === "1" ? "netto / szt." : "net / pcs."}</b>\n${
+                          : priceToString(calculatedPrices[1].unit, clientPriceUnit)
+                  } ${lang === "1" ? "netto / szt." : "/ pcs."}</b>\n${
                       calculatedPrices[1].singleCardboardPrice
                           ? `+ ${lang === "1" ? "opakowanie" : "packaging"}: ${priceToString(
-                                calculatedPrices[1].singleCardboardPrice
-                            )}${clientPriceUnit} ${lang === "1" ? "netto / szt." : "net / pcs."}\n`
+                                calculatedPrices[1].singleCardboardPrice,
+                                clientPriceUnit
+                            )} ${lang === "1" ? "netto / szt." : "/ pcs."}\n`
                           : ""
-                  }+ ${lang === "1" ? "przygotowalnia" : "set-up"}: ${
-                      calculatedPrices[1].prep ? priceToString(calculatedPrices[1].prep) : "0.00"
-                  }${clientPriceUnit} ${lang === "1" ? "netto" : "net"}\n${
+                  }+ ${lang === "1" ? "przygotowalnia" : "set-up"}: ${priceToString(
+                      calculatedPrices[1].prep,
+                      clientPriceUnit
+                  )} ${lang === "1" ? "netto" : ""}\n${
                       clientPriceUnit === "zł"
-                          ? `+ transport: ${
-                                calculatedPrices[1].transport
-                                    ? priceToString(calculatedPrices[1].transport)
-                                    : "0.00"
-                            }${clientPriceUnit} ${lang === "1" ? "netto" : "net"}\n`
+                          ? `+ transport: ${priceToString(
+                                calculatedPrices[1].transport,
+                                clientPriceUnit
+                            )} ${lang === "1" ? "netto" : ""}\n`
                           : ""
                   }${lang === "1" ? "Suma: " : "Total: "}${
                       calculatedPrices[1].prep !== null &&
@@ -387,7 +388,8 @@ export const copyCalcToClip = async ({
                                                 amounts[`amount${1}`]! +
                                             calculatedPrices[1].transport!) *
                                             100
-                                    ) / 100
+                                    ) / 100,
+                                    clientPriceUnit
                                 )
                               : priceToString(
                                     Math.round(
@@ -396,10 +398,11 @@ export const copyCalcToClip = async ({
                                                 (calculatedPrices[1].singleCardboardPrice || 0)) *
                                                 amounts[`amount${1}`]!) *
                                             100
-                                    ) / 100
+                                    ) / 100,
+                                    clientPriceUnit
                                 )
-                          : "0.00"
-                  }${clientPriceUnit} ${lang === "1" ? "netto" : "net"}\n\n`
+                          : priceToString(0, clientPriceUnit)
+                  } ${lang === "1" ? "netto" : ""}\n\n`
                 : ""
         }${
             amounts.amount2
@@ -408,22 +411,23 @@ export const copyCalcToClip = async ({
                   }: ${
                       calculatedPrices[2].unit === null
                           ? ""
-                          : priceToString(calculatedPrices[2].unit)
-                  }${clientPriceUnit} ${lang === "1" ? "netto / szt." : "net / pcs."}</b>\n${
+                          : priceToString(calculatedPrices[2].unit, clientPriceUnit)
+                  } ${lang === "1" ? "netto / szt." : "/ pcs."}</b>\n${
                       calculatedPrices[1].singleCardboardPrice
                           ? `+ ${lang === "1" ? "opakowanie" : "packaging"}: ${priceToString(
-                                calculatedPrices[1].singleCardboardPrice
-                            )}${clientPriceUnit} ${lang === "1" ? "netto / szt." : "net / pcs."}\n`
+                                calculatedPrices[1].singleCardboardPrice,
+                                clientPriceUnit
+                            )} ${lang === "1" ? "netto / szt." : "/ pcs."}\n`
                           : ""
-                  }+ ${lang === "1" ? "przygotowalnia" : "set-up"}: ${
-                      calculatedPrices[2].prep ? priceToString(calculatedPrices[2].prep) : "0.00"
-                  }${clientPriceUnit} ${lang === "1" ? "netto" : "net"}\n${
+                  }+ ${lang === "1" ? "przygotowalnia" : "set-up"}: ${priceToString(
+                      calculatedPrices[2].prep,
+                      clientPriceUnit
+                  )} ${lang === "1" ? "netto" : ""}\n${
                       clientPriceUnit === "zł"
-                          ? `+ transport: ${
-                                calculatedPrices[2].transport
-                                    ? priceToString(calculatedPrices[2].transport)
-                                    : "0.00"
-                            }${clientPriceUnit} ${lang === "1" ? "netto" : "net"}\n`
+                          ? `+ transport: ${priceToString(
+                                calculatedPrices[2].transport,
+                                clientPriceUnit
+                            )} ${lang === "1" ? "netto" : ""}\n`
                           : ""
                   }${lang === "1" ? "Suma: " : "Total: "}${
                       calculatedPrices[2].prep !== null &&
@@ -438,7 +442,8 @@ export const copyCalcToClip = async ({
                                                 amounts[`amount${2}`]! +
                                             calculatedPrices[2].transport!) *
                                             100
-                                    ) / 100
+                                    ) / 100,
+                                    clientPriceUnit
                                 )
                               : priceToString(
                                     Math.round(
@@ -447,10 +452,11 @@ export const copyCalcToClip = async ({
                                                 (calculatedPrices[2].singleCardboardPrice || 0)) *
                                                 amounts[`amount${2}`]!) *
                                             100
-                                    ) / 100
+                                    ) / 100,
+                                    clientPriceUnit
                                 )
-                          : "0.00"
-                  }${clientPriceUnit} ${lang === "1" ? "netto" : "net"}\n\n`
+                          : priceToString(0, clientPriceUnit)
+                  } ${lang === "1" ? "netto" : ""}\n\n`
                 : ""
         }${
             amounts.amount3
@@ -459,22 +465,23 @@ export const copyCalcToClip = async ({
                   }: ${
                       calculatedPrices[3].unit === null
                           ? ""
-                          : priceToString(calculatedPrices[3].unit)
-                  }${clientPriceUnit} ${lang === "1" ? "netto / szt." : "net / pcs."}</b>\n${
+                          : priceToString(calculatedPrices[3].unit, clientPriceUnit)
+                  } ${lang === "1" ? "netto / szt." : "/ pcs."}</b>\n${
                       calculatedPrices[1].singleCardboardPrice
                           ? `+ ${lang === "1" ? "opakowanie" : "packaging"}: ${priceToString(
-                                calculatedPrices[1].singleCardboardPrice
-                            )}${clientPriceUnit} ${lang === "1" ? "netto / szt." : "net / pcs."}\n`
+                                calculatedPrices[1].singleCardboardPrice,
+                                clientPriceUnit
+                            )} ${lang === "1" ? "netto / szt." : "/ pcs."}\n`
                           : ""
-                  }+ ${lang === "1" ? "przygotowalnia" : "set-up"}: ${
-                      calculatedPrices[3].prep ? priceToString(calculatedPrices[3].prep) : "0.00"
-                  }${clientPriceUnit} ${lang === "1" ? "netto" : "net"}\n${
+                  }+ ${lang === "1" ? "przygotowalnia" : "set-up"}: ${priceToString(
+                      calculatedPrices[3].prep,
+                      clientPriceUnit
+                  )} ${lang === "1" ? "netto" : ""}\n${
                       clientPriceUnit === "zł"
-                          ? `+ transport: ${
-                                calculatedPrices[3].transport
-                                    ? priceToString(calculatedPrices[3].transport)
-                                    : "0.00"
-                            }${clientPriceUnit} ${lang === "1" ? "netto" : "net"}\n`
+                          ? `+ transport: ${priceToString(
+                                calculatedPrices[3].transport,
+                                clientPriceUnit
+                            )} ${lang === "1" ? "netto" : ""}\n`
                           : ""
                   }${lang === "1" ? "Suma: " : "Total: "}${
                       calculatedPrices[3].prep !== null &&
@@ -489,7 +496,8 @@ export const copyCalcToClip = async ({
                                                 amounts[`amount${3}`]! +
                                             calculatedPrices[3].transport!) *
                                             100
-                                    ) / 100
+                                    ) / 100,
+                                    clientPriceUnit
                                 )
                               : priceToString(
                                     Math.round(
@@ -498,10 +506,11 @@ export const copyCalcToClip = async ({
                                                 (calculatedPrices[3].singleCardboardPrice || 0)) *
                                                 amounts[`amount${3}`]!) *
                                             100
-                                    ) / 100
+                                    ) / 100,
+                                    clientPriceUnit
                                 )
-                          : "0.00"
-                  }${clientPriceUnit} ${lang === "1" ? "netto" : "net"}\n`
+                          : priceToString(0, clientPriceUnit)
+                  } ${lang === "1" ? "netto" : ""}\n`
                 : ""
         }`;
 

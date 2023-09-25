@@ -179,34 +179,7 @@ export const PdfPage = ({
                         </Text>
                     </View>
                 </View>
-                <View style={{ display: "flex", flexDirection: "column" }}>
-                    <View
-                        style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            width: "100%",
-                            justifyContent: "space-between",
-                        }}
-                    >
-                        {amounts.amount1 && (
-                            <Text style={styles.p}>
-                                {lang === "1" ? "Ilość: " : "Amount: "}
-                                {amounts.amount1}
-                            </Text>
-                        )}
-                        {amounts.amount2 && (
-                            <Text style={styles.p}>
-                                {lang === "1" ? "Ilość: " : "Amount: "}
-                                {amounts.amount2}
-                            </Text>
-                        )}
-                        {amounts.amount3 && (
-                            <Text style={styles.p}>
-                                {lang === "1" ? "Ilość: " : "Amount: "}
-                                {amounts.amount3}
-                            </Text>
-                        )}
-                    </View>
+                <View style={{ display: "flex", flexDirection: "column", marginBottom: 20 }}>
                     <Text style={styles.p}>
                         {lang === "1" ? "Nadruk: " : "Print type: "}
                         {cupConfig.imprintType === "direct_print" &&
@@ -421,16 +394,6 @@ export const PdfPage = ({
                         {!cupConfig.cardboard &&
                             (lang === "1" ? "Opakowanie zbiorcze" : "Bulk packaging")}
                     </Text>
-                    <Text
-                        style={{
-                            ...styles.p,
-                            fontWeight: "bold",
-                            marginTop: 20,
-                            marginBottom: 8,
-                        }}
-                    >
-                        {lang === "1" ? "Cena" : "Price"}
-                    </Text>
                 </View>
                 <View
                     style={{
@@ -441,6 +404,20 @@ export const PdfPage = ({
                 >
                     {amounts.amount1 && (
                         <View style={{ display: "flex", flexDirection: "column" }}>
+                            <Text style={{ ...styles.p, fontWeight: "bold" }}>
+                                {lang === "1" ? "Ilość: " : "Amount: "}
+                                {amounts.amount1}
+                            </Text>
+                            <Text
+                                style={{
+                                    ...styles.p,
+                                    marginTop: 12,
+                                    marginBottom: 6,
+                                    fontWeight: "bold",
+                                }}
+                            >
+                                {lang === "1" ? "Cena" : "Price"}
+                            </Text>
                             <Text style={styles.psmall}>
                                 {lang === "1"
                                     ? "Produkt z nadrukiem (1 szt. netto): "
@@ -472,9 +449,7 @@ export const PdfPage = ({
                                     : "Please contact your advisor"}
                             </Text>
                             <Text style={styles.psmall}>
-                                {lang === "1"
-                                    ? "Całkowita wartość kalkulacji netto: "
-                                    : "Total sum of the calculation: "}
+                                {lang === "1" ? "Całkowita wartość netto: " : "Total: "}
                                 {calculatedPrices[1].prep !== null &&
                                 calculatedPrices[1].unit !== null &&
                                 amounts.amount1
@@ -532,6 +507,20 @@ export const PdfPage = ({
                     )}
                     {amounts.amount2 && (
                         <View style={{ display: "flex", flexDirection: "column" }}>
+                            <Text style={{ ...styles.p, fontWeight: "bold" }}>
+                                {lang === "1" ? "Ilość: " : "Amount: "}
+                                {amounts.amount2}
+                            </Text>
+                            <Text
+                                style={{
+                                    ...styles.p,
+                                    marginTop: 12,
+                                    marginBottom: 6,
+                                    fontWeight: "bold",
+                                }}
+                            >
+                                {lang === "1" ? "Cena" : "Price"}
+                            </Text>
                             <Text style={styles.psmall}>
                                 {lang === "1"
                                     ? "Produkt z nadrukiem (1 szt. netto): "
@@ -563,9 +552,7 @@ export const PdfPage = ({
                                     : "Please contact your advisor"}
                             </Text>
                             <Text style={styles.psmall}>
-                                {lang === "1"
-                                    ? "Całkowita wartość kalkulacji netto: "
-                                    : "Total sum of the calculation: "}
+                                {lang === "1" ? "Całkowita wartość netto: " : "Total: "}
                                 {calculatedPrices[2].prep !== null &&
                                 calculatedPrices[2].unit !== null &&
                                 amounts.amount2
@@ -623,6 +610,20 @@ export const PdfPage = ({
                     )}
                     {amounts.amount3 && (
                         <View style={{ display: "flex", flexDirection: "column" }}>
+                            <Text style={{ ...styles.p, fontWeight: "bold" }}>
+                                {lang === "1" ? "Ilość: " : "Amount: "}
+                                {amounts.amount3}
+                            </Text>
+                            <Text
+                                style={{
+                                    ...styles.p,
+                                    marginTop: 12,
+                                    marginBottom: 6,
+                                    fontWeight: "bold",
+                                }}
+                            >
+                                {lang === "1" ? "Cena" : "Price"}
+                            </Text>
                             <Text style={styles.psmall}>
                                 {lang === "1"
                                     ? "Produkt z nadrukiem (1 szt. netto): "
@@ -654,9 +655,7 @@ export const PdfPage = ({
                                     : "Please contact your advisor"}
                             </Text>
                             <Text style={styles.psmall}>
-                                {lang === "1"
-                                    ? "Całkowita wartość kalkulacji netto: "
-                                    : "Total sum of the calculation: "}
+                                {lang === "1" ? "Całkowita wartość netto: " : "Total: "}
                                 {calculatedPrices[3].prep !== null &&
                                 calculatedPrices[3].unit !== null &&
                                 amounts.amount3
@@ -690,7 +689,7 @@ export const PdfPage = ({
                                 style={{
                                     ...styles.p,
                                     marginTop: 20,
-                                    marginBottom: 8,
+                                    marginBottom: 6,
                                     fontWeight: "bold",
                                 }}
                             >

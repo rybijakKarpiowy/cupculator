@@ -15,6 +15,7 @@ import { resetInputs } from "@/lib/resetInputs";
 import { translateColor } from "@/lib/translateColor";
 import { downloadPdf } from "@/lib/downloadPdf";
 import { copyCalcToClip } from "@/lib/copyCalcToClip";
+import { getDefaultImprint } from "@/lib/getDefaultImprint";
 
 export const Calculator = ({
     cupData,
@@ -51,7 +52,7 @@ export const Calculator = ({
         trend_color: "",
         soft_touch: false,
         pro_color: false,
-        imprintType: selectedCup.digital_print ? "" : "transfer_plus_1",
+        imprintType: getDefaultImprint(selectedCup),
         imprintColors: selectedCup.digital_print ? 0 : 1,
         nadruk_wewnatrz_na_sciance: 0,
         nadruk_na_uchu: false,
@@ -106,6 +107,35 @@ export const Calculator = ({
     }, [cupData]);
 
     useEffect(() => {
+        setCupConfig({
+            trend_color: "",
+            soft_touch: false,
+            pro_color: false,
+            imprintType: getDefaultImprint(selectedCup),
+            imprintColors: selectedCup.digital_print ? 0 : 1,
+            nadruk_wewnatrz_na_sciance: 0,
+            nadruk_na_uchu: false,
+            nadruk_na_spodzie: false,
+            nadruk_na_dnie: false,
+            nadruk_przez_rant: false,
+            nadruk_apla: false,
+            nadruk_dookola_pod_uchem: false,
+            nadruk_zlotem: false,
+            personalizacja: false,
+            zdobienie_paskiem: false,
+            zdobienie_tapeta_na_barylce: false,
+            nadruk_na_powloce_magicznej_1_kolor: false,
+            naklejka_papierowa_z_nadrukiem: false,
+            wkladanie_ulotek_do_kubka: false,
+            cardboard: "",
+        });
+        const imprintSelect = document.getElementById("imprintType") as
+            | HTMLSelectElement
+            | undefined;
+        if (imprintSelect) {
+            imprintSelect.value = getDefaultImprint(selectedCup);
+        }
+
         for (const price of Object.values(selectedCup.prices)) {
             if (!price) {
                 setNoPrices(true);
@@ -500,11 +530,7 @@ export const Calculator = ({
                             <div className="flex flex-row justify-between items-center">
                                 {lang === "1" ? "Wybierz nadruk: " : "Select print type: "}
                                 <select
-                                    defaultValue={
-                                        !selectedCup.digital_print && selectedCup.transfer_plus
-                                            ? "transfer_plus_1"
-                                            : ""
-                                    }
+                                    defaultValue={getDefaultImprint(selectedCup)}
                                     id="imprintType"
                                     onChange={(e) => {
                                         if (e.target.value === cupConfig.imprintType) return;

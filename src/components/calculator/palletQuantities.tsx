@@ -20,7 +20,7 @@ export const PalletQuantities = ({
     if ((!amount || amount < 24) && !keep) return <></>;
 
     return (
-        <div className="flex flex-col w-[168px]">
+        <div className="flex flex-col w-[168px] h-20">
             <div className="flex flex-row gap-2 justify-between">
                 <p>{lang === "1" ? "Liczba mini palet: " : "Mini-pallet quantity: "}</p>
                 <span>{palletsCount.mini}</span>

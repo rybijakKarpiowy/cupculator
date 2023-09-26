@@ -1420,27 +1420,40 @@ export const Calculator = ({
                                     )}
                                 </select>
                             </div>
-                            <PalletQuantities
-                                lang={lang}
-                                selectedCardboard={cupConfig.cardboard}
-                                selectedCup={selectedCup}
-                                amount={amounts.amount1}
-                                keep={amounts.inputs > 0}
-                            />
-                            <PalletQuantities
-                                lang={lang}
-                                selectedCardboard={cupConfig.cardboard}
-                                selectedCup={selectedCup}
-                                amount={amounts.amount2}
-                                keep={amounts.inputs > 1}
-                            />
-                            <PalletQuantities
-                                lang={lang}
-                                selectedCardboard={cupConfig.cardboard}
-                                selectedCup={selectedCup}
-                                amount={amounts.amount3}
-                                keep={amounts.inputs > 2}
-                            />
+                            {(cupConfig.cardboard === "singular" &&
+                                selectedCup.mini_pallet_singular &&
+                                selectedCup.half_pallet_singular &&
+                                selectedCup.full_pallet_singular) ||
+                            (cupConfig.cardboard !== "singular" &&
+                                selectedCup.mini_pallet &&
+                                selectedCup.half_pallet &&
+                                selectedCup.full_pallet) ? (
+                                <>
+                                    <PalletQuantities
+                                        lang={lang}
+                                        selectedCardboard={cupConfig.cardboard}
+                                        selectedCup={selectedCup}
+                                        amount={amounts.amount1}
+                                        keep={amounts.inputs > 0}
+                                    />
+                                    <PalletQuantities
+                                        lang={lang}
+                                        selectedCardboard={cupConfig.cardboard}
+                                        selectedCup={selectedCup}
+                                        amount={amounts.amount2}
+                                        keep={amounts.inputs > 1}
+                                    />
+                                    <PalletQuantities
+                                        lang={lang}
+                                        selectedCardboard={cupConfig.cardboard}
+                                        selectedCup={selectedCup}
+                                        amount={amounts.amount3}
+                                        keep={amounts.inputs > 2}
+                                    />
+                                </>
+                            ) : (
+                                <div className="w-[100%] h-20 flex flex-row justify-center"></div>
+                            )}
                         </div>
                     </div>
                     <div className="mt-5 w-full flex justify-center gap-8">

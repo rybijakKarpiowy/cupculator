@@ -3,7 +3,6 @@ import { CupConfigInterface } from "@/components/calculator/calculator";
 import { Database } from "@/database/types";
 import { ColorPricing } from "./colorPricingType";
 import { calculatePrices } from "./calculatePrices";
-import { getPalletQuantities } from "./getPalletQuantities";
 import { translateColor } from "./translateColor";
 import { priceToString } from "./priceToString";
 
@@ -92,12 +91,6 @@ export const copyCalcToClip = async ({
                 singleCardboardPrice,
             };
         }
-
-        const palletQuantities = {
-            1: getPalletQuantities(amounts.amount1, selectedCup, cupConfig.cardboard),
-            2: getPalletQuantities(amounts.amount2, selectedCup, cupConfig.cardboard),
-            3: getPalletQuantities(amounts.amount3, selectedCup, cupConfig.cardboard),
-        };
 
         const text = `${lang === "1" ? "Data: " : "Date: "}${new Date().toLocaleDateString(
             "pl-PL"
@@ -370,10 +363,21 @@ export const copyCalcToClip = async ({
                       clientPriceUnit
                   )} ${lang === "1" ? "netto" : ""}\n${
                       clientPriceUnit === "zł"
-                          ? `+ transport: ${priceToString(
-                                calculatedPrices[1].transport,
-                                clientPriceUnit
-                            )} ${lang === "1" ? "netto" : ""}\n`
+                          ? (cupConfig.cardboard === "singular" &&
+                                selectedCup.mini_pallet_singular &&
+                                selectedCup.half_pallet_singular &&
+                                selectedCup.full_pallet_singular) ||
+                            (cupConfig.cardboard !== "singular" &&
+                                selectedCup.mini_pallet &&
+                                selectedCup.half_pallet &&
+                                selectedCup.full_pallet)
+                              ? `+ transport: ${priceToString(
+                                    calculatedPrices[1].transport,
+                                    clientPriceUnit
+                                )} ${lang === "1" ? "netto" : ""}\n`
+                              : `+ transport: ${
+                                    lang === "1" ? "Wycena indywidualna" : "Individual pricing"
+                                }\n`
                           : ""
                   }${lang === "1" ? "Suma: " : "Total: "}${
                       calculatedPrices[1].prep !== null &&
@@ -424,10 +428,21 @@ export const copyCalcToClip = async ({
                       clientPriceUnit
                   )} ${lang === "1" ? "netto" : ""}\n${
                       clientPriceUnit === "zł"
-                          ? `+ transport: ${priceToString(
-                                calculatedPrices[2].transport,
-                                clientPriceUnit
-                            )} ${lang === "1" ? "netto" : ""}\n`
+                          ? (cupConfig.cardboard === "singular" &&
+                                selectedCup.mini_pallet_singular &&
+                                selectedCup.half_pallet_singular &&
+                                selectedCup.full_pallet_singular) ||
+                            (cupConfig.cardboard !== "singular" &&
+                                selectedCup.mini_pallet &&
+                                selectedCup.half_pallet &&
+                                selectedCup.full_pallet)
+                              ? `+ transport: ${priceToString(
+                                    calculatedPrices[2].transport,
+                                    clientPriceUnit
+                                )} ${lang === "1" ? "netto" : ""}\n`
+                              : `+ transport: ${
+                                    lang === "1" ? "Wycena indywidualna" : "Individual pricing"
+                                }\n`
                           : ""
                   }${lang === "1" ? "Suma: " : "Total: "}${
                       calculatedPrices[2].prep !== null &&
@@ -478,10 +493,21 @@ export const copyCalcToClip = async ({
                       clientPriceUnit
                   )} ${lang === "1" ? "netto" : ""}\n${
                       clientPriceUnit === "zł"
-                          ? `+ transport: ${priceToString(
-                                calculatedPrices[3].transport,
-                                clientPriceUnit
-                            )} ${lang === "1" ? "netto" : ""}\n`
+                          ? (cupConfig.cardboard === "singular" &&
+                                selectedCup.mini_pallet_singular &&
+                                selectedCup.half_pallet_singular &&
+                                selectedCup.full_pallet_singular) ||
+                            (cupConfig.cardboard !== "singular" &&
+                                selectedCup.mini_pallet &&
+                                selectedCup.half_pallet &&
+                                selectedCup.full_pallet)
+                              ? `+ transport: ${priceToString(
+                                    calculatedPrices[3].transport,
+                                    clientPriceUnit
+                                )} ${lang === "1" ? "netto" : ""}\n`
+                              : `+ transport: ${
+                                    lang === "1" ? "Wycena indywidualna" : "Individual pricing"
+                                }\n`
                           : ""
                   }${lang === "1" ? "Suma: " : "Total: "}${
                       calculatedPrices[3].prep !== null &&

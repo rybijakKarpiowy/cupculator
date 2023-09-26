@@ -59,20 +59,23 @@ export const PricesDisplay = ({
                 {amount}
                 {lang === "1" ? " szt." : " pcs."}
             </p>
-            <p>
-                {calculatedPrices.unit === null
-                    ? ""
-                    : priceToString(calculatedPrices.unit, clientPriceUnit)}
-            </p>
-            <p>
-                {priceToString(singleCardboardPrice, clientPriceUnit)}
-            </p>
-            <p>
-                {priceToString(calculatedPrices.prep, clientPriceUnit)}
-            </p>
+            <p>{priceToString(calculatedPrices.unit, clientPriceUnit)}</p>
+            <p>{priceToString(singleCardboardPrice, clientPriceUnit)}</p>
+            <p>{priceToString(calculatedPrices.prep, clientPriceUnit)}</p>
             {clientPriceUnit === "zł" && (
                 <p>
-                    {priceToString(calculatedPrices.transport, clientPriceUnit)}
+                    {(cupConfig.cardboard === "singular" &&
+                        selectedCup.mini_pallet_singular &&
+                        selectedCup.half_pallet_singular &&
+                        selectedCup.full_pallet_singular) ||
+                    (cupConfig.cardboard !== "singular" &&
+                        selectedCup.mini_pallet &&
+                        selectedCup.half_pallet &&
+                        selectedCup.full_pallet)
+                        ? priceToString(calculatedPrices.transport, clientPriceUnit)
+                        : lang === "1"
+                        ? "Wycena indywidualna"
+                        : "Individual pricing"}
                 </p>
             )}
             <p>

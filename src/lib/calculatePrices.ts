@@ -468,7 +468,7 @@ export const calculatePrices = ({
     prepCost = Math.round(prepCost * 100) / 100;
     const transportCost = clientPriceUnit === "zł" ?
         Math.round((palletsPrice.mini + palletsPrice.half + palletsPrice.full) * 100) / 100 : 0;
-
+    console.log(unitCost, prepCost, transportCost, cardboardCost)
     return {
         data: {
             unit: unitCost,

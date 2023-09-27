@@ -15,13 +15,13 @@ export const GET = async (req: NextRequest) => {
     if (warehouseData.length === 0 || !warehouseData) {
         return NextResponse.json("Brak danych", { status: 500 });
     }
-    // if latest update was less than 5 minutes ago, return 304
+    // if latest update was less than 5 minutes ago, return 409
     const diffInMinutes =
         Math.round(
             ((new Date().getTime() - new Date(warehouseData[0].updated_at).getTime()) / 60000) * 100
         ) / 100;
     if (diffInMinutes < 5) {
-        return NextResponse.json("Ostatnio odnowiono mniej niż 5 minut temu", { status: 304 });
+        return NextResponse.json("Ostatnio odnowiono mniej niż 5 minut temu", { status: 409 });
     }
 
     const ICLCups = warehouseData

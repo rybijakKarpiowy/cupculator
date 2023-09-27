@@ -277,34 +277,6 @@ export interface Database {
         }
         Relationships: []
       }
-      lomag_warehouses: {
-        Row: {
-          amount: number
-          cup_id: number
-          updated_at: string
-          warehouse: string
-        }
-        Insert: {
-          amount?: number
-          cup_id: number
-          updated_at?: string
-          warehouse: string
-        }
-        Update: {
-          amount?: number
-          cup_id?: number
-          updated_at?: string
-          warehouse?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "lomag_warehouses_cup_id_fkey"
-            columns: ["cup_id"]
-            referencedRelation: "cups"
-            referencedColumns: ["id"]
-          }
-        ]
-      }
       restrictions: {
         Row: {
           anotherValue: string

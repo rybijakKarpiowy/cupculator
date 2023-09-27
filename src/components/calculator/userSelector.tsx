@@ -13,17 +13,13 @@ export const UserSelector = ({
     cup,
     lang,
     additionalValues,
-    restrictions,
-    warehouseAcces,
+    restrictions
 }: {
     allUsersData: (Database["public"]["Tables"]["users"]["Row"] & pricingsInterface)[];
     cup: string;
     lang: "1" | "2";
     additionalValues: Database["public"]["Tables"]["additional_values"]["Row"];
     restrictions: Restriction[];
-    warehouseAcces:
-        | Database["public"]["Tables"]["users_restricted"]["Row"]["warehouse_acces"]
-        | "Salesman";
 }) => {
     const [selectedPricingsData, setSelectedPricingsData] = useState<selectedPricingsDataInterface>(
         { cupData: [], colorPricing: null }
@@ -116,7 +112,6 @@ export const UserSelector = ({
                         clientPriceUnit={selectedUserUnit}
                         additionalValues={additionalValues}
                         restrictions={restrictions}
-                        warehouseAcces={warehouseAcces}
                     />
                 )}
         </>

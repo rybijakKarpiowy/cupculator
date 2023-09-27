@@ -65,7 +65,6 @@ export const resetInputs = async (document: Document, toReset: ToReset) => {
         const nadruk_na_wewnatrz_sciance = (await document.getElementById(
             "nadruk_wewnatrz_na_sciance"
         )) as HTMLInputElement | null;
-        console.log(nadruk_na_wewnatrz_sciance);
         if (nadruk_na_wewnatrz_sciance) {
             nadruk_na_wewnatrz_sciance.checked = false;
         }

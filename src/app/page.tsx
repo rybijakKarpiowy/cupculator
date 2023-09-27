@@ -118,8 +118,6 @@ export default async function Home({
                 clientPriceUnit={userData.eu ? "EUR" : "zł"}
                 additionalValues={additionalValues}
                 restrictions={restrictions}
-                // @ts-ignore
-                warehouseAcces={userData.users_restricted.warehouse_acces}
             />
         );
     }
@@ -153,7 +151,6 @@ export default async function Home({
             lang={lang}
             additionalValues={additionalValues}
             restrictions={restrictions}
-            warehouseAcces={"Salesman"}
         />
     );
 }

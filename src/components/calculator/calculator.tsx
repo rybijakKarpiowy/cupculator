@@ -379,7 +379,7 @@ export const Calculator = ({
                                 ))}
                         </select>
                     </div>
-                    <div>{!loading && WarehouseDisplay({warehouseStock, lang})}</div>
+                    <div>{WarehouseDisplay({ warehouseStock, lang, loading, setLoading })}</div>
                 </div>
                 {!noPrices && (
                     <>
@@ -1549,5 +1549,6 @@ export interface WarehouseStockInterface {
             updated_at: string;
             note: string;
         };
+        total: number;
     };
 }

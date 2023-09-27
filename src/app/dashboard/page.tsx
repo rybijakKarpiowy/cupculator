@@ -151,6 +151,7 @@ export interface Client {
     color_pricing?: string | null | undefined;
     cup_pricing?: string | null | undefined;
     salesman_id: string | null;
+    warehouse_acces: "None" | "Actual" | "Fictional" | null;
     role: "User" | "Salesman" | "Admin";
     email: string;
     user_id: string;

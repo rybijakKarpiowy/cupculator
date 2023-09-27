@@ -21,9 +21,10 @@ export const POST = async (req: NextRequest) => {
         cup_pricing: string;
         color_pricing: string;
         salesman_id: string;
+        warehouse_acces: "None" | "Actual" | "Fictional";
         eu?: boolean;
     };
-    const { user_id, cup_pricing, color_pricing, salesman_id, eu } = data;
+    const { user_id, cup_pricing, color_pricing, salesman_id, warehouse_acces, eu } = data;
 
     const { data: roleData, error: error1 } = await supabase
         .from("users_restricted")
@@ -48,6 +49,7 @@ export const POST = async (req: NextRequest) => {
             cup_pricing,
             color_pricing,
             salesman_id,
+            warehouse_acces,
             activated: true,
         })
         .eq("user_id", user_id);

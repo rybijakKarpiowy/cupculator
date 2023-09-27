@@ -76,6 +76,7 @@ export const GET = async (req: NextRequest) => {
                         },
                     }),
                     // ...(actualStock && {warehouse: {amount: actualStock.amount, updated_at: new Date(actualStock.updated_at).toLocaleString("pl-PL")}, note: actualStock.note})
+                    total: (ICLstock?.amount || 0) + (QBSstock?.amount || 0), // + (actualStock?.amount || 0)
                 },
             },
             { status: 200 }

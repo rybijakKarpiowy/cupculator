@@ -119,6 +119,7 @@ export const DashboardPages = ({
         let cup_pricing = "";
         let color_pricing = "";
         let salesman_id = "";
+        let warehouse_acces = "";
         let eu = "" as "EU" | "PL" | "brak" | boolean;
 
         if (e) {
@@ -129,6 +130,9 @@ export const DashboardPages = ({
                 ?.value;
             salesman_id = (e.currentTarget.querySelector("#assigned_salesman") as HTMLSelectElement)
                 ?.value;
+            warehouse_acces = (
+                e.currentTarget.querySelector("#warehouse_acces") as HTMLSelectElement
+            )?.value;
             eu = (e.currentTarget.querySelector("#eu") as HTMLSelectElement)?.value as
                 | "EU"
                 | "PL"
@@ -144,10 +148,12 @@ export const DashboardPages = ({
             color_pricing = (clientDiv?.querySelector("#color_pricing") as HTMLSelectElement).value;
             salesman_id = (clientDiv?.querySelector("#assigned_salesman") as HTMLSelectElement)
                 .value;
+            warehouse_acces = (clientDiv?.querySelector("#warehouse_acces") as HTMLSelectElement)
+                ?.value;
         }
 
-        if (!cup_pricing || !color_pricing || !salesman_id) {
-            toast.warn("Uzupełnij cennik klienta i przypisz handlowca");
+        if (!cup_pricing || !color_pricing || !salesman_id || !warehouse_acces) {
+            toast.warn("Uzupełnij cennik klienta, przypisz handlowca i ustal dostęp do magazynu");
             setLoading(false);
             return;
         }
@@ -159,6 +165,7 @@ export const DashboardPages = ({
                 cup_pricing,
                 color_pricing,
                 salesman_id,
+                warehouse_acces,
                 ...{ eu: eu === "EU" ? true : eu === "PL" ? false : undefined },
             }),
         });
@@ -173,6 +180,7 @@ export const DashboardPages = ({
                     client.cup_pricing = cup_pricing;
                     client.color_pricing = color_pricing;
                     client.salesman_id = salesman_id;
+                    client.warehouse_acces = warehouse_acces as "None" | "Actual" | "Fictional";
 
                     setClients([...clients]);
                     return;
@@ -546,14 +554,17 @@ export const DashboardPages = ({
                                 </li>
                                 <li className="px-2 border border-black w-32 text-center">Kraj</li>
                                 <li className="px-2 border border-black w-64 text-center">Email</li>
-                                <li className="px-2 border border-black w-32 text-center">
+                                <li className="px-2 border border-black w-80 text-center">
                                     Cennik kubków
                                 </li>
-                                <li className="px-2 border border-black w-32 text-center">
+                                <li className="px-2 border border-black w-80 text-center">
                                     Cennik nadruków
                                 </li>
                                 <li className="px-2 border border-black w-60 text-center">
                                     Przypisany Handlowiec
+                                </li>
+                                <li className="px-2 border border-black w-60 text-center">
+                                    Dostęp do stanów magazynowych
                                 </li>
                             </ul>
                         </li>
@@ -610,7 +621,7 @@ export const DashboardPages = ({
                                             <li className="px-2 border border-black w-64 text-center">
                                                 {client.email}
                                             </li>
-                                            <li className="px-2 border border-black w-32 text-center">
+                                            <li className="px-2 border border-black w-80 text-center">
                                                 <select
                                                     id="cup_pricing"
                                                     disabled={loading}
@@ -633,7 +644,7 @@ export const DashboardPages = ({
                                                         ))}
                                                 </select>
                                             </li>
-                                            <li className="px-2 border border-black w-32 text-center">
+                                            <li className="px-2 border border-black w-80 text-center">
                                                 <select
                                                     id="color_pricing"
                                                     disabled={loading}
@@ -682,6 +693,27 @@ export const DashboardPages = ({
                                                                 {salesman.email}
                                                             </option>
                                                         ))}
+                                                </select>
+                                            </li>
+                                            <li className="px-2 border border-black w-60 text-center">
+                                                <select
+                                                    id="warehouse_acces"
+                                                    disabled={loading}
+                                                    className="text-center"
+                                                    defaultValue={
+                                                        client.warehouse_acces
+                                                            ? client.warehouse_acces
+                                                            : ""
+                                                    }
+                                                >
+                                                    <option value="" key="brak" disabled hidden>
+                                                        -
+                                                    </option>
+                                                    <option value="None">Brak dostępu</option>
+                                                    <option value="Actual">Faktyczne stany</option>
+                                                    <option value="Fictional">
+                                                        Fikcyjne stany
+                                                    </option>
                                                 </select>
                                             </li>
                                             <button
@@ -747,14 +779,17 @@ export const DashboardPages = ({
                                 </li>
                                 <li className="px-2 border border-black w-32 text-center">Kraj</li>
                                 <li className="px-2 border border-black w-64 text-center">Email</li>
-                                <li className="px-2 border border-black w-32 text-center">
+                                <li className="px-2 border border-black w-80 text-center">
                                     Cennik kubków
                                 </li>
-                                <li className="px-2 border border-black w-32 text-center">
+                                <li className="px-2 border border-black w-80 text-center">
                                     Cennik nadruków
                                 </li>
                                 <li className="px-2 border border-black w-60 text-center">
                                     Przypisany Handlowiec
+                                </li>
+                                <li className="px-2 border border-black w-60 text-center">
+                                    Dostęp do stanów magazynowych
                                 </li>
                             </ul>
                         </li>
@@ -800,7 +835,7 @@ export const DashboardPages = ({
                                         <li className="px-2 border border-black w-64 text-center">
                                             {client.email}
                                         </li>
-                                        <li className="px-2 border border-black w-32 text-center">
+                                        <li className="px-2 border border-black w-80 text-center">
                                             <select
                                                 id="cup_pricing"
                                                 disabled={loading}
@@ -825,7 +860,7 @@ export const DashboardPages = ({
                                                     ))}
                                             </select>
                                         </li>
-                                        <li className="px-2 border border-black w-32 text-center">
+                                        <li className="px-2 border border-black w-80 text-center">
                                             <select
                                                 id="color_pricing"
                                                 disabled={loading}
@@ -874,6 +909,26 @@ export const DashboardPages = ({
                                                             {salesman.email}
                                                         </option>
                                                     ))}
+                                            </select>
+                                        </li>
+                                        <li className="px-2 border border-black w-60 text-center">
+                                            <select
+                                                id="warehouse_acces"
+                                                disabled={loading}
+                                                onChange={() => handleActication(client.user_id)}
+                                                className={`${loading && "bg-slate-400"} text-center`}
+                                                defaultValue={
+                                                    client.warehouse_acces
+                                                        ? client.warehouse_acces
+                                                        : ""
+                                                }
+                                            >
+                                                <option value="" key="brak" disabled hidden>
+                                                    -
+                                                </option>
+                                                <option value="None">Brak dostępu</option>
+                                                <option value="Actual">Faktyczne stany</option>
+                                                <option value="Fictional">Fikcyjne stany</option>
                                             </select>
                                         </li>
                                         <button

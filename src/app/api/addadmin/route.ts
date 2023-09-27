@@ -14,7 +14,6 @@ export const POST = async (req: NextRequest) => {
     }
 
     const { email, password, role } = (await req.json()) as {
-        auth_id: string;
         email: string;
         password: string;
         role: "Admin" | "Salesman";

@@ -16,7 +16,6 @@ export const POST = async (req: NextRequest) => {
     }
 
     const { pricing_name, sheet_url } = (await req.json()) as {
-        auth_id: string;
         pricing_name: string;
         sheet_url: string;
     };

@@ -128,7 +128,7 @@ export default async function Home({
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ auth_id: authId }),
+        body: JSON.stringify({ auth_id: authId, key: process.env.SERVER_KEY }),
     });
 
     if (!allUserDataRes.ok) {

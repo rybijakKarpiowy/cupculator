@@ -17,7 +17,7 @@ const getUserData = async (authUser: AuthUser, lang: string, cup: string) => {
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ auth_id: authUser?.id }),
+        body: JSON.stringify({ auth_id: authUser?.id, key: process.env.SERVER_KEY }),
     });
 
     if (!res.ok) {
@@ -53,7 +53,7 @@ const getPricings = async (authUser: AuthUser) => {
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ auth_id: authUser?.id }),
+        body: JSON.stringify({ auth_id: authUser?.id, key: process.env.SERVER_KEY }),
     });
 
     if (!res.ok) {

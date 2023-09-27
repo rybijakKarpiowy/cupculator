@@ -3,9 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 import { baseUrl } from "@/app/baseUrl";
 
 export const POST = async (req: NextRequest) => {
-    const { auth_id } = await req.json();
+    const { auth_id, key } = (await req.json()) as { auth_id?: string; key?: string };
 
-    if (!auth_id) {
+    if (!auth_id || key !== process.env.SERVER_KEY) {
         return NextResponse.redirect(new URL("/login", baseUrl));
     }
 

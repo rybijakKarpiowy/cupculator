@@ -84,12 +84,12 @@ export default async function Home({
             );
         }
 
-        const pricingsDataRes = await fetch("/api/getuserpricings", {
+        const pricingsDataRes = await fetch(`${baseUrl}/api/getuserpricings`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ user_id: authId, cupLink: cup }),
+            body: JSON.stringify({ user_id: authId, cupLink: cup, key: process.env.SERVER_KEY }),
         });
 
         if (!pricingsDataRes.ok) {

@@ -10,16 +10,22 @@ import { Cup } from "../updatecups/route";
 export const POST = async (req: NextRequest) => {
     const res = NextResponse.next();
     const clientSupabase = createMiddlewareClient<Database>({ req, res });
-    const auth_id = (await clientSupabase.auth.getSession()).data.session?.user.id;
+    let auth_id = (await clientSupabase.auth.getSession()).data.session?.user.id;
 
-    if (!auth_id) {
-        return NextResponse.redirect(new URL("/login", baseUrl));
-    }
-
-    const { user_id, cupLink } = (await req.json()) as {
+    const { user_id, cupLink, key } = (await req.json()) as {
         user_id: string;
         cupLink: string;
+        key: string;
     };
+
+    // this is user or anonymous person
+    if (!auth_id) {
+        if (key !== process.env.SERVER_KEY) {
+            // anonymous person is trying to get user data
+            return NextResponse.redirect(new URL("/login", baseUrl));
+        }
+        auth_id = user_id;
+    }
 
     const { data: roleData, error: error0 } = await supabase
         .from("users_restricted")

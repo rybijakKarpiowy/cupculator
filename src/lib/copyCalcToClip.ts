@@ -5,6 +5,7 @@ import { ColorPricing } from "./colorPricingType";
 import { calculatePrices } from "./calculatePrices";
 import { translateColor } from "./translateColor";
 import { priceToString } from "./priceToString";
+import { anyAdditionalPrint } from "./anyAdditionalPrint";
 
 export const copyCalcToClip = async ({
     amounts,
@@ -235,7 +236,7 @@ export const copyCalcToClip = async ({
                 cupConfig.zdobienie_tapeta_na_barylce !== true) ||
             cupConfig.naklejka_papierowa_z_nadrukiem ||
             cupConfig.wkladanie_ulotek_do_kubka
-                ? `${lang === "1" ? "Dodatkowe zdobienia: " : "Additional decorations: "}\n`
+                ? `\n${lang === "1" ? "Dodatkowe zdobienia: " : "Additional decorations: "}\n`
                 : ""
         }${
             cupConfig.nadruk_wewnatrz_na_sciance
@@ -323,7 +324,15 @@ export const copyCalcToClip = async ({
                       lang === "1" ? "Wkładanie ulotek do kubka" : "Inserting leaflets into the mug"
                   }\n`
                 : ""
-        }${lang === "1" ? "Sposób pakowania: " : "Packaging type: "}${
+        }${
+            ["digital_print", ""].includes(cupConfig.imprintType) && anyAdditionalPrint(cupConfig)
+                ? `${
+                      lang === "1"
+                          ? "Liczba kolorów nadruków dodatkowych"
+                          : "Number of colors of additional prints"
+                  }: ${cupConfig.imprintColors}\n`
+                : ""
+        }\n${lang === "1" ? "Sposób pakowania: " : "Packaging type: "}${
             cupConfig.cardboard === "singular"
                 ? lang === "1"
                     ? "Kartoniki jednostkowe"

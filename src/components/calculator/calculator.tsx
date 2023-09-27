@@ -16,6 +16,7 @@ import { translateColor } from "@/lib/translateColor";
 import { downloadPdf } from "@/lib/downloadPdf";
 import { copyCalcToClip } from "@/lib/copyCalcToClip";
 import { getDefaultImprint } from "@/lib/getDefaultImprint";
+import { anyAdditionalPrint } from "@/lib/anyAdditionalPrint";
 
 export const Calculator = ({
     cupData,
@@ -659,94 +660,92 @@ export const Calculator = ({
                                     )}
                                     {selectedCup.digital_print && (
                                         <option value="digital_print">
-                                            {lang === "1" ? "Nadruk cyfrowy" : "Digital print"}
-                                        </option>
-                                    )}
-                                    {selectedCup.polylux && selectedCup.digital_print && (
-                                        <option value="polylux_1">
                                             {lang === "1"
-                                                ? "Nadruk cyfrowy + Polylux"
-                                                : "Digital print + Polylux"}
+                                                ? "Nadruk cyfrowy - pełny kolor"
+                                                : "Digital print - full color"}
                                         </option>
                                     )}
                                 </select>
                             </div>
-                            {cupConfig.imprintType &&
+                            {((cupConfig.imprintType &&
                                 ![
                                     "deep_effect_1",
                                     "deep_effect_2",
                                     "deep_effect_plus_1",
                                     "deep_effect_plus_2",
-                                ].includes(cupConfig.imprintType) && (
-                                    <div className="flex flex-row justify-between items-center relative">
-                                        {lang === "1"
-                                            ? "Liczba kolorów nadruku: "
-                                            : "Number of print colors: "}
-                                        <select
-                                            defaultValue="1"
-                                            id="imprintColors"
-                                            disabled={
-                                                !cupConfig.imprintType ||
-                                                cupConfig.imprintType === "digital_print"
-                                            }
-                                            onChange={(e) => {
-                                                const imprintColors = parseInt(e.target.value) || 0;
-                                                setCupConfig({
-                                                    ...cupConfig,
-                                                    imprintColors,
-                                                });
-                                            }}
-                                            className="border w-max border-[#bbb] bg-slate-50 text-black px-2 py-[2px] rounded-md"
-                                        >
-                                            <option value="1" disabled hidden>
-                                                {cupConfig.imprintType !== "digital_print"
-                                                    ? "1"
-                                                    : lang === "1"
-                                                    ? "Pełny kolor"
-                                                    : "Full color"}
-                                            </option>
-                                            {cupConfig.imprintType &&
-                                                cupConfig.imprintType === "direct_print" &&
-                                                [...Array(3)].map(
-                                                    (_, index) => (
-                                                        (index += 2),
-                                                        (
-                                                            <option key={index} value={index}>
-                                                                {index.toString()}
-                                                            </option>
-                                                        )
+                                    "digital_print",
+                                ].includes(cupConfig.imprintType)) ||
+                                (["digital_print", ""].includes(cupConfig.imprintType) &&
+                                    anyAdditionalPrint(cupConfig))) && (
+                                <div
+                                    className={`flex flex-row justify-between items-center relative ${
+                                        ["digital_print", ""].includes(cupConfig.imprintType) &&
+                                        anyAdditionalPrint(cupConfig) &&
+                                        "mb-3"
+                                    }`}
+                                >
+                                    {lang === "1"
+                                        ? "Liczba kolorów nadruku: "
+                                        : "Number of print colors: "}
+                                    <select
+                                        defaultValue="1"
+                                        id="imprintColors"
+                                        disabled={
+                                            ["digital_print", ""].includes(cupConfig.imprintType) &&
+                                            !anyAdditionalPrint(cupConfig)
+                                        }
+                                        onChange={(e) => {
+                                            const imprintColors = parseInt(e.target.value) || 0;
+                                            setCupConfig({
+                                                ...cupConfig,
+                                                imprintColors,
+                                            });
+                                        }}
+                                        className="border w-max border-[#bbb] bg-slate-50 text-black px-2 py-[2px] rounded-md"
+                                    >
+                                        {cupConfig.imprintType &&
+                                            cupConfig.imprintType === "direct_print" &&
+                                            [...Array(3)].map(
+                                                (_, index) => (
+                                                    (index += 2),
+                                                    (
+                                                        <option key={index} value={index}>
+                                                            {index.toString()}
+                                                        </option>
                                                     )
-                                                )}
-                                            {cupConfig.imprintType &&
-                                                [
-                                                    "transfer_plus_1",
-                                                    "transfer_plus_2",
-                                                    "transfer_plus_round",
-                                                    "polylux_1",
-                                                    "polylux_2",
-                                                    "polylux_round",
-                                                ].includes(cupConfig.imprintType) &&
-                                                [...Array(16)].map(
-                                                    (_, index) => (
-                                                        (index += 1),
-                                                        (
-                                                            <option key={index} value={index}>
-                                                                {index.toString()}
-                                                            </option>
-                                                        )
-                                                    )
-                                                )}
-                                        </select>
-                                        {selectedCup.digital_print &&
-                                            cupConfig.imprintType === "polylux_1" && (
-                                                <span className="absolute left-0 -bottom-4 text-xs text-slate-600">
-                                                    {lang === "1"
-                                                        ? "Liczba kolorów dotyczy tylko polylux"
-                                                        : "Number of colors applies to polylux only"}
-                                                </span>
+                                                )
                                             )}
-                                    </div>
-                                )}
+                                        {[
+                                            "transfer_plus_1",
+                                            "transfer_plus_2",
+                                            "transfer_plus_round",
+                                            "polylux_1",
+                                            "polylux_2",
+                                            "polylux_round",
+                                            "digital_print",
+                                            "",
+                                        ].includes(cupConfig.imprintType) &&
+                                            [...Array(16)].map(
+                                                (_, index) => (
+                                                    (index += 1),
+                                                    (
+                                                        <option key={index} value={index}>
+                                                            {index.toString()}
+                                                        </option>
+                                                    )
+                                                )
+                                            )}
+                                    </select>
+                                    {["digital_print", ""].includes(cupConfig.imprintType) &&
+                                        anyAdditionalPrint(cupConfig) && (
+                                            <span className="absolute letf-0 -bottom-4 text-xs text-slate-500 w-full">
+                                                {lang === "1"
+                                                    ? "Liczba kolorów dotyczy tylko nadruków dodatkowych (dolna ramka)"
+                                                    : "Number of colors applies to additional prints only (lower frame)"}
+                                            </span>
+                                        )}
+                                </div>
+                            )}
                             {selectedCup.trend_color &&
                                 (!forbidden.trend_color_both ||
                                     !forbidden.trend_color_inside ||
@@ -944,6 +943,11 @@ export const Calculator = ({
                                 </div>
                             )}
                         </div>
+                        <span>
+                            {lang === "1"
+                                ? "Zdobienia/nadruki dodatkowe:"
+                                : "Additional decorations/prints:"}
+                        </span>
                         <div className="flex flex-col flex-wrap gap-1 accent-[#009E60] bg-slate-100 pt-4 pb-2">
                             {selectedCup.nadruk_wewnatrz_na_sciance &&
                                 !forbidden.nadruk_wewnatrz_na_sciance && (

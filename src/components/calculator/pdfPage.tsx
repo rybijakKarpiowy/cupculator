@@ -10,6 +10,7 @@ import { calculatePrices } from "@/lib/calculatePrices";
 import { priceToString } from "@/lib/priceToString";
 import { getPalletQuantities } from "@/lib/getPalletQuantities";
 import { useState } from "react";
+import { anyAdditionalPrint } from "@/lib/anyAdditionalPrint";
 
 export const PdfPage = ({
     amounts,
@@ -265,17 +266,27 @@ export const PdfPage = ({
                             ? "Brak"
                             : "None"}
                     </Text>
-                    <View style={{ display: "flex", flexDirection: "row" }}>
-                        <Text style={styles.p}>
-                            {lang === "1" ? "Dodatkowe zdobienia: " : "Additional decorations: "}
-                        </Text>
-                        <View
-                            style={{
-                                display: "flex",
-                                flexDirection: "column",
-                                gap: 2,
-                            }}
-                        >
+                    <Text style={styles.p}> </Text>
+                    {(cupConfig.nadruk_wewnatrz_na_sciance ||
+                        cupConfig.nadruk_na_uchu ||
+                        cupConfig.nadruk_na_spodzie ||
+                        cupConfig.nadruk_na_dnie ||
+                        cupConfig.nadruk_przez_rant ||
+                        cupConfig.nadruk_apla ||
+                        (cupConfig.nadruk_zlotem && cupConfig.nadruk_zlotem !== true) ||
+                        cupConfig.personalizacja ||
+                        (cupConfig.zdobienie_paskiem && cupConfig.zdobienie_paskiem !== true) ||
+                        cupConfig.nadruk_na_powloce_magicznej_1_kolor ||
+                        (cupConfig.zdobienie_tapeta_na_barylce &&
+                            cupConfig.zdobienie_tapeta_na_barylce !== true) ||
+                        cupConfig.naklejka_papierowa_z_nadrukiem ||
+                        cupConfig.wkladanie_ulotek_do_kubka) && (
+                        <View style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                            <Text style={styles.p}>
+                                {lang === "1"
+                                    ? "Dodatkowe zdobienia: "
+                                    : "Additional decorations: "}
+                            </Text>
                             {cupConfig.nadruk_wewnatrz_na_sciance && (
                                 <Text style={styles.p}>
                                     •{" "}
@@ -381,8 +392,18 @@ export const PdfPage = ({
                                         : "Inserting leaflets into the mug"}
                                 </Text>
                             )}
+                            {["digital_print", ""].includes(cupConfig.imprintType) &&
+                                anyAdditionalPrint(cupConfig) && (
+                                    <Text style={styles.p}>
+                                        {lang === "1"
+                                            ? "Liczba kolorów nadruków dodatkowych"
+                                            : "Number of colors of additional prints"}
+                                        : {cupConfig.imprintColors}
+                                    </Text>
+                                )}
+                            <Text style={styles.p}> </Text>
                         </View>
-                    </View>
+                    )}
                     <Text style={styles.p}>
                         {lang === "1" ? "Sposób pakowania: " : "Packaging type: "}
                         {cupConfig.cardboard === "singular" &&

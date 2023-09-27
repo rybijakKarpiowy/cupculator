@@ -3,6 +3,7 @@ import { Database } from "@/database/types";
 import { ColorPricing } from "./colorPricingType";
 import { CupConfigInterface } from "@/components/calculator/calculator";
 import { getPalletQuantities } from "./getPalletQuantities";
+import { anyAdditionalPrint } from "./anyAdditionalPrint";
 
 export const calculatePrices = ({
     amount,
@@ -40,6 +41,29 @@ export const calculatePrices = ({
     switch (cupConfig.imprintType) {
         case "":
             imprintCost = (cupCost * additionalValues.plain_cup_markup_percent) / 100;
+            if (!anyAdditionalPrint(cupConfig)) {
+                prepCost = 0;
+            } else {
+                // add prepcost from polylux_1
+                nextColor = colorPricing.polylux.find((item) => item.colorCount === "kolejny");
+                if (cupConfig.imprintColors <= 6) {
+                    prepCost =
+                        colorPricing.polylux.find(
+                            (item) => item.colorCount === cupConfig.imprintColors.toString()
+                        )?.prepCost || 0;
+                } else {
+                    prepCost =
+                        colorPricing.polylux.find((item) => item.colorCount === "6")?.prepCost || 0;
+                    if (!nextColor)
+                        notSoImportantError =
+                            lang === "1"
+                                ? "Wystąpił bląd, wyświetlono cenę dla 6 kolorów"
+                                : "An error occurred, the price for 6 colors was displayed";
+                    else {
+                        prepCost += nextColor.prepCost * (cupConfig.imprintColors - 6);
+                    }
+                }
+            }
             break;
         case "deep_effect_1":
             imprintCost =
@@ -77,7 +101,31 @@ export const calculatePrices = ({
             break;
         case "digital_print":
             imprintCost = colorPricing.digital_print.prices[amountRange];
-            prepCost = colorPricing.digital_print.prepCost;
+            if (!anyAdditionalPrint(cupConfig)) {
+                prepCost = 0;
+            } else {
+                // add prepcost from polylux_1
+                nextColor = colorPricing.polylux.find((item) => item.colorCount === "kolejny");
+                if (cupConfig.imprintColors <= 6) {
+                    prepCost =
+                        colorPricing.polylux.find(
+                            (item) => item.colorCount === cupConfig.imprintColors.toString()
+                        )?.prepCost || 0;
+                } else {
+                    prepCost =
+                        colorPricing.polylux.find((item) => item.colorCount === "6")?.prepCost || 0;
+                    if (!nextColor)
+                        notSoImportantError =
+                            lang === "1"
+                                ? "Wystąpił bląd, wyświetlono cenę dla 6 kolorów"
+                                : "An error occurred, the price for 6 colors was displayed";
+                    else {
+                        prepCost += nextColor.prepCost * (cupConfig.imprintColors - 6);
+                    }
+                }
+            }
+            // add prepcost from digital_print
+            prepCost += colorPricing.digital_print.prepCost;
             break;
         case "direct_print":
             if (amountRange === "24") {
@@ -440,19 +488,25 @@ export const calculatePrices = ({
         case "singular":
             if (selectedCup.category === "filiżanka") {
                 cardboardCost +=
-                    colorPricing.cardboards.find((item) => item.name === "Jednostkowy na filiżankę")?.prices[amountRange] || 0;
+                    colorPricing.cardboards.find((item) => item.name === "Jednostkowy na filiżankę")
+                        ?.prices[amountRange] || 0;
             } else {
                 cardboardCost +=
-                    colorPricing.cardboards.find((item) => item.name === "Jednostkowy na kubek")?.prices[amountRange] || 0;
+                    colorPricing.cardboards.find((item) => item.name === "Jednostkowy na kubek")
+                        ?.prices[amountRange] || 0;
             }
             break;
         case "6pack_klapowy":
             cardboardCost +=
-                colorPricing.cardboards.find((item) => item.name === "6-pack klapowy")?.prices[amountRange] || 0;
+                colorPricing.cardboards.find((item) => item.name === "6-pack klapowy")?.prices[
+                    amountRange
+                ] || 0;
             break;
         case "6pack_wykrojnik":
             cardboardCost +=
-                colorPricing.cardboards.find((item) => item.name === "6-pack z wykrojnika")?.prices[amountRange] || 0;
+                colorPricing.cardboards.find((item) => item.name === "6-pack z wykrojnika")?.prices[
+                    amountRange
+                ] || 0;
             break;
     }
 
@@ -466,9 +520,11 @@ export const calculatePrices = ({
     const unitCost =
         Math.round((cupCost + imprintCost + trendProSoftCost + additionalCosts) * 100) / 100;
     prepCost = Math.round(prepCost * 100) / 100;
-    const transportCost = clientPriceUnit === "zł" ?
-        Math.round((palletsPrice.mini + palletsPrice.half + palletsPrice.full) * 100) / 100 : 0;
-    console.log(unitCost, prepCost, transportCost, cardboardCost)
+    const transportCost =
+        clientPriceUnit === "zł"
+            ? Math.round((palletsPrice.mini + palletsPrice.half + palletsPrice.full) * 100) / 100
+            : 0;
+
     return {
         data: {
             unit: unitCost,
@@ -478,7 +534,12 @@ export const calculatePrices = ({
         },
         error: notSoImportantError,
     } as {
-        data: { unit: number | null; prep: number | null; transport: number | null; cardboard: number | null };
+        data: {
+            unit: number | null;
+            prep: number | null;
+            transport: number | null;
+            cardboard: number | null;
+        };
         error?: string;
     };
 };

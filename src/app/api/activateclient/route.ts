@@ -80,7 +80,8 @@ export const POST = async (req: NextRequest) => {
                 name: "Pro Media",
                 email: "biuro@kubki.com.pl",
             },
-            subject: "Your account has been activated",
+            subject:
+                eu === true ? "Your account has been activated" : "Twoje konto zostało aktywowane",
             text:
                 eu === true
                     ? "Your account has been activated, you can now log in our calculator at https://kubki.com.pl"

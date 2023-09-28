@@ -15,6 +15,7 @@ import { resetInputs } from "@/lib/resetInputs";
 import { translateColor } from "@/lib/translateColor";
 import { downloadPdf } from "@/lib/downloadPdf";
 import { copyCalcToClip } from "@/lib/copyCalcToClip";
+import { WarehouseDisplay } from "./warehouseDisplay";
 import { getDefaultImprint } from "@/lib/getDefaultImprint";
 import { anyAdditionalPrint } from "@/lib/anyAdditionalPrint";
 
@@ -102,12 +103,17 @@ export const Calculator = ({
         naklejka_papierowa_z_nadrukiem: false,
         wkladanie_ulotek_do_kubka: false,
     });
+    const [warehouseDisplayStock, setWarehouseDisplayStock] = useState<WarehouseStockInterface>({});
 
     useEffect(() => {
         setSelectedCup(cupData.sort((a, b) => a.color.localeCompare(b.color))[0]);
     }, [cupData]);
 
     useEffect(() => {
+        // update warehouse stock
+        updateWarehouseDisplayStock();
+
+        // reset cupConfig
         setCupConfig({
             trend_color: "",
             soft_touch: false,
@@ -137,6 +143,7 @@ export const Calculator = ({
             imprintSelect.value = getDefaultImprint(selectedCup);
         }
 
+        // check if cup have all prices
         for (const price of Object.values(selectedCup.prices)) {
             if (!price) {
                 setNoPrices(true);
@@ -175,6 +182,13 @@ export const Calculator = ({
             }
         }
     }, [amounts, cupConfig]);
+
+    async function updateWarehouseDisplayStock() {
+        setLoading(true);
+        const res = await fetch(`/api/getwarehousestock?code=${selectedCup.code}`);
+        setWarehouseDisplayStock(await res.json());
+        setLoading(false);
+    }
 
     const amountAlerts = (amount: number | null, inputId: number) => {
         if (!amount) return;
@@ -330,72 +344,83 @@ export const Calculator = ({
                 </div>
             </div>
             <div className="ml-[40%] flex flex-col gap-4">
-                <div className="absolute right-[62vw] mr-4 mt-4 flex flex-row gap-2 items-center">
-                    {lang == "1" ? "Wybierz kolor: " : "Select color: "}
-                    <select
-                        onChange={(e) => {
-                            if (e.target.value === selectedCup.code) return;
-                            setCupConfig({
-                                trend_color: "",
-                                soft_touch: false,
-                                pro_color: false,
-                                imprintType: "",
-                                imprintColors: 1,
-                                nadruk_wewnatrz_na_sciance: 0,
-                                nadruk_na_uchu: false,
-                                nadruk_na_spodzie: false,
-                                nadruk_na_dnie: false,
-                                nadruk_przez_rant: false,
-                                nadruk_apla: false,
-                                nadruk_dookola_pod_uchem: false,
-                                nadruk_zlotem: false,
-                                personalizacja: false,
-                                zdobienie_paskiem: false,
-                                zdobienie_tapeta_na_barylce: false,
-                                nadruk_na_powloce_magicznej_1_kolor: false,
-                                naklejka_papierowa_z_nadrukiem: false,
-                                wkladanie_ulotek_do_kubka: false,
-                                cardboard: "",
-                            });
-                            resetInputs(document, {
-                                trend_color: true,
-                                soft_touch: true,
-                                pro_color: true,
-                                imprintType: true,
-                                nadruk_na_wewnatrz_sciance: true,
-                                nadruk_na_uchu: true,
-                                nadruk_na_spodzie: true,
-                                nadruk_na_dnie: true,
-                                nadruk_przez_rant: true,
-                                nadruk_apla: true,
-                                nadruk_dookola_pod_uchem: true,
-                                nadruk_zlotem: true,
-                                personalizacja: true,
-                                zdobienie_paskiem: true,
-                                nadruk_na_powloce_magicznej_1_kolor: true,
-                                zdobienie_tapeta_na_barylce: true,
-                                naklejka_papierowa_z_nadrukiem: true,
-                                wkladanie_ulotek_do_kubka: true,
-                                cardboard: true,
-                            });
-                            setSelectedCup(
-                                cupData.find((cup) => cup.code === e.target.value) as Cup
-                            );
-                            // reset input/select elements
-                        }}
-                        defaultValue={
-                            cupData.sort((a, b) => a.color.localeCompare(b.color))[0].code
-                        }
-                        className="border w-max border-[#bbb] bg-slate-50 text-black px-2 py-[2px] rounded-md"
-                    >
-                        {cupData
-                            .sort((a, b) => a.color.localeCompare(b.color))
-                            .map((cup) => (
-                                <option key={cup.code} value={cup.code}>
-                                    {lang === "1" ? cup.color : translateColor(cup.color)}
-                                </option>
-                            ))}
-                    </select>
+                <div className="absolute right-[62vw] mr-4 mt-4 flex flex-col gap-2 items-end">
+                    <div className="flex flex-row gap-2 items-center">
+                        {lang == "1" ? "Wybierz kolor: " : "Select color: "}
+                        <select
+                            onChange={(e) => {
+                                if (e.target.value === selectedCup.code) return;
+                                setCupConfig({
+                                    trend_color: "",
+                                    soft_touch: false,
+                                    pro_color: false,
+                                    imprintType: "",
+                                    imprintColors: 1,
+                                    nadruk_wewnatrz_na_sciance: 0,
+                                    nadruk_na_uchu: false,
+                                    nadruk_na_spodzie: false,
+                                    nadruk_na_dnie: false,
+                                    nadruk_przez_rant: false,
+                                    nadruk_apla: false,
+                                    nadruk_dookola_pod_uchem: false,
+                                    nadruk_zlotem: false,
+                                    personalizacja: false,
+                                    zdobienie_paskiem: false,
+                                    zdobienie_tapeta_na_barylce: false,
+                                    nadruk_na_powloce_magicznej_1_kolor: false,
+                                    naklejka_papierowa_z_nadrukiem: false,
+                                    wkladanie_ulotek_do_kubka: false,
+                                    cardboard: "",
+                                });
+                                resetInputs(document, {
+                                    trend_color: true,
+                                    soft_touch: true,
+                                    pro_color: true,
+                                    imprintType: true,
+                                    nadruk_na_wewnatrz_sciance: true,
+                                    nadruk_na_uchu: true,
+                                    nadruk_na_spodzie: true,
+                                    nadruk_na_dnie: true,
+                                    nadruk_przez_rant: true,
+                                    nadruk_apla: true,
+                                    nadruk_dookola_pod_uchem: true,
+                                    nadruk_zlotem: true,
+                                    personalizacja: true,
+                                    zdobienie_paskiem: true,
+                                    nadruk_na_powloce_magicznej_1_kolor: true,
+                                    zdobienie_tapeta_na_barylce: true,
+                                    naklejka_papierowa_z_nadrukiem: true,
+                                    wkladanie_ulotek_do_kubka: true,
+                                    cardboard: true,
+                                });
+                                setSelectedCup(
+                                    cupData.find((cup) => cup.code === e.target.value) as Cup
+                                );
+                                // reset input/select elements
+                            }}
+                            defaultValue={
+                                cupData.sort((a, b) => a.color.localeCompare(b.color))[0].code
+                            }
+                            className="border w-max border-[#bbb] bg-slate-50 text-black px-2 py-[2px] rounded-md"
+                        >
+                            {cupData
+                                .sort((a, b) => a.color.localeCompare(b.color))
+                                .map((cup) => (
+                                    <option key={cup.code} value={cup.code}>
+                                        {lang === "1" ? cup.color : translateColor(cup.color)}
+                                    </option>
+                                ))}
+                        </select>
+                    </div>
+                    <div>
+                        {WarehouseDisplay({
+                            warehouseDisplayStock: warehouseDisplayStock,
+                            lang,
+                            loading,
+                            setLoading,
+                            updateWarehouseDisplayStock,
+                        })}
+                    </div>
                 </div>
                 {!noPrices && (
                     <>
@@ -1463,8 +1488,7 @@ export const Calculator = ({
                     <div className="mt-5 w-full flex justify-center gap-8">
                         <button
                             className={`px-2 py-1 rounded-md ${
-                                loading ||
-                                (!amounts.amount1 && !amounts.amount2 && !amounts.amount3)
+                                !amounts.amount1 && !amounts.amount2 && !amounts.amount3
                                     ? "bg-slate-400"
                                     : "bg-green-300 hover:bg-green-400"
                             }`}
@@ -1479,17 +1503,13 @@ export const Calculator = ({
                                     clientPriceUnit,
                                 })
                             }
-                            disabled={
-                                loading ||
-                                (!amounts.amount1 && !amounts.amount2 && !amounts.amount3)
-                            }
+                            disabled={!amounts.amount1 && !amounts.amount2 && !amounts.amount3}
                         >
                             {lang === "1" ? "Pobierz potwierdzenie" : "Download confirmation"}
                         </button>
                         <button
                             className={`px-2 py-1 rounded-md ${
-                                loading ||
-                                (!amounts.amount1 && !amounts.amount2 && !amounts.amount3)
+                                !amounts.amount1 && !amounts.amount2 && !amounts.amount3
                                     ? "bg-slate-400"
                                     : "bg-green-300 hover:bg-green-400"
                             }`}
@@ -1519,10 +1539,7 @@ export const Calculator = ({
                                         : "An error occurred while copying to clipboard"
                                 );
                             }}
-                            disabled={
-                                loading ||
-                                (!amounts.amount1 && !amounts.amount2 && !amounts.amount3)
-                            }
+                            disabled={!amounts.amount1 && !amounts.amount2 && !amounts.amount3}
                         >
                             {lang === "1" ? "Skopiuj do schowka" : "Copy to clipboard"}
                         </button>
@@ -1567,4 +1584,24 @@ export interface CupConfigInterface {
     naklejka_papierowa_z_nadrukiem: boolean;
     wkladanie_ulotek_do_kubka: boolean;
     cardboard: "" | "singular" | "6pack_wykrojnik" | "6pack_klapowy";
+}
+
+export interface WarehouseStockInterface {
+    sum?: number;
+    divided?: {
+        ICL?: {
+            amount: number;
+            updated_at: string;
+        };
+        QBS?: {
+            amount: number;
+            updated_at: string;
+        };
+        warehouse?: {
+            amount: number;
+            updated_at: string;
+            note: string;
+        };
+        total: number;
+    };
 }

@@ -13,7 +13,7 @@ export const UserSelector = ({
     cup,
     lang,
     additionalValues,
-    restrictions,
+    restrictions
 }: {
     allUsersData: (Database["public"]["Tables"]["users"]["Row"] & pricingsInterface)[];
     cup: string;

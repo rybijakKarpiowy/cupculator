@@ -174,7 +174,6 @@ export default function AccountDetails() {
         }
         // phone validation
         if (!/^[0-9+ ]+$/g.test(userData.phone)) {
-            console.log(userData.phone);
             toast.warn(`${lang === "1" ? "Niepoprawny numer telefonu!" : "Invalid phone number!"}`);
             setLoading(false);
             return;
@@ -245,10 +244,7 @@ export default function AccountDetails() {
         }
 
         const res = await fetch("/api/createuser", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
+            method: "GET",
         });
 
         if (!res.ok) {

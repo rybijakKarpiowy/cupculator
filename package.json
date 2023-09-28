@@ -20,12 +20,14 @@
     "@types/react-dom": "18.2.7",
     "@types/tailwindcss": "^3.1.0",
     "autoprefixer": "10.4.14",
+    "cheerio": "^1.0.0-rc.12",
     "encoding": "^0.1.13",
     "eslint": "8.44.0",
     "eslint-config-next": "13.4.10",
     "file-saver": "^2.0.5",
     "google-auth-library": "^9.0.0",
     "google-spreadsheet": "^4.0.2",
+    "mssql": "^10.0.1",
     "next": "13.4.10",
     "next-fonts": "^1.5.1",
     "postcss": "8.4.26",
@@ -37,6 +39,7 @@
   },
   "devDependencies": {
     "@types/gapi": "^0.0.44",
-    "supabase": "^1.88.0"
+    "@types/mssql": "^9.1.1",
+    "supabase": "^1.99.5"
   }
 }

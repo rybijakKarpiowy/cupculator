@@ -17,7 +17,7 @@ const getUserData = async (authUser: AuthUser, lang: string, cup: string) => {
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ auth_id: authUser?.id }),
+        body: JSON.stringify({ auth_id: authUser?.id, key: process.env.SERVER_KEY }),
     });
 
     if (!res.ok) {
@@ -53,7 +53,7 @@ const getPricings = async (authUser: AuthUser) => {
         headers: {
             "Content-Type": "application/json",
         },
-        body: JSON.stringify({ auth_id: authUser?.id }),
+        body: JSON.stringify({ auth_id: authUser?.id, key: process.env.SERVER_KEY }),
     });
 
     if (!res.ok) {
@@ -151,6 +151,7 @@ export interface Client {
     color_pricing?: string | null | undefined;
     cup_pricing?: string | null | undefined;
     salesman_id: string | null;
+    warehouse_acces: "None" | "Actual" | "Fictional" | null;
     role: "User" | "Salesman" | "Admin";
     email: string;
     user_id: string;

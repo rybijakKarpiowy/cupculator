@@ -8,6 +8,7 @@ import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ProductsCardTab } from "./dashboardPages/productsCardTab";
+import { ScrapersTab } from "./dashboardPages/scrapersTab";
 
 export const DashboardPages = ({
     clientsInput,
@@ -40,6 +41,7 @@ export const DashboardPages = ({
         | "additionalValues"
         | "restrictions"
         | "productsCard"
+        | "scrapers"
     >("activationRequests");
     const [loading, setLoading] = useState(false);
     const [addAdmin, setAddAdmin] = useState(false);
@@ -51,21 +53,81 @@ export const DashboardPages = ({
     const [additionalValuesState, setAdditionalValuesState] = useState(additionalValues);
     const [restrictionsState, setRestrictionsState] = useState<Restriction[]>(restrictions);
     const [cupsData, setCupsData] = useState<Database["public"]["Tables"]["cups"]["Row"][]>([]);
+    const [scrapersData, setScrapersData] = useState<
+        { cup_code: string; cup_id: number; scrapers: { provider: string; code_link: string }[] }[]
+    >([]);
 
     const supabase = createClientComponentClient<Database>();
 
-    (async () => {
-        const { data, error } = await supabase.from("cups").select("*");
-        if (error) {
-            console.error(error);
+    const getTabsData = async () => {
+        // Get products data
+        const { data: data1, error: error1 } = await supabase.from("cups").select("*");
+        if (error1) {
+            toast.error("Wystąpił błąd przy pobieraniu daych do karty produktów");
             return;
         }
-        if (!data || data.length === 0) {
+        if (!data1 || data1.length === 0) {
             console.error("No data");
             return;
         }
-        setCupsData(data);
-    })();
+        setCupsData(data1);
+
+        // Get scrapers data
+        const { data: data2, error: error2 } = await supabase
+            .from("scraped_warehouses")
+            .select("provider, code_link, cup_id, cups(code)");
+        if (error2) {
+            toast.error("Wystąpił błąd przy pobieraniu daych do scraperów");
+            return;
+        }
+        if (!data2 || data2.length === 0) {
+            console.error("No data");
+            return;
+        }
+        const scrapersDataPrep = (
+            data2.filter((item) => item.cups?.code) as {
+                provider: string;
+                code_link: string;
+                cup_id: number;
+                cups: {
+                    code: string;
+                };
+            }[]
+        ).map((item) => ({
+            provider: item.provider,
+            code_link: item.code_link,
+            cup_code: item.cups.code,
+            cup_id: item.cup_id,
+        }));
+        const uniqueCodes = scrapersDataPrep
+            .map((item) => item.cup_code)
+            .filter((value, index, self) => self.indexOf(value) === index);
+        const scrapersDataFinal = uniqueCodes
+            .map((cup_code) => ({
+                cup_code,
+                cup_id: scrapersDataPrep.find((item) => item.cup_code === cup_code)?.cup_id,
+                scrapers: scrapersDataPrep
+                    .filter((item) => item.cup_code === cup_code)
+                    .map((item) => ({
+                        provider: item.provider,
+                        code_link: item.code_link,
+                    })),
+            }))
+            .filter((item) => item.cup_id)
+            .sort((a, b) => a.cup_code.localeCompare(b.cup_code)) as {
+            cup_code: string;
+            cup_id: number;
+            scrapers: {
+                provider: string;
+                code_link: string;
+            }[];
+        }[];
+        setScrapersData(scrapersDataFinal);
+    };
+
+    useEffect(() => {
+        getTabsData();
+    }, []);
 
     useEffect(() => {
         const cupsOrColorsDiv = document.querySelector("#cups_or_colors") as HTMLSelectElement;
@@ -119,6 +181,7 @@ export const DashboardPages = ({
         let cup_pricing = "";
         let color_pricing = "";
         let salesman_id = "";
+        let warehouse_acces = "";
         let eu = "" as "EU" | "PL" | "brak" | boolean;
 
         if (e) {
@@ -129,6 +192,9 @@ export const DashboardPages = ({
                 ?.value;
             salesman_id = (e.currentTarget.querySelector("#assigned_salesman") as HTMLSelectElement)
                 ?.value;
+            warehouse_acces = (
+                e.currentTarget.querySelector("#warehouse_acces") as HTMLSelectElement
+            )?.value;
             eu = (e.currentTarget.querySelector("#eu") as HTMLSelectElement)?.value as
                 | "EU"
                 | "PL"
@@ -144,10 +210,12 @@ export const DashboardPages = ({
             color_pricing = (clientDiv?.querySelector("#color_pricing") as HTMLSelectElement).value;
             salesman_id = (clientDiv?.querySelector("#assigned_salesman") as HTMLSelectElement)
                 .value;
+            warehouse_acces = (clientDiv?.querySelector("#warehouse_acces") as HTMLSelectElement)
+                ?.value;
         }
 
-        if (!cup_pricing || !color_pricing || !salesman_id) {
-            toast.warn("Uzupełnij cennik klienta i przypisz handlowca");
+        if (!cup_pricing || !color_pricing || !salesman_id || !warehouse_acces) {
+            toast.warn("Uzupełnij cennik klienta, przypisz handlowca i ustal dostęp do magazynu");
             setLoading(false);
             return;
         }
@@ -159,6 +227,7 @@ export const DashboardPages = ({
                 cup_pricing,
                 color_pricing,
                 salesman_id,
+                warehouse_acces,
                 ...{ eu: eu === "EU" ? true : eu === "PL" ? false : undefined },
             }),
         });
@@ -173,6 +242,7 @@ export const DashboardPages = ({
                     client.cup_pricing = cup_pricing;
                     client.color_pricing = color_pricing;
                     client.salesman_id = salesman_id;
+                    client.warehouse_acces = warehouse_acces as "None" | "Actual" | "Fictional";
 
                     setClients([...clients]);
                     return;
@@ -508,6 +578,14 @@ export const DashboardPages = ({
                         >
                             Karta produktów
                         </button>
+                        <button
+                            className={`${
+                                chosenTab === "scrapers" ? "bg-slate-400" : "bg-slate-300"
+                            } px-2 rounded-md`}
+                            onClick={() => setChosenTab("scrapers")}
+                        >
+                            Scrapery
+                        </button>
                     </>
                 )}
             </div>
@@ -546,14 +624,17 @@ export const DashboardPages = ({
                                 </li>
                                 <li className="px-2 border border-black w-32 text-center">Kraj</li>
                                 <li className="px-2 border border-black w-64 text-center">Email</li>
-                                <li className="px-2 border border-black w-32 text-center">
+                                <li className="px-2 border border-black w-80 text-center">
                                     Cennik kubków
                                 </li>
-                                <li className="px-2 border border-black w-32 text-center">
+                                <li className="px-2 border border-black w-80 text-center">
                                     Cennik nadruków
                                 </li>
                                 <li className="px-2 border border-black w-60 text-center">
                                     Przypisany Handlowiec
+                                </li>
+                                <li className="px-2 border border-black w-60 text-center">
+                                    Dostęp do stanów magazynowych
                                 </li>
                             </ul>
                         </li>
@@ -610,7 +691,7 @@ export const DashboardPages = ({
                                             <li className="px-2 border border-black w-64 text-center">
                                                 {client.email}
                                             </li>
-                                            <li className="px-2 border border-black w-32 text-center">
+                                            <li className="px-2 border border-black w-80 text-center">
                                                 <select
                                                     id="cup_pricing"
                                                     disabled={loading}
@@ -633,7 +714,7 @@ export const DashboardPages = ({
                                                         ))}
                                                 </select>
                                             </li>
-                                            <li className="px-2 border border-black w-32 text-center">
+                                            <li className="px-2 border border-black w-80 text-center">
                                                 <select
                                                     id="color_pricing"
                                                     disabled={loading}
@@ -682,6 +763,27 @@ export const DashboardPages = ({
                                                                 {salesman.email}
                                                             </option>
                                                         ))}
+                                                </select>
+                                            </li>
+                                            <li className="px-2 border border-black w-60 text-center">
+                                                <select
+                                                    id="warehouse_acces"
+                                                    disabled={loading}
+                                                    className="text-center"
+                                                    defaultValue={
+                                                        client.warehouse_acces
+                                                            ? client.warehouse_acces
+                                                            : ""
+                                                    }
+                                                >
+                                                    <option value="" key="brak" disabled hidden>
+                                                        -
+                                                    </option>
+                                                    <option value="None">Brak dostępu</option>
+                                                    <option value="Actual">Faktyczne stany</option>
+                                                    <option value="Fictional">
+                                                        Fikcyjne stany
+                                                    </option>
                                                 </select>
                                             </li>
                                             <button
@@ -747,14 +849,17 @@ export const DashboardPages = ({
                                 </li>
                                 <li className="px-2 border border-black w-32 text-center">Kraj</li>
                                 <li className="px-2 border border-black w-64 text-center">Email</li>
-                                <li className="px-2 border border-black w-32 text-center">
+                                <li className="px-2 border border-black w-80 text-center">
                                     Cennik kubków
                                 </li>
-                                <li className="px-2 border border-black w-32 text-center">
+                                <li className="px-2 border border-black w-80 text-center">
                                     Cennik nadruków
                                 </li>
                                 <li className="px-2 border border-black w-60 text-center">
                                     Przypisany Handlowiec
+                                </li>
+                                <li className="px-2 border border-black w-60 text-center">
+                                    Dostęp do stanów magazynowych
                                 </li>
                             </ul>
                         </li>
@@ -800,7 +905,7 @@ export const DashboardPages = ({
                                         <li className="px-2 border border-black w-64 text-center">
                                             {client.email}
                                         </li>
-                                        <li className="px-2 border border-black w-32 text-center">
+                                        <li className="px-2 border border-black w-80 text-center">
                                             <select
                                                 id="cup_pricing"
                                                 disabled={loading}
@@ -825,7 +930,7 @@ export const DashboardPages = ({
                                                     ))}
                                             </select>
                                         </li>
-                                        <li className="px-2 border border-black w-32 text-center">
+                                        <li className="px-2 border border-black w-80 text-center">
                                             <select
                                                 id="color_pricing"
                                                 disabled={loading}
@@ -874,6 +979,28 @@ export const DashboardPages = ({
                                                             {salesman.email}
                                                         </option>
                                                     ))}
+                                            </select>
+                                        </li>
+                                        <li className="px-2 border border-black w-60 text-center">
+                                            <select
+                                                id="warehouse_acces"
+                                                disabled={loading}
+                                                onChange={() => handleActication(client.user_id)}
+                                                className={`${
+                                                    loading && "bg-slate-400"
+                                                } text-center`}
+                                                defaultValue={
+                                                    client.warehouse_acces
+                                                        ? client.warehouse_acces
+                                                        : ""
+                                                }
+                                            >
+                                                <option value="" key="brak" disabled hidden>
+                                                    -
+                                                </option>
+                                                <option value="None">Brak dostępu</option>
+                                                <option value="Actual">Faktyczne stany</option>
+                                                <option value="Fictional">Fikcyjne stany</option>
                                             </select>
                                         </li>
                                         <button
@@ -1498,6 +1625,9 @@ export const DashboardPages = ({
             )}
             {user?.role === "Admin" && chosenTab === "productsCard" && (
                 <ProductsCardTab cupsData={cupsData} />
+            )}
+            {user?.role === "Admin" && chosenTab === "scrapers" && (
+                <ScrapersTab scrapersData={scrapersData} />
             )}
         </div>
     );

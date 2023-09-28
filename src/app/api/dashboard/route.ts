@@ -3,13 +3,16 @@ import { NextRequest, NextResponse } from "next/server";
 import { baseUrl } from "@/app/baseUrl";
 
 export const POST = async (req: NextRequest) => {
-    const { auth_id } = await req.json();
+    const { auth_id, key } = (await req.json()) as { auth_id?: string; key?: string };
 
-    if (!auth_id) {
+    if (!auth_id || key !== process.env.SERVER_KEY) {
         return NextResponse.redirect(new URL("/login", baseUrl));
     }
-    
-    const { data: roleData, error: error1 } = await supabase.from("users_restricted").select("role").eq("user_id", auth_id);
+
+    const { data: roleData, error: error1 } = await supabase
+        .from("users_restricted")
+        .select("role")
+        .eq("user_id", auth_id);
 
     if (error1) {
         return NextResponse.json(error1.message, { status: 500 });
@@ -23,21 +26,24 @@ export const POST = async (req: NextRequest) => {
         return NextResponse.redirect(new URL("/", baseUrl));
     }
 
-    const { data: usersInfo, error: error2 } = await supabase.from("users").select("*")
-
+    const { data: usersInfo, error: error2 } = await supabase.from("users").select("*");
 
     if (error2) {
         return NextResponse.json(error2.message, { status: 500 });
     }
 
-    const { data: usersRestricted, error: error3 } = await supabase.from("users_restricted").select("*")
+    const { data: usersRestricted, error: error3 } = await supabase
+        .from("users_restricted")
+        .select("*");
 
     if (error3) {
         return NextResponse.json(error3.message, { status: 500 });
     }
 
     const users = usersInfo?.map((user) => {
-        const restricted = usersRestricted?.find((restricted) => restricted.user_id === user.user_id);
+        const restricted = usersRestricted?.find(
+            (restricted) => restricted.user_id === user.user_id
+        );
         return {
             ...user,
             ...restricted,
@@ -50,7 +56,7 @@ export const POST = async (req: NextRequest) => {
     );
 
     const userInfo = users?.find((user) => user.user_id === auth_id);
-    
+
     if (roleData[0].role == "Admin") {
         return NextResponse.json({ clients, adminsAndSalesmen, userInfo });
     }

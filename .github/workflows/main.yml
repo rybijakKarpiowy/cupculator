@@ -1,0 +1,20 @@
+name: Warehouse update
+on:
+    schedule:
+        - cron: "45 * * * *"
+jobs:
+    update_warehouse:
+        runs-on: ubuntu-latest
+        steps:
+            - run: echo "Api fetch triggered by github actions!"
+            - name: "Fetch api"
+              id: response
+              uses: fjogeleit/http-request-action@v1.14.1
+              with:
+                  url: "https://calculator.kubki.com.pl/api/updatewarehouse"
+                  method: "GET"
+                  retry: 3
+                  retryWait: 120000
+            - name: "Log response status"
+              run: |
+                  echo ${{ steps.response.outputs.headers }}

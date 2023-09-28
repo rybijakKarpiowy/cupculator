@@ -13,8 +13,8 @@ jobs:
               with:
                   url: "https://calculator.kubki.com.pl/api/updatewarehouse"
                   method: "GET"
-                  retry: 3
-                  retryWait: 120000
+                  ignoreStatusCodes: "400,401,403,404,422,500,502,503,504,200"
+
             - name: "Log response status"
               run: |
                   echo ${{ steps.response.outputs.headers }}

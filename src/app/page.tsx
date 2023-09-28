@@ -17,7 +17,7 @@ export default async function Home({
     searchParams: { cup: string; lang: string };
 }) {
     const lang = (searchParams.lang || "1") as "1" | "2";
-    const cup = searchParams.cup?.replace(" ", "_") as string;
+    const cup = searchParams.cup?.trim().replaceAll(" ", "_") as string;
 
     const supabase = createServerComponentClient<Database>({ cookies });
     const authUser = (await supabase.auth.getUser()).data.user;
@@ -84,12 +84,12 @@ export default async function Home({
             );
         }
 
-        const pricingsDataRes = await fetch("/api/getuserpricings", {
+        const pricingsDataRes = await fetch(`${baseUrl}/api/getuserpricings`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json",
             },
-            body: JSON.stringify({ user_id: authId, cupLink: cup }),
+            body: JSON.stringify({ user_id: authId, cupLink: cup, key: process.env.SERVER_KEY }),
         });
 
         if (!pricingsDataRes.ok) {

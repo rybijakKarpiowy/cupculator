@@ -347,66 +347,81 @@ export const ProductsCardTab = ({
                                         zdobienie_tapeta_na_barylce_II_stopien_trudnosci:
                                             zdobienie_tapeta_na_barylce_II_stopien_trudnosci.checked,
                                     };
-                                    if (rawData.mini_pallet && parseInt(rawData.mini_pallet)) {
+                                    if (
+                                        rawData.mini_pallet !== null &&
+                                        rawData.mini_pallet !== undefined &&
+                                        parseInt(rawData.mini_pallet) >= 0
+                                    ) {
                                         // @ts-ignore
                                         rawData.mini_pallet = parseInt(rawData.mini_pallet);
                                     } else {
-                                        toast.error("Mini paleta musi być liczbą");
-                                        setLoading(false);
-                                        return;
-                                    }
-                                    if (rawData.half_pallet && parseInt(rawData.half_pallet)) {
-                                        // @ts-ignore
-                                        rawData.half_pallet = parseInt(rawData.half_pallet);
-                                    } else {
-                                        toast.error("Pół paleta musi być liczbą");
-                                        setLoading(false);
-                                        return;
-                                    }
-                                    if (rawData.full_pallet && parseInt(rawData.full_pallet)) {
-                                        // @ts-ignore
-                                        rawData.full_pallet = parseInt(rawData.full_pallet);
-                                    } else {
-                                        toast.error("Pełna paleta musi być liczbą");
+                                        toast.error("Mini paleta musi być liczbą dodatnią");
                                         setLoading(false);
                                         return;
                                     }
                                     if (
-                                        rawData.mini_pallet_singular &&
-                                        parseInt(rawData.mini_pallet_singular)
+                                        rawData.half_pallet !== null &&
+                                        rawData.half_pallet !== undefined &&
+                                        parseInt(rawData.half_pallet) >= 0
+                                    ) {
+                                        // @ts-ignore
+                                        rawData.half_pallet = parseInt(rawData.half_pallet);
+                                    } else {
+                                        toast.error("Pół paleta musi być liczbą dodatnią");
+                                        setLoading(false);
+                                        return;
+                                    }
+                                    if (
+                                        rawData.full_pallet !== null &&
+                                        rawData.full_pallet !== undefined &&
+                                        parseInt(rawData.full_pallet) >= 0
+                                    ) {
+                                        // @ts-ignore
+                                        rawData.full_pallet = parseInt(rawData.full_pallet);
+                                    } else {
+                                        toast.error("Pełna paleta musi być liczbą dodatnią");
+                                        setLoading(false);
+                                        return;
+                                    }
+                                    if (
+                                        rawData.mini_pallet_singular !== null &&
+                                        rawData.mini_pallet_singular !== undefined &&
+                                        parseInt(rawData.mini_pallet_singular) >= 0
                                     ) {
                                         // @ts-ignore
                                         rawData.mini_pallet_singular = parseInt(
                                             rawData.mini_pallet_singular
                                         );
                                     } else {
-                                        toast.error("Mini paleta jednostkowe musi być liczbą");
+                                        toast.error("Mini paleta jednostkowe musi być liczbą dodatnią");
                                         setLoading(false);
                                         return;
                                     }
                                     if (
-                                        rawData.half_pallet_singular &&
-                                        parseInt(rawData.half_pallet_singular)
+                                        rawData.half_pallet_singular !== null &&
+                                        rawData.half_pallet_singular !== undefined &&
+                                        parseInt(rawData.half_pallet_singular) >= 0
                                     ) {
                                         // @ts-ignore
                                         rawData.half_pallet_singular = parseInt(
                                             rawData.half_pallet_singular
                                         );
                                     } else {
-                                        toast.error("Pół paleta jednostkowe musi być liczbą");
+                                        toast.error("Pół paleta jednostkowe musi być liczbą dodatnią");
                                         setLoading(false);
                                         return;
                                     }
                                     if (
-                                        rawData.full_pallet_singular &&
-                                        parseInt(rawData.full_pallet_singular)
+                                        rawData.full_pallet_singular !== null &&
+                                        rawData.full_pallet_singular !== undefined &&
+                                        parseInt(rawData.full_pallet_singular) >= 0
                                     ) {
                                         // @ts-ignore
                                         rawData.full_pallet_singular = parseInt(
                                             rawData.full_pallet_singular
                                         );
                                     } else {
-                                        toast.error("Pełna paleta jednostkowe musi być liczbą");
+                                        toast.error("Pełna paleta jednostkowe musi być liczbą dodatnią");
                                         setLoading(false);
                                         return;
                                     }

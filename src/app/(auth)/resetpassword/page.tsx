@@ -12,7 +12,7 @@ export default function ResetPassword() {
 
     const searchParams = useSearchParams();
     const lang = searchParams.get("lang") || "1";
-    const cup = searchParams.get("cup")?.replace(" ", "_");
+    const cup = searchParams.get("cup")?.trim().replaceAll(" ", "_");
     const error_description = searchParams.get("error_description");
 
     if (error_description === "Email link is invalid or has expired") {

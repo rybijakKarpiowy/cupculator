@@ -102,7 +102,9 @@ export const UserSelector = ({
                     {lang === "1" ? "Wybierz kubek" : "Select a cup"}
                 </div>
             )}
-            {selectedPricingsData.colorPricing &&
+            {!isError &&
+                !loading &&
+                selectedPricingsData.colorPricing &&
                 selectedPricingsData.cupData.length > 0 &&
                 selectedUserUnit && (
                     <Calculator

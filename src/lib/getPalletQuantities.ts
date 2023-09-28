@@ -6,7 +6,14 @@ export const getPalletQuantities = (
     selectedCardboard: "" | "singular" | "6pack_wykrojnik" | "6pack_klapowy"
 ) => {
     if (amount === null) return { mini: 0, half: 0, full: 0 };
-    else if (selectedCardboard === "singular") {
+    if (selectedCardboard === "singular") {
+        if (
+            !selectedCup.mini_pallet_singular ||
+            !selectedCup.half_pallet_singular ||
+            !selectedCup.full_pallet_singular
+        )
+            return { mini: 0, half: 0, full: 0 };
+
         const tempPalletsCount = { mini: 0, half: 0, full: 0 };
         let tempAmount = amount;
         while (tempAmount > 0) {
@@ -60,6 +67,9 @@ export const getPalletQuantities = (
         }
         return tempPalletsCount;
     } else {
+        if (!selectedCup.mini_pallet || !selectedCup.half_pallet || !selectedCup.full_pallet)
+            return { mini: 0, half: 0, full: 0 };
+
         const tempPalletsCount = { mini: 0, half: 0, full: 0 };
         let tempAmount = amount;
         while (tempAmount > 0) {

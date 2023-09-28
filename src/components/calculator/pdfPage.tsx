@@ -10,6 +10,7 @@ import { calculatePrices } from "@/lib/calculatePrices";
 import { priceToString } from "@/lib/priceToString";
 import { getPalletQuantities } from "@/lib/getPalletQuantities";
 import { useState } from "react";
+import { anyAdditionalPrint } from "@/lib/anyAdditionalPrint";
 
 export const PdfPage = ({
     amounts,
@@ -265,17 +266,27 @@ export const PdfPage = ({
                             ? "Brak"
                             : "None"}
                     </Text>
-                    <View style={{ display: "flex", flexDirection: "row" }}>
-                        <Text style={styles.p}>
-                            {lang === "1" ? "Dodatkowe zdobienia: " : "Additional decorations: "}
-                        </Text>
-                        <View
-                            style={{
-                                display: "flex",
-                                flexDirection: "column",
-                                gap: 2,
-                            }}
-                        >
+                    <Text style={styles.p}> </Text>
+                    {(cupConfig.nadruk_wewnatrz_na_sciance ||
+                        cupConfig.nadruk_na_uchu ||
+                        cupConfig.nadruk_na_spodzie ||
+                        cupConfig.nadruk_na_dnie ||
+                        cupConfig.nadruk_przez_rant ||
+                        cupConfig.nadruk_apla ||
+                        (cupConfig.nadruk_zlotem && cupConfig.nadruk_zlotem !== true) ||
+                        cupConfig.personalizacja ||
+                        (cupConfig.zdobienie_paskiem && cupConfig.zdobienie_paskiem !== true) ||
+                        cupConfig.nadruk_na_powloce_magicznej_1_kolor ||
+                        (cupConfig.zdobienie_tapeta_na_barylce &&
+                            cupConfig.zdobienie_tapeta_na_barylce !== true) ||
+                        cupConfig.naklejka_papierowa_z_nadrukiem ||
+                        cupConfig.wkladanie_ulotek_do_kubka) && (
+                        <View style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                            <Text style={styles.p}>
+                                {lang === "1"
+                                    ? "Dodatkowe zdobienia: "
+                                    : "Additional decorations: "}
+                            </Text>
                             {cupConfig.nadruk_wewnatrz_na_sciance && (
                                 <Text style={styles.p}>
                                     •{" "}
@@ -381,8 +392,18 @@ export const PdfPage = ({
                                         : "Inserting leaflets into the mug"}
                                 </Text>
                             )}
+                            {["digital_print", ""].includes(cupConfig.imprintType) &&
+                                anyAdditionalPrint(cupConfig) && (
+                                    <Text style={styles.p}>
+                                        {lang === "1"
+                                            ? "Liczba kolorów nadruków dodatkowych"
+                                            : "Number of colors of additional prints"}
+                                        : {cupConfig.imprintColors}
+                                    </Text>
+                                )}
+                            <Text style={styles.p}> </Text>
                         </View>
-                    </View>
+                    )}
                     <Text style={styles.p}>
                         {lang === "1" ? "Sposób pakowania: " : "Packaging type: "}
                         {cupConfig.cardboard === "singular" &&
@@ -442,10 +463,21 @@ export const PdfPage = ({
                             <Text style={styles.psmall}>
                                 {"Transport: "}
                                 {clientPriceUnit === "zł"
-                                    ? `${priceToString(
-                                          calculatedPrices[1].transport,
-                                          clientPriceUnit
-                                      )}`
+                                    ? `${
+                                          (cupConfig.cardboard === "singular" &&
+                                              selectedCup.mini_pallet_singular &&
+                                              selectedCup.half_pallet_singular &&
+                                              selectedCup.full_pallet_singular) ||
+                                          (cupConfig.cardboard !== "singular" &&
+                                              selectedCup.mini_pallet &&
+                                              selectedCup.half_pallet &&
+                                              selectedCup.full_pallet)
+                                              ? priceToString(
+                                                    calculatedPrices[1].transport,
+                                                    clientPriceUnit
+                                                )
+                                              : "Skontaktuj się z doradcą handlowym"
+                                      }`
                                     : "Please contact your advisor"}
                             </Text>
                             <Text style={styles.psmall}>
@@ -479,30 +511,45 @@ export const PdfPage = ({
                                           )
                                     : priceToString(0, clientPriceUnit)}
                             </Text>
-                            <Text
-                                style={{
-                                    ...styles.p,
-                                    marginTop: 20,
-                                    marginBottom: 8,
-                                    fontWeight: "bold",
-                                }}
-                            >
-                                {lang === "1" ? "Dane logistyczne" : "Logistic details"}
-                            </Text>
-                            <Text style={styles.p}>
-                                {lang === "1"
-                                    ? "Liczba palet MINI: "
-                                    : "Quantity of pallets MINI: "}
-                                {palletQuantities[1].mini}
-                            </Text>
-                            <Text style={styles.p}>
-                                {lang === "1" ? "Liczba półpalet: " : "Quantity of half-pallets: "}
-                                {palletQuantities[1].half}
-                            </Text>
-                            <Text style={styles.p}>
-                                {lang === "1" ? "Liczba palet EURO: " : "Quantity of pallets EUR: "}
-                                {palletQuantities[1].full}
-                            </Text>
+                            {(cupConfig.cardboard === "singular" &&
+                                selectedCup.mini_pallet_singular &&
+                                selectedCup.half_pallet_singular &&
+                                selectedCup.full_pallet_singular) ||
+                            (cupConfig.cardboard !== "singular" &&
+                                selectedCup.mini_pallet &&
+                                selectedCup.half_pallet &&
+                                selectedCup.full_pallet) ? (
+                                <>
+                                    <Text
+                                        style={{
+                                            ...styles.p,
+                                            marginTop: 20,
+                                            marginBottom: 8,
+                                            fontWeight: "bold",
+                                        }}
+                                    >
+                                        {lang === "1" ? "Dane logistyczne" : "Logistic details"}
+                                    </Text>
+                                    <Text style={styles.p}>
+                                        {lang === "1"
+                                            ? "Liczba palet MINI: "
+                                            : "Quantity of pallets MINI: "}
+                                        {palletQuantities[1].mini}
+                                    </Text>
+                                    <Text style={styles.p}>
+                                        {lang === "1"
+                                            ? "Liczba półpalet: "
+                                            : "Quantity of half-pallets: "}
+                                        {palletQuantities[1].half}
+                                    </Text>
+                                    <Text style={styles.p}>
+                                        {lang === "1"
+                                            ? "Liczba palet EURO: "
+                                            : "Quantity of pallets EUR: "}
+                                        {palletQuantities[1].full}
+                                    </Text>
+                                </>
+                            ) : null}
                         </View>
                     )}
                     {amounts.amount2 && (
@@ -545,10 +592,21 @@ export const PdfPage = ({
                             <Text style={styles.psmall}>
                                 {"Transport: "}
                                 {clientPriceUnit === "zł"
-                                    ? `${priceToString(
-                                          calculatedPrices[2].transport,
-                                          clientPriceUnit
-                                      )}`
+                                    ? `${
+                                          (cupConfig.cardboard === "singular" &&
+                                              selectedCup.mini_pallet_singular &&
+                                              selectedCup.half_pallet_singular &&
+                                              selectedCup.full_pallet_singular) ||
+                                          (cupConfig.cardboard !== "singular" &&
+                                              selectedCup.mini_pallet &&
+                                              selectedCup.half_pallet &&
+                                              selectedCup.full_pallet)
+                                              ? priceToString(
+                                                    calculatedPrices[2].transport,
+                                                    clientPriceUnit
+                                                )
+                                              : "Skontaktuj się z doradcą handlowym"
+                                      }`
                                     : "Please contact your advisor"}
                             </Text>
                             <Text style={styles.psmall}>
@@ -582,30 +640,45 @@ export const PdfPage = ({
                                           )
                                     : priceToString(0, clientPriceUnit)}
                             </Text>
-                            <Text
-                                style={{
-                                    ...styles.p,
-                                    marginTop: 20,
-                                    marginBottom: 8,
-                                    fontWeight: "bold",
-                                }}
-                            >
-                                {lang === "1" ? "Dane logistyczne" : "Logistic details"}
-                            </Text>
-                            <Text style={styles.p}>
-                                {lang === "1"
-                                    ? "Liczba palet MINI: "
-                                    : "Quantity of pallets MINI: "}
-                                {palletQuantities[2].mini}
-                            </Text>
-                            <Text style={styles.p}>
-                                {lang === "1" ? "Liczba półpalet: " : "Quantity of half-pallets: "}
-                                {palletQuantities[2].half}
-                            </Text>
-                            <Text style={styles.p}>
-                                {lang === "1" ? "Liczba palet EURO: " : "Quantity of pallets EUR: "}
-                                {palletQuantities[2].full}
-                            </Text>
+                            {(cupConfig.cardboard === "singular" &&
+                                selectedCup.mini_pallet_singular &&
+                                selectedCup.half_pallet_singular &&
+                                selectedCup.full_pallet_singular) ||
+                            (cupConfig.cardboard !== "singular" &&
+                                selectedCup.mini_pallet &&
+                                selectedCup.half_pallet &&
+                                selectedCup.full_pallet) ? (
+                                <>
+                                    <Text
+                                        style={{
+                                            ...styles.p,
+                                            marginTop: 20,
+                                            marginBottom: 8,
+                                            fontWeight: "bold",
+                                        }}
+                                    >
+                                        {lang === "1" ? "Dane logistyczne" : "Logistic details"}
+                                    </Text>
+                                    <Text style={styles.p}>
+                                        {lang === "1"
+                                            ? "Liczba palet MINI: "
+                                            : "Quantity of pallets MINI: "}
+                                        {palletQuantities[2].mini}
+                                    </Text>
+                                    <Text style={styles.p}>
+                                        {lang === "1"
+                                            ? "Liczba półpalet: "
+                                            : "Quantity of half-pallets: "}
+                                        {palletQuantities[2].half}
+                                    </Text>
+                                    <Text style={styles.p}>
+                                        {lang === "1"
+                                            ? "Liczba palet EURO: "
+                                            : "Quantity of pallets EUR: "}
+                                        {palletQuantities[2].full}
+                                    </Text>
+                                </>
+                            ) : null}
                         </View>
                     )}
                     {amounts.amount3 && (
@@ -648,10 +721,21 @@ export const PdfPage = ({
                             <Text style={styles.psmall}>
                                 {"Transport: "}
                                 {clientPriceUnit === "zł"
-                                    ? `${priceToString(
-                                          calculatedPrices[3].transport,
-                                          clientPriceUnit
-                                      )}`
+                                    ? `${
+                                          (cupConfig.cardboard === "singular" &&
+                                              selectedCup.mini_pallet_singular &&
+                                              selectedCup.half_pallet_singular &&
+                                              selectedCup.full_pallet_singular) ||
+                                          (cupConfig.cardboard !== "singular" &&
+                                              selectedCup.mini_pallet &&
+                                              selectedCup.half_pallet &&
+                                              selectedCup.full_pallet)
+                                              ? priceToString(
+                                                    calculatedPrices[3].transport,
+                                                    clientPriceUnit
+                                                )
+                                              : "Skontaktuj się z doradcą handlowym"
+                                      }`
                                     : "Please contact your advisor"}
                             </Text>
                             <Text style={styles.psmall}>
@@ -685,30 +769,45 @@ export const PdfPage = ({
                                           )
                                     : priceToString(0, clientPriceUnit)}
                             </Text>
-                            <Text
-                                style={{
-                                    ...styles.p,
-                                    marginTop: 20,
-                                    marginBottom: 6,
-                                    fontWeight: "bold",
-                                }}
-                            >
-                                {lang === "1" ? "Dane logistyczne" : "Logistic details"}
-                            </Text>
-                            <Text style={styles.p}>
-                                {lang === "1"
-                                    ? "Liczba palet MINI: "
-                                    : "Quantity of pallets MINI: "}
-                                {palletQuantities[3].mini}
-                            </Text>
-                            <Text style={styles.p}>
-                                {lang === "1" ? "Liczba półpalet: " : "Quantity of half-pallets: "}
-                                {palletQuantities[3].half}
-                            </Text>
-                            <Text style={styles.p}>
-                                {lang === "1" ? "Liczba palet EURO: " : "Quantity of pallets EUR: "}
-                                {palletQuantities[3].full}
-                            </Text>
+                            {(cupConfig.cardboard === "singular" &&
+                                selectedCup.mini_pallet_singular &&
+                                selectedCup.half_pallet_singular &&
+                                selectedCup.full_pallet_singular) ||
+                            (cupConfig.cardboard !== "singular" &&
+                                selectedCup.mini_pallet &&
+                                selectedCup.half_pallet &&
+                                selectedCup.full_pallet) ? (
+                                <>
+                                    <Text
+                                        style={{
+                                            ...styles.p,
+                                            marginTop: 20,
+                                            marginBottom: 6,
+                                            fontWeight: "bold",
+                                        }}
+                                    >
+                                        {lang === "1" ? "Dane logistyczne" : "Logistic details"}
+                                    </Text>
+                                    <Text style={styles.p}>
+                                        {lang === "1"
+                                            ? "Liczba palet MINI: "
+                                            : "Quantity of pallets MINI: "}
+                                        {palletQuantities[3].mini}
+                                    </Text>
+                                    <Text style={styles.p}>
+                                        {lang === "1"
+                                            ? "Liczba półpalet: "
+                                            : "Quantity of half-pallets: "}
+                                        {palletQuantities[3].half}
+                                    </Text>
+                                    <Text style={styles.p}>
+                                        {lang === "1"
+                                            ? "Liczba palet EURO: "
+                                            : "Quantity of pallets EUR: "}
+                                        {palletQuantities[3].full}
+                                    </Text>
+                                </>
+                            ) : null}
                         </View>
                     )}
                 </View>

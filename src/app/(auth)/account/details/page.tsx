@@ -12,7 +12,7 @@ export default function AccountDetails() {
 
     const searchParams = useSearchParams();
     const lang = searchParams.get("lang") || "1";
-    const cup = searchParams.get("cup")?.replace(" ", "_");
+    const cup = searchParams.get("cup")?.trim().replaceAll(" ", "_");
     const error_description = searchParams.get("error_description");
 
     useEffect(() => {

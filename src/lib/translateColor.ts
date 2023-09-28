@@ -1,4 +1,9 @@
-export const translateColor = (color: string): string => {
+export const translateColor = (colorInput: string): string => {
+    let color: string = colorInput;
+    if (colorInput.includes("_")) {
+        color = colorInput.trim().replace(" ", "");
+    }
+
     // if color has space in it, return the color
     if (color.includes(" ")) return color;
 

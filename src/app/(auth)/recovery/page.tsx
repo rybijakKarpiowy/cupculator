@@ -20,7 +20,7 @@ export default function Recovery() {
 
     const searchParams = useSearchParams();
     const lang = searchParams.get("lang") || "1";
-    const cup = searchParams.get("cup")?.replace(" ", "_");
+    const cup = searchParams.get("cup")?.trim().replaceAll(" ", "_");
 
     const supabase = createClientComponentClient();
 

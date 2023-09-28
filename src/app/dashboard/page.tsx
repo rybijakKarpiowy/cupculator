@@ -72,7 +72,7 @@ export default async function Dashboard({
     searchParams?: { [key: string]: string | undefined };
 }) {
     const lang = searchParams?.lang || "1";
-    const cup = searchParams?.cup?.replace(" ", "_") || "";
+    const cup = searchParams?.cup?.trim().replaceAll(" ", "_") || "";
 
     const supabase = createServerComponentClient<Database>({ cookies });
     const authUser = (await supabase.auth.getUser()).data.user;

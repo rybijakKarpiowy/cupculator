@@ -3,9 +3,9 @@ import { CupConfigInterface } from "@/components/calculator/calculator";
 import { Database } from "@/database/types";
 import { ColorPricing } from "./colorPricingType";
 import { calculatePrices } from "./calculatePrices";
-import { getPalletQuantities } from "./getPalletQuantities";
 import { translateColor } from "./translateColor";
 import { priceToString } from "./priceToString";
+import { anyAdditionalPrint } from "./anyAdditionalPrint";
 
 export const copyCalcToClip = async ({
     amounts,
@@ -92,12 +92,6 @@ export const copyCalcToClip = async ({
                 singleCardboardPrice,
             };
         }
-
-        const palletQuantities = {
-            1: getPalletQuantities(amounts.amount1, selectedCup, cupConfig.cardboard),
-            2: getPalletQuantities(amounts.amount2, selectedCup, cupConfig.cardboard),
-            3: getPalletQuantities(amounts.amount3, selectedCup, cupConfig.cardboard),
-        };
 
         const text = `${lang === "1" ? "Data: " : "Date: "}${new Date().toLocaleDateString(
             "pl-PL"
@@ -242,7 +236,7 @@ export const copyCalcToClip = async ({
                 cupConfig.zdobienie_tapeta_na_barylce !== true) ||
             cupConfig.naklejka_papierowa_z_nadrukiem ||
             cupConfig.wkladanie_ulotek_do_kubka
-                ? `${lang === "1" ? "Dodatkowe zdobienia: " : "Additional decorations: "}\n`
+                ? `\n${lang === "1" ? "Dodatkowe zdobienia: " : "Additional decorations: "}\n`
                 : ""
         }${
             cupConfig.nadruk_wewnatrz_na_sciance
@@ -330,7 +324,15 @@ export const copyCalcToClip = async ({
                       lang === "1" ? "Wkładanie ulotek do kubka" : "Inserting leaflets into the mug"
                   }\n`
                 : ""
-        }${lang === "1" ? "Sposób pakowania: " : "Packaging type: "}${
+        }${
+            ["digital_print", ""].includes(cupConfig.imprintType) && anyAdditionalPrint(cupConfig)
+                ? `${
+                      lang === "1"
+                          ? "Liczba kolorów nadruków dodatkowych"
+                          : "Number of colors of additional prints"
+                  }: ${cupConfig.imprintColors}\n`
+                : ""
+        }\n${lang === "1" ? "Sposób pakowania: " : "Packaging type: "}${
             cupConfig.cardboard === "singular"
                 ? lang === "1"
                     ? "Kartoniki jednostkowe"
@@ -370,10 +372,21 @@ export const copyCalcToClip = async ({
                       clientPriceUnit
                   )} ${lang === "1" ? "netto" : ""}\n${
                       clientPriceUnit === "zł"
-                          ? `+ transport: ${priceToString(
-                                calculatedPrices[1].transport,
-                                clientPriceUnit
-                            )} ${lang === "1" ? "netto" : ""}\n`
+                          ? (cupConfig.cardboard === "singular" &&
+                                selectedCup.mini_pallet_singular &&
+                                selectedCup.half_pallet_singular &&
+                                selectedCup.full_pallet_singular) ||
+                            (cupConfig.cardboard !== "singular" &&
+                                selectedCup.mini_pallet &&
+                                selectedCup.half_pallet &&
+                                selectedCup.full_pallet)
+                              ? `+ transport: ${priceToString(
+                                    calculatedPrices[1].transport,
+                                    clientPriceUnit
+                                )} ${lang === "1" ? "netto" : ""}\n`
+                              : `+ transport: ${
+                                    lang === "1" ? "Wycena indywidualna" : "Individual pricing"
+                                }\n`
                           : ""
                   }${lang === "1" ? "Suma: " : "Total: "}${
                       calculatedPrices[1].prep !== null &&
@@ -424,10 +437,21 @@ export const copyCalcToClip = async ({
                       clientPriceUnit
                   )} ${lang === "1" ? "netto" : ""}\n${
                       clientPriceUnit === "zł"
-                          ? `+ transport: ${priceToString(
-                                calculatedPrices[2].transport,
-                                clientPriceUnit
-                            )} ${lang === "1" ? "netto" : ""}\n`
+                          ? (cupConfig.cardboard === "singular" &&
+                                selectedCup.mini_pallet_singular &&
+                                selectedCup.half_pallet_singular &&
+                                selectedCup.full_pallet_singular) ||
+                            (cupConfig.cardboard !== "singular" &&
+                                selectedCup.mini_pallet &&
+                                selectedCup.half_pallet &&
+                                selectedCup.full_pallet)
+                              ? `+ transport: ${priceToString(
+                                    calculatedPrices[2].transport,
+                                    clientPriceUnit
+                                )} ${lang === "1" ? "netto" : ""}\n`
+                              : `+ transport: ${
+                                    lang === "1" ? "Wycena indywidualna" : "Individual pricing"
+                                }\n`
                           : ""
                   }${lang === "1" ? "Suma: " : "Total: "}${
                       calculatedPrices[2].prep !== null &&
@@ -478,10 +502,21 @@ export const copyCalcToClip = async ({
                       clientPriceUnit
                   )} ${lang === "1" ? "netto" : ""}\n${
                       clientPriceUnit === "zł"
-                          ? `+ transport: ${priceToString(
-                                calculatedPrices[3].transport,
-                                clientPriceUnit
-                            )} ${lang === "1" ? "netto" : ""}\n`
+                          ? (cupConfig.cardboard === "singular" &&
+                                selectedCup.mini_pallet_singular &&
+                                selectedCup.half_pallet_singular &&
+                                selectedCup.full_pallet_singular) ||
+                            (cupConfig.cardboard !== "singular" &&
+                                selectedCup.mini_pallet &&
+                                selectedCup.half_pallet &&
+                                selectedCup.full_pallet)
+                              ? `+ transport: ${priceToString(
+                                    calculatedPrices[3].transport,
+                                    clientPriceUnit
+                                )} ${lang === "1" ? "netto" : ""}\n`
+                              : `+ transport: ${
+                                    lang === "1" ? "Wycena indywidualna" : "Individual pricing"
+                                }\n`
                           : ""
                   }${lang === "1" ? "Suma: " : "Total: "}${
                       calculatedPrices[3].prep !== null &&

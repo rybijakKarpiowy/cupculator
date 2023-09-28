@@ -3,6 +3,7 @@ import { supabase } from "@/database/supabase";
 import { Database } from "@/database/types";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { NextRequest, NextResponse } from "next/server";
+import * as mssql from "mssql";
 
 export const GET = async (req: NextRequest) => {
     const res = NextResponse.next();
@@ -57,7 +58,55 @@ export const GET = async (req: NextRequest) => {
     );
 
     // fetch data from warehouse db
-    // const actualStock = ......
+    const connectionConfig = {
+        server: process.env.LOMAG_IP!,
+        port: parseInt(process.env.LOMAG_PORT!)!,
+        user: process.env.LOMAG_USERNAME!,
+        password: process.env.LOMAG_PASSWORD!,
+        database: "ProMedia",
+        pool: {
+            min: 5,
+            max: 50,
+            idleTimeoutMillis: 30000,
+        },
+        options: {
+            encrypt: false,
+        },
+    };
+
+    await mssql.connect(connectionConfig);
+    const warehouseRaw: { warehouseId: number; message: string; amount: number }[] =
+        await mssql.query`SELECT IDMagazynu as warehouseId, _TowarTempString1 as message, _TowarTempExpression1 as amount FROM ProMedia.dbo.Towar WHERE IDMagazynu IN (14, 19) AND _TowarTempString6 = ${code}` // change 19 to actual warehouse id
+            .then((result) => {
+                return result.recordset;
+            })
+            .catch((err) => {
+                console.log(err);
+                return [];
+            });
+
+    const actualStock = warehouseRaw
+        .filter((warehouse) => warehouse.warehouseId === 14)
+        .reduce(
+            (prev, curr) => {
+                return {
+                    amount: prev.amount + curr.amount,
+                    note: prev.note + curr.message,
+                };
+            },
+            { amount: 0, note: "" }
+        );
+
+    const fictionalStock = warehouseRaw
+        .filter((warehouse) => warehouse.warehouseId === 19) // change 19 to actual warehouse id
+        .reduce(
+            (prev, curr) => {
+                return {
+                    amount: prev.amount + curr.amount,
+                };
+            },
+            { amount: 0 }
+        );
 
     if (user.role === "Admin" || user.role === "Salesman") {
         return NextResponse.json(
@@ -75,8 +124,13 @@ export const GET = async (req: NextRequest) => {
                             updated_at: new Date(QBSstock.updated_at).toLocaleString("pl-PL"),
                         },
                     }),
-                    // ...(actualStock && {warehouse: {amount: actualStock.amount, updated_at: new Date(actualStock.updated_at).toLocaleString("pl-PL")}, note: actualStock.note})
-                    total: (ICLstock?.amount || 0) + (QBSstock?.amount || 0), // + (actualStock?.amount || 0)
+                    ...(actualStock && {
+                        warehouse: { amount: actualStock.amount, note: actualStock.note },
+                    }),
+                    total:
+                        (ICLstock?.amount || 0) +
+                        (QBSstock?.amount || 0) +
+                        (actualStock?.amount || 0),
                 },
             },
             { status: 200 }
@@ -87,17 +141,20 @@ export const GET = async (req: NextRequest) => {
     if (user.warehouse_acces === "Actual") {
         return NextResponse.json(
             {
-                sum: (ICLstock?.amount || 0) + (QBSstock?.amount || 0), // + (actualStock?.amount || 0)
+                sum: (ICLstock?.amount || 0) + (QBSstock?.amount || 0) + (actualStock?.amount || 0),
             },
             { status: 200 }
         );
     }
 
-    // const fictionalStock = .....
     if (user.warehouse_acces === "Fictional") {
         return NextResponse.json(
             {
-                sum: (ICLstock?.amount || 0) + (QBSstock?.amount || 0), // + (actualStock?.amount || 0) + (fictionalStock?.amount || 0)
+                sum:
+                    (ICLstock?.amount || 0) +
+                    (QBSstock?.amount || 0) +
+                    (actualStock?.amount || 0) +
+                    (fictionalStock?.amount || 0),
             },
             { status: 200 }
         );

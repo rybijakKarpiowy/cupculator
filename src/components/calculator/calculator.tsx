@@ -101,7 +101,7 @@ export const Calculator = ({
         naklejka_papierowa_z_nadrukiem: false,
         wkladanie_ulotek_do_kubka: false,
     });
-    const [warehouseStock, setWarehouseStock] = useState<WarehouseStockInterface>({});
+    const [warehouseDisplayStock, setWarehouseDisplayStock] = useState<WarehouseStockInterface>({});
 
     useEffect(() => {
         setSelectedCup(cupData.sort((a, b) => a.color.localeCompare(b.color))[0]);
@@ -109,13 +109,7 @@ export const Calculator = ({
 
     useEffect(() => {
         // update warehouse stock
-        async function updateWarehouseStock() {
-            setLoading(true);
-            const res = await fetch(`/api/getwarehousestock?code=${selectedCup.code}`);
-            setWarehouseStock(await res.json());
-            setLoading(false);
-        }
-        updateWarehouseStock();
+        updateWarehouseDisplayStock();
 
         // check if cup have all prices
         for (const price of Object.values(selectedCup.prices)) {
@@ -156,6 +150,13 @@ export const Calculator = ({
             }
         }
     }, [amounts, cupConfig]);
+
+    async function updateWarehouseDisplayStock() {
+        setLoading(true);
+        const res = await fetch(`/api/getwarehousestock?code=${selectedCup.code}`);
+        setWarehouseDisplayStock(await res.json());
+        setLoading(false);
+    }
 
     const amountAlerts = (amount: number | null, inputId: number) => {
         if (!amount) return;
@@ -379,7 +380,15 @@ export const Calculator = ({
                                 ))}
                         </select>
                     </div>
-                    <div>{WarehouseDisplay({ warehouseStock, lang, loading, setLoading })}</div>
+                    <div>
+                        {WarehouseDisplay({
+                            warehouseDisplayStock: warehouseDisplayStock,
+                            lang,
+                            loading,
+                            setLoading,
+                            updateWarehouseDisplayStock,
+                        })}
+                    </div>
                 </div>
                 {!noPrices && (
                     <>

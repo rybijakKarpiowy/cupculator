@@ -3,15 +3,17 @@ import { WarehouseStockInterface } from "./calculator";
 import { toast } from "react-toastify";
 
 export const WarehouseDisplay = ({
-    warehouseStock,
+    warehouseDisplayStock,
     lang,
     loading,
     setLoading,
+    updateWarehouseDisplayStock,
 }: {
-    warehouseStock: WarehouseStockInterface;
+    warehouseDisplayStock: WarehouseStockInterface;
     lang: "1" | "2";
     loading: boolean;
     setLoading: Dispatch<SetStateAction<boolean>>;
+    updateWarehouseDisplayStock: () => Promise<void>;
 }) => {
     const handleUpdate = async () => {
         setLoading(true);
@@ -20,9 +22,11 @@ export const WarehouseDisplay = ({
         switch (status) {
             case 200:
                 toast.success("Magazyny zaktualizowane");
+                await updateWarehouseDisplayStock();
                 break;
             case 409:
-                toast.error("Magazyny były aktualizowane w ciągu ostatnich 5 minut");
+                toast.warn("Magazyny były aktualizowane w ciągu ostatnich 5 minut");
+                await updateWarehouseDisplayStock();
                 break;
             case 500:
                 toast.error("Błąd serwera");
@@ -37,60 +41,60 @@ export const WarehouseDisplay = ({
     if (loading) {
         return (
             <div className="w-96">
-                <p>{"Ładowanie..."}</p>
+                <p>{lang === "1" ? "Ładowanie..." : "Loading..."}</p>
             </div>
         );
     }
 
     return (
         <>
-            {"sum" in warehouseStock && (
+            {"sum" in warehouseDisplayStock && (
                 <div>
                     <p>
-                        {lang === "1" ? "W magazynie:" : "In stock:"} {warehouseStock.sum}
+                        {lang === "1" ? "W magazynie:" : "In stock:"} {warehouseDisplayStock.sum}
                     </p>
                 </div>
             )}
-            {"divided" in warehouseStock && warehouseStock.divided && (
+            {"divided" in warehouseDisplayStock && warehouseDisplayStock.divided && (
                 <>
-                    {"ICL" in warehouseStock.divided && (
+                    {"ICL" in warehouseDisplayStock.divided && (
                         <div className="flex justify-between gap-4 w-96">
                             <p>
                                 {"ICL: "}
-                                {warehouseStock.divided?.ICL?.amount || 0}
+                                {warehouseDisplayStock.divided?.ICL?.amount || 0}
                             </p>
                             <p>
                                 {"Aktualizacja: "}
-                                {warehouseStock.divided?.ICL?.updated_at || "błąd"}
+                                {warehouseDisplayStock.divided?.ICL?.updated_at || "błąd"}
                             </p>
                         </div>
                     )}
-                    {"QBS" in warehouseStock.divided && (
+                    {"QBS" in warehouseDisplayStock.divided && (
                         <div className="flex justify-between gap-4 w-96">
                             <p>
                                 {"QBS: "}
-                                {warehouseStock.divided?.QBS?.amount || 0}
+                                {warehouseDisplayStock.divided?.QBS?.amount || 0}
                             </p>
                             <p>
                                 {"Aktualizacja: "}
-                                {warehouseStock.divided?.QBS?.updated_at || "błąd"}
+                                {warehouseDisplayStock.divided?.QBS?.updated_at || "błąd"}
                             </p>
                         </div>
                     )}
-                    {"warehouse" in warehouseStock.divided && (
+                    {"warehouse" in warehouseDisplayStock.divided && (
                         <>
                             <div className="flex justify-between gap-4 w-96">
                                 <p>
                                     {"Magazyn: "}
-                                    {warehouseStock.divided?.warehouse?.amount || 0}
+                                    {warehouseDisplayStock.divided?.warehouse?.amount || 0}
                                 </p>
                                 <p>{"Aktualizacja: Teraz"}</p>
                             </div>
-                            {warehouseStock.divided?.warehouse?.note && (
+                            {warehouseDisplayStock.divided?.warehouse?.note && (
                                 <div className="w-96">
                                     <p>
                                         {"Rezerwacja: "}
-                                        {warehouseStock.divided?.warehouse?.note}
+                                        {warehouseDisplayStock.divided?.warehouse?.note}
                                     </p>
                                 </div>
                             )}
@@ -99,7 +103,7 @@ export const WarehouseDisplay = ({
                     <div className="w-96">
                         <p>
                             {"Łącznie: "}
-                            {warehouseStock.divided.total}
+                            {warehouseDisplayStock.divided.total}
                         </p>
                     </div>
                     <div className="w-96 flex justify-center" onClick={() => handleUpdate()}>

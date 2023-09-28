@@ -37,6 +37,9 @@ export const GET = async (req: NextRequest) => {
             return { cup_id: cup.cup_id, code: cup.code_link };
         });
 
+    console.log("ICL Cups: ", ICLCups.length);
+    console.log("QBS Cups: ", QBSCups.length);
+
     const { data: ICLdata, error: ICLErrorLinks } = await getICLWarehouse(ICLCups);
     const { data: QBSdata, error: QBSErrorPages } = await getQBSWarehouse(QBSCups);
 
@@ -56,6 +59,8 @@ export const GET = async (req: NextRequest) => {
             amount: number;
         }[]),
     ];
+
+    console.log("All Cups Final Data: ", allCupsData.length)
 
     const { error: error2 } = await supabase.from("scraped_warehouses").upsert(allCupsData, {
         onConflict: "provider, code_link",

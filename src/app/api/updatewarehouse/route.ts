@@ -21,7 +21,9 @@ export const GET = async (req: NextRequest) => {
             ((new Date().getTime() - new Date(warehouseData[0].updated_at).getTime()) / 60000) * 100
         ) / 100;
     if (diffInMinutes < 5) {
-        return NextResponse.json("Magazyn był aktualizowany mniej niż 5 minut temu", { status: 409 });
+        return NextResponse.json("Magazyn był aktualizowany mniej niż 5 minut temu", {
+            status: 409,
+        });
     }
 
     const ICLCups = warehouseData
@@ -38,7 +40,22 @@ export const GET = async (req: NextRequest) => {
     const { data: ICLdata, error: ICLErrorLinks } = await getICLWarehouse(ICLCups);
     const { data: QBSdata, error: QBSErrorPages } = await getQBSWarehouse(QBSCups);
 
-    const allCupsData = [...ICLdata, ...QBSdata];
+    const allCupsData = [
+        ...(ICLdata.filter((item) => typeof item.amount === "number") as {
+            provider: string;
+            code_link: string;
+            cup_id: number;
+            updated_at: string;
+            amount: number;
+        }[]),
+        ...(QBSdata.filter((item) => typeof item.amount === "number") as {
+            provider: string;
+            code_link: string;
+            cup_id: number;
+            updated_at: string;
+            amount: number;
+        }[]),
+    ];
 
     const { error: error2 } = await supabase.from("scraped_warehouses").upsert(allCupsData, {
         onConflict: "provider, code_link",

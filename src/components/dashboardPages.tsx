@@ -8,6 +8,7 @@ import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ProductsCardTab } from "./dashboardPages/productsCardTab";
+import { ScrapersTab } from "./dashboardPages/scrapersTab";
 
 export const DashboardPages = ({
     clientsInput,
@@ -40,6 +41,7 @@ export const DashboardPages = ({
         | "additionalValues"
         | "restrictions"
         | "productsCard"
+        | "scrapers"
     >("activationRequests");
     const [loading, setLoading] = useState(false);
     const [addAdmin, setAddAdmin] = useState(false);
@@ -51,21 +53,81 @@ export const DashboardPages = ({
     const [additionalValuesState, setAdditionalValuesState] = useState(additionalValues);
     const [restrictionsState, setRestrictionsState] = useState<Restriction[]>(restrictions);
     const [cupsData, setCupsData] = useState<Database["public"]["Tables"]["cups"]["Row"][]>([]);
+    const [scrapersData, setScrapersData] = useState<
+        { cup_code: string; cup_id: number; scrapers: { provider: string; code_link: string }[] }[]
+    >([]);
 
     const supabase = createClientComponentClient<Database>();
 
-    (async () => {
-        const { data, error } = await supabase.from("cups").select("*");
-        if (error) {
-            console.error(error);
+    const getTabsData = async () => {
+        // Get products data
+        const { data: data1, error: error1 } = await supabase.from("cups").select("*");
+        if (error1) {
+            toast.error("Wystąpił błąd przy pobieraniu daych do karty produktów");
             return;
         }
-        if (!data || data.length === 0) {
+        if (!data1 || data1.length === 0) {
             console.error("No data");
             return;
         }
-        setCupsData(data);
-    })();
+        setCupsData(data1);
+
+        // Get scrapers data
+        const { data: data2, error: error2 } = await supabase
+            .from("scraped_warehouses")
+            .select("provider, code_link, cup_id, cups(code)");
+        if (error2) {
+            toast.error("Wystąpił błąd przy pobieraniu daych do scraperów");
+            return;
+        }
+        if (!data2 || data2.length === 0) {
+            console.error("No data");
+            return;
+        }
+        const scrapersDataPrep = (
+            data2.filter((item) => item.cups?.code) as {
+                provider: string;
+                code_link: string;
+                cup_id: number;
+                cups: {
+                    code: string;
+                };
+            }[]
+        ).map((item) => ({
+            provider: item.provider,
+            code_link: item.code_link,
+            cup_code: item.cups.code,
+            cup_id: item.cup_id,
+        }));
+        const uniqueCodes = scrapersDataPrep
+            .map((item) => item.cup_code)
+            .filter((value, index, self) => self.indexOf(value) === index);
+        const scrapersDataFinal = uniqueCodes
+            .map((cup_code) => ({
+                cup_code,
+                cup_id: scrapersDataPrep.find((item) => item.cup_code === cup_code)?.cup_id,
+                scrapers: scrapersDataPrep
+                    .filter((item) => item.cup_code === cup_code)
+                    .map((item) => ({
+                        provider: item.provider,
+                        code_link: item.code_link,
+                    })),
+            }))
+            .filter((item) => item.cup_id)
+            .sort((a, b) => a.cup_code.localeCompare(b.cup_code)) as {
+            cup_code: string;
+            cup_id: number;
+            scrapers: {
+                provider: string;
+                code_link: string;
+            }[];
+        }[];
+        setScrapersData(scrapersDataFinal);
+    };
+
+    useEffect(() => {
+        getTabsData();
+    }, []);
 
     useEffect(() => {
         const cupsOrColorsDiv = document.querySelector("#cups_or_colors") as HTMLSelectElement;
@@ -516,6 +578,14 @@ export const DashboardPages = ({
                         >
                             Karta produktów
                         </button>
+                        <button
+                            className={`${
+                                chosenTab === "scrapers" ? "bg-slate-400" : "bg-slate-300"
+                            } px-2 rounded-md`}
+                            onClick={() => setChosenTab("scrapers")}
+                        >
+                            Scrapery
+                        </button>
                     </>
                 )}
             </div>
@@ -916,7 +986,9 @@ export const DashboardPages = ({
                                                 id="warehouse_acces"
                                                 disabled={loading}
                                                 onChange={() => handleActication(client.user_id)}
-                                                className={`${loading && "bg-slate-400"} text-center`}
+                                                className={`${
+                                                    loading && "bg-slate-400"
+                                                } text-center`}
                                                 defaultValue={
                                                     client.warehouse_acces
                                                         ? client.warehouse_acces
@@ -1553,6 +1625,9 @@ export const DashboardPages = ({
             )}
             {user?.role === "Admin" && chosenTab === "productsCard" && (
                 <ProductsCardTab cupsData={cupsData} />
+            )}
+            {user?.role === "Admin" && chosenTab === "scrapers" && (
+                <ScrapersTab scrapersData={scrapersData} />
             )}
         </div>
     );

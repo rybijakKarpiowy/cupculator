@@ -18,7 +18,7 @@ export const ProductsCardTab = ({
         )
     ).sort();
 
-    const supabase = createClientComponentClient();
+    const supabase = createClientComponentClient<Database>();
 
     const [loading, setLoading] = useState(false);
     const [selectedName, setSelectedName] = useState(cupNames[0]);

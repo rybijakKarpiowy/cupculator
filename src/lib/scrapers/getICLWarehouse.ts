@@ -83,7 +83,7 @@ export const getICLWarehouse = async (cups: { cup_id: number; link: string }[]) 
                 code_link: cup.link,
                 cup_id: cup.cup_id,
                 updated_at: new Date().toISOString().slice(0, 19).replace("T", " "),
-                amount: 0,
+                amount: "error",
             };
         }
 

@@ -69,7 +69,7 @@ export const getQBSWarehouse = async (cups: { cup_id: number; code: string }[]) 
                 code_link: cup.code,
                 cup_id: cup.cup_id,
                 updated_at: new Date().toISOString().slice(0, 19).replace("T", " "),
-                amount: 0,
+                amount: "error",
             };
         }
 

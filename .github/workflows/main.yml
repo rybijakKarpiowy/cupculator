@@ -13,7 +13,7 @@ jobs:
               with:
                   url: "https://calculator.kubki.com.pl/api/updatewarehouse"
                   method: "GET"
-                  ignoreStatusCodes: "400,401,403,404,422,500,502,503,504,200"
+                  ignoreStatusCodes: "400,401,403,404,409,422,500,502,503,504,200"
 
             - name: "Log response status"
               run: |

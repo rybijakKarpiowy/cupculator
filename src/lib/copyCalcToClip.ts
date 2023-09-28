@@ -94,7 +94,7 @@ export const copyCalcToClip = async ({
         }
 
         const text = `${lang === "1" ? "Data: " : "Date: "}${new Date().toLocaleDateString(
-            "pl-PL"
+            "pl-PL", {timeZone: "Europe/Warsaw"}
         )}\n\n${selectedCup.code}\n<b>${selectedCup.name} ${
             lang === "1" ? selectedCup.color : translateColor(selectedCup.color)
         }${cupConfig.imprintType ? " + " : ""}${

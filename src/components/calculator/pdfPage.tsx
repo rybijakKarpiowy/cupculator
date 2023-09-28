@@ -159,7 +159,7 @@ export const PdfPage = ({
             >
                 <Text style={{ ...styles.p, margin: 10 }}>
                     {lang === "1" ? "Data: " : "Date: "}
-                    {new Date().toLocaleDateString("pl-PL")}
+                    {new Date().toLocaleDateString("pl-PL", {timeZone: "Europe/Warsaw"})}
                 </Text>
             </View>
             <View style={{ display: "flex", flexDirection: "column", marginLeft: 10 }}>

@@ -115,13 +115,13 @@ export const GET = async (req: NextRequest) => {
                     ...(ICLstock && {
                         ICL: {
                             amount: ICLstock.amount,
-                            updated_at: new Date(ICLstock.updated_at).toLocaleString("pl-PL"),
+                            updated_at: new Date(ICLstock.updated_at).toLocaleString("pl-PL", {timeZone: "Europe/Warsaw"}),
                         },
                     }),
                     ...(QBSstock && {
                         QBS: {
                             amount: QBSstock.amount,
-                            updated_at: new Date(QBSstock.updated_at).toLocaleString("pl-PL"),
+                            updated_at: new Date(QBSstock.updated_at).toLocaleString("pl-PL", {timeZone: "Europe/Warsaw"}),
                         },
                     }),
                     ...(actualStock && {

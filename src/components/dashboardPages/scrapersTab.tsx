@@ -6,9 +6,9 @@ import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
 export const ScrapersTab = ({
-    scrapersData,
+    scrapersDataInput,
 }: {
-    scrapersData: {
+    scrapersDataInput: {
         cup_code: string;
         cup_id: number;
         scrapers: {
@@ -19,6 +19,7 @@ export const ScrapersTab = ({
 }) => {
     const supabase = createClientComponentClient<Database>();
 
+    const [scrapersData, setScrapersData] = useState(scrapersDataInput);
     const [selectedItem, setSelectedItem] = useState<{
         cup_code: string;
         cup_id: number;
@@ -89,6 +90,22 @@ export const ScrapersTab = ({
                     setLoading(false);
                     return;
                 }
+                const newScrapersData = scrapersData.map((item) => {
+                    if (item.cup_id === cup_id) {
+                        return {
+                            ...item,
+                            scrapers: [
+                                ...item.scrapers.filter((item) => item.provider !== provider),
+                                {
+                                    provider,
+                                    code_link,
+                                },
+                            ],
+                        };
+                    }
+                    return item;
+                });
+                setScrapersData(newScrapersData);
                 toast.success("Zapisano dane");
                 break;
         }
@@ -99,6 +116,7 @@ export const ScrapersTab = ({
         provider: string,
         scrapersItem: {
             cup_code: string;
+            cup_id: number;
             scrapers: {
                 provider: string;
                 code_link: string;
@@ -124,6 +142,17 @@ export const ScrapersTab = ({
             setLoading(false);
             return;
         }
+        const newScrapersData = scrapersData.map((item) => {
+            if (item.cup_id === scrapersItem.cup_id) {
+                return {
+                    ...item,
+                    scrapers: [...item.scrapers.filter((item) => item.provider !== provider)],
+                };
+            }
+            return item;
+        });
+        setScrapersData(newScrapersData);
+        toast.success("Usunięto scraper");
         setLoading(false);
     };
 

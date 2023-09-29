@@ -18,4 +18,4 @@ jobs:
 
             - name: "Log response status"
               run: |
-                  echo ${{ fromJson(steps.response.outputs.response).status }}
+                  echo ${{ steps.response.outputs.response }}

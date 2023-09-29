@@ -1627,7 +1627,7 @@ export const DashboardPages = ({
                 <ProductsCardTab cupsData={cupsData} />
             )}
             {user?.role === "Admin" && chosenTab === "scrapers" && (
-                <ScrapersTab scrapersData={scrapersData} />
+                <ScrapersTab scrapersDataInput={scrapersData} />
             )}
         </div>
     );

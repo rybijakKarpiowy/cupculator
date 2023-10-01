@@ -1,4 +1,3 @@
-import { supabase } from "@/database/supabase";
 import { NextRequest, NextResponse } from "next/server";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/database/types";
@@ -6,6 +5,9 @@ import sgmail from "@sendgrid/mail";
 import { baseUrl } from "@/app/baseUrl";
 import { activationEu } from "@/app/emails/activationEu";
 import { activationPl } from "@/app/emails/activationPl";
+import { pgsql } from "@/database/pgsql";
+import * as schema from "@/database/schema";
+import { eq } from "drizzle-orm";
 
 export const POST = async (req: NextRequest) => {
     const res = NextResponse.next();
@@ -26,16 +28,21 @@ export const POST = async (req: NextRequest) => {
     };
     const { user_id, cup_pricing, color_pricing, salesman_id, warehouse_acces, eu } = data;
 
-    const { data: roleData, error: error1 } = await supabase
-        .from("users_restricted")
-        .select("role")
-        .eq("user_id", auth_id);
+    const { data: roleData, error: error1 } = await pgsql.query.users_restricted
+        .findMany({
+            where: (users_restricted, { eq }) => eq(users_restricted.user_id, auth_id),
+            columns: {
+                role: true,
+            },
+        })
+        .then((data) => ({ data, error: null }))
+        .catch((error) => ({ data: null, error }));
 
     if (error1) {
         return NextResponse.json(error1.message, { status: 500 });
     }
 
-    if (roleData.length === 0) {
+    if (!roleData || roleData.length === 0) {
         return NextResponse.redirect(new URL("/login", baseUrl));
     }
 
@@ -43,37 +50,52 @@ export const POST = async (req: NextRequest) => {
         return NextResponse.redirect(new URL("/", baseUrl));
     }
 
-    const { error: error2 } = await supabase
-        .from("users_restricted")
-        .update({
+    const { error: error2 } = await pgsql
+        .update(schema.users_restricted)
+        .set({
             cup_pricing,
             color_pricing,
             salesman_id,
             warehouse_acces,
             activated: true,
         })
-        .eq("user_id", user_id);
+        .where(eq(schema.users_restricted.user_id, user_id))
+        .then((data) => ({ data, error: null }))
+        .catch((error) => ({ data: null, error }));
+
     if (error2) {
         return NextResponse.json(error2.message, { status: 500 });
     }
 
     // If Client is activated first time, send email
     if (eu !== undefined) {
-        const { error: error3 } = await supabase
-            .from("users")
-            .update({ eu })
-            .eq("user_id", user_id);
+        const { error: error3 } = await pgsql
+            .update(schema.users)
+            .set({ eu })
+            .where(eq(schema.users.user_id, user_id))
+            .then((data) => ({ data, error: null }))
+            .catch((error) => ({ data: null, error }));
+
         if (error3) {
             return NextResponse.json(error3.message, { status: 500 });
         }
 
-        const { data: activatedUserEmail, error: error4 } = await supabase
-            .from("users")
-            .select("email, eu")
-            .eq("user_id", user_id)
-            .single();
+        const { data: activatedUserEmail, error: error4 } = await pgsql.query.users
+            .findFirst({
+                where: (users, { eq }) => eq(users.user_id, user_id),
+                columns: {
+                    email: true,
+                    eu: true,
+                },
+            })
+            .then((data) => ({ data, error: null }))
+            .catch((error) => ({ data: null, error }));
+
         if (error4) {
             return NextResponse.json(error4.message, { status: 500 });
+        }
+        if (!activatedUserEmail) {
+            return NextResponse.json("User not found", { status: 500 });
         }
 
         const msg = {

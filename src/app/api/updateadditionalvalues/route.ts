@@ -1,8 +1,8 @@
+import { baseUrl } from "@/app/baseUrl";
+import { pgsql } from "@/database/pgsql";
 import { Database } from "@/database/types";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { NextRequest, NextResponse } from "next/server";
-import { baseUrl } from "@/app/baseUrl";
-import { pgsql } from "@/database/pgsql";
 import * as schema from "@/database/schema";
 import { eq } from "drizzle-orm";
 
@@ -14,11 +14,6 @@ export const POST = async (req: NextRequest) => {
     if (!auth_id) {
         return NextResponse.redirect(new URL("/login", baseUrl));
     }
-
-    const { user_id, role } = (await req.json()) as {
-        user_id: string;
-        role: "Admin" | "Salesman";
-    };
 
     const { data: roleData, error: error1 } = await pgsql.query.users_restricted
         .findMany({
@@ -42,31 +37,26 @@ export const POST = async (req: NextRequest) => {
         return NextResponse.redirect(new URL("/", baseUrl));
     }
 
-    const { error: error2 } = await pgsql
-        .update(schema.users_restricted)
-        .set({ role })
-        .where(eq(schema.users_restricted.user_id, user_id))
-        .then(() => ({ error: null }))
-        .catch((error) => ({ error }));
+    const { id, attr, value } = await req.json() as {
+        id: number;
+        attr: string;
+        value: number;
+    };
 
-    if (error2) {
-        return NextResponse.json(error2.message, { status: 500 });
+    if (!id || !attr || !value || !["plain_cup_markup_percent", "mini_pallet_price", "half_pallet_price", "full_pallet_price"].includes(attr)) {
+        return NextResponse.json("Missing parameters", { status: 400 });
     }
 
-    if (role == "Admin") {
-        const { error: error3 } = await pgsql
-            .update(schema.users_restricted)
-            .set({
-                salesman_id: null,
-            })
-            .where(eq(schema.users_restricted.salesman_id, user_id))
+    const { error } = await pgsql
+            .update(schema.additional_values)
+            .set({ [attr]: value })
+            .where(eq(schema.additional_values.id, id))
             .then(() => ({ error: null }))
             .catch((error) => ({ error }));
 
-        if (error3) {
-            return NextResponse.json(error3.message, { status: 500 });
-        }
+    if (error) {
+        return NextResponse.json(error.message, { status: 500 });
     }
 
-    return NextResponse.json({ message: "Role changed successfully" }, { status: 200 });
-};
+    return NextResponse.json("Success", { status: 200 });
+}

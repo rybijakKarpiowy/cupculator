@@ -1,7 +1,6 @@
 "use client";
 
 import { Database } from "@/database/types";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useState } from "react";
 import { toast } from "react-toastify";
 
@@ -17,8 +16,6 @@ export const ProductsCardTab = ({
             })
         )
     ).sort();
-
-    const supabase = createClientComponentClient<Database>();
 
     const [loading, setLoading] = useState(false);
     const [selectedName, setSelectedName] = useState(cupNames[0]);
@@ -393,7 +390,9 @@ export const ProductsCardTab = ({
                                             rawData.mini_pallet_singular
                                         );
                                     } else {
-                                        toast.error("Mini paleta jednostkowe musi być liczbą dodatnią");
+                                        toast.error(
+                                            "Mini paleta jednostkowe musi być liczbą dodatnią"
+                                        );
                                         setLoading(false);
                                         return;
                                     }
@@ -407,7 +406,9 @@ export const ProductsCardTab = ({
                                             rawData.half_pallet_singular
                                         );
                                     } else {
-                                        toast.error("Pół paleta jednostkowe musi być liczbą dodatnią");
+                                        toast.error(
+                                            "Pół paleta jednostkowe musi być liczbą dodatnią"
+                                        );
                                         setLoading(false);
                                         return;
                                     }
@@ -421,7 +422,9 @@ export const ProductsCardTab = ({
                                             rawData.full_pallet_singular
                                         );
                                     } else {
-                                        toast.error("Pełna paleta jednostkowe musi być liczbą dodatnią");
+                                        toast.error(
+                                            "Pełna paleta jednostkowe musi być liczbą dodatnią"
+                                        );
                                         setLoading(false);
                                         return;
                                     }
@@ -476,16 +479,30 @@ export const ProductsCardTab = ({
                                         zdobienie_tapeta_na_barylce_II_stopien_trudnosci:
                                             rawData.zdobienie_tapeta_na_barylce_II_stopien_trudnosci,
                                     };
+                                    const res = await fetch("/api/updateproductstab", {
+                                        method: "POST",
+                                        headers: {
+                                            "Content-Type": "application/json",
+                                        },
+                                        body: JSON.stringify(data),
+                                    });
 
-                                    const { error } = await supabase
-                                        .from("cups")
-                                        .update(data)
-                                        .match({ id: cup.id });
-                                    if (error) {
-                                        toast.error(error.message);
-                                    } else {
-                                        toast.success("Zaktualizowano");
+                                    if (res.status === 500) {
+                                        toast.error("Błąd serwera");
+                                        setLoading(false);
+                                        return;
                                     }
+                                    if (res.status === 400) {
+                                        toast.error("Błędne dane");
+                                        setLoading(false);
+                                        return;
+                                    }
+                                    if (!res.ok) {
+                                        toast.error("Wystąpił błąd");
+                                        setLoading(false);
+                                        return;
+                                    }
+                                    toast.success("Zaktualizowano");
                                     setLoading(false);
                                 }}
                             >

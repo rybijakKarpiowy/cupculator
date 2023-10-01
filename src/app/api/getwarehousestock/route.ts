@@ -1,9 +1,9 @@
 import { baseUrl } from "@/app/baseUrl";
-import { supabase } from "@/database/supabase";
 import { Database } from "@/database/types";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { NextRequest, NextResponse } from "next/server";
 import * as mssql from "mssql";
+import { pgsql } from "@/database/pgsql";
 
 export const GET = async (req: NextRequest) => {
     const res = NextResponse.next();
@@ -21,11 +21,16 @@ export const GET = async (req: NextRequest) => {
         return NextResponse.redirect(new URL("/login", baseUrl));
     }
 
-    const { data: user, error } = await supabase
-        .from("users_restricted")
-        .select("role, warehouse_acces")
-        .eq("user_id", auth_id)
-        .single();
+    const { data: user, error } = await pgsql.query.users_restricted
+        .findFirst({
+            where: (users_restricted, { eq }) => eq(users_restricted.user_id, auth_id),
+            columns: {
+                role: true,
+                warehouse_acces: true,
+            },
+        })
+        .then((data) => ({ data, error: null }))
+        .catch((error) => ({ data: null, error }));
 
     if (!user || error) {
         console.log(error);
@@ -39,11 +44,24 @@ export const GET = async (req: NextRequest) => {
         return NextResponse.json({}, { status: 401 });
     }
 
-    const { data: scrapedStock, error: error1 } = await supabase
-        .from("cups")
-        .select("code, scraped_warehouses(provider, updated_at, amount)")
-        .eq("code", code)
-        .single();
+    const { data: scrapedStock, error: error1 } = await pgsql.query.cups
+        .findFirst({
+            where: (cups, { eq }) => eq(cups.code, code),
+            columns: {
+                code: true,
+            },
+            with: {
+                scraped_warehouses: {
+                    columns: {
+                        provider: true,
+                        updated_at: true,
+                        amount: true,
+                    },
+                },
+            },
+        })
+        .then((data) => ({ data, error: null }))
+        .catch((error) => ({ error, data: null }));
 
     if (!scrapedStock || error1) {
         console.log(error1);
@@ -115,13 +133,17 @@ export const GET = async (req: NextRequest) => {
                     ...(ICLstock && {
                         ICL: {
                             amount: ICLstock.amount,
-                            updated_at: new Date(ICLstock.updated_at).toLocaleString("pl-PL", {timeZone: "Europe/Warsaw"}),
+                            updated_at: new Date(ICLstock.updated_at).toLocaleString("pl-PL", {
+                                timeZone: "Europe/Warsaw",
+                            }),
                         },
                     }),
                     ...(QBSstock && {
                         QBS: {
                             amount: QBSstock.amount,
-                            updated_at: new Date(QBSstock.updated_at).toLocaleString("pl-PL", {timeZone: "Europe/Warsaw"}),
+                            updated_at: new Date(QBSstock.updated_at).toLocaleString("pl-PL", {
+                                timeZone: "Europe/Warsaw",
+                            }),
                         },
                     }),
                     ...(actualStock && {

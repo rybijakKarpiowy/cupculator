@@ -3,11 +3,11 @@ import { UserSelector } from "@/components/calculator/userSelector";
 import { Database } from "@/database/types";
 import { Restriction } from "@/lib/checkRestriction";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { PostgrestError } from "@supabase/supabase-js";
 import { cookies } from "next/dist/client/components/headers";
 import { baseUrl } from "@/app/baseUrl";
 import { Cup } from "./api/updatecups/route";
 import { ColorPricing } from "@/lib/colorPricingType";
+import { pgsql } from "@/database/pgsql";
 
 export const dynamic = "force-dynamic";
 
@@ -23,11 +23,16 @@ export default async function Home({
     const authUser = (await supabase.auth.getUser()).data.user;
     const authId = authUser?.id as string;
 
-    const { data: userData, error: error1 } = await supabase
-        .from("users")
-        .select("*, users_restricted(*)")
-        .eq("user_id", authId)
-        .single();
+    const { data: userData, error: error1 } = await pgsql.query.users
+        .findFirst({
+            where: (users, { eq }) => eq(users.user_id, authId),
+            with: {
+                users_restricted: true,
+            },
+        })
+        .then((data) => ({ data, error: null }))
+        .catch((error) => ({ data: null, error }));
+
     if (error1) {
         console.log(error1);
         return (
@@ -44,10 +49,10 @@ export default async function Home({
         );
     }
 
-    const { data: additionalValues, error: error2 } = await supabase
-        .from("additional_values")
-        .select("*")
-        .single();
+    const { data: additionalValues, error: error2 } = await pgsql.query.additional_values
+        .findFirst()
+        .then((data) => ({ data, error: null }))
+        .catch((error) => ({ data: null, error }));
     if (error2) {
         console.log(error2);
         return (
@@ -57,9 +62,10 @@ export default async function Home({
         );
     }
 
-    const { data: restrictions, error: error3 } = (await supabase
-        .from("restrictions")
-        .select("*")) as { data: Restriction[] | null; error: PostgrestError | null };
+    const { data: restrictions, error: error3 } = await pgsql.query.restrictions
+        .findMany()
+        .then((data) => ({ data, error: null } as { data: Restriction[]; error: null }))
+        .catch((error) => ({ data: null, error }));
     if (error3 || !restrictions) {
         console.log(error3);
         return (
@@ -116,8 +122,8 @@ export default async function Home({
                 colorPricing={colorPricing}
                 lang={lang}
                 clientPriceUnit={userData.eu ? "EUR" : "zł"}
-                additionalValues={additionalValues}
-                restrictions={restrictions}
+                additionalValues={additionalValues!}
+                restrictions={restrictions!}
             />
         );
     }
@@ -149,8 +155,8 @@ export default async function Home({
             allUsersData={allUsersData}
             cup={cup}
             lang={lang}
-            additionalValues={additionalValues}
-            restrictions={restrictions}
+            additionalValues={additionalValues!}
+            restrictions={restrictions!}
         />
     );
 }

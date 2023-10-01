@@ -5,6 +5,7 @@ import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/database/types";
 import { cookies } from "next/dist/client/components/headers";
 import { ToastContainer } from "react-toastify";
+import { pgsql } from "@/database/pgsql";
 
 export const dynamic = "force-dynamic";
 
@@ -20,10 +21,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     let userRestrictedData = null;
 
     if (authUser) {
-        const { data, error } = await supabase
-            .from("users_restricted")
-            .select("*")
-            .eq("user_id", authUser)
+        const { data, error } = await pgsql.query.users_restricted
+            .findMany({
+                where: (users_restricted, { eq }) => eq(users_restricted.user_id, authUser),
+            })
+            .then((data) => ({ data, error: null }))
+            .catch((error) => ({ data: null, error }));
+
         if (error) {
             console.log(error);
         }
@@ -34,9 +38,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
     return (
         <html lang="en">
-            <body
-                className="overflow-y-scroll bg-[url('https://kubki.com.pl/img/bg.jpg')] bg-repeat-x bg-[center_115px] bg-white"
-            >
+            <body className="overflow-y-scroll bg-[url('https://kubki.com.pl/img/bg.jpg')] bg-repeat-x bg-[center_115px] bg-white">
                 <Navbar authUser={authUser} role={userRestrictedData?.role} />
                 <main className="mt-[115px]">{children}</main>
                 <ToastContainer

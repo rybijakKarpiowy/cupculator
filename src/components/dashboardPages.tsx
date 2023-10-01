@@ -3,7 +3,6 @@
 import { Client, User } from "@/app/dashboard/page";
 import { Database } from "@/database/types";
 import { Restriction } from "@/lib/checkRestriction";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -18,6 +17,8 @@ export const DashboardPages = ({
     available_color_pricings,
     additionalValues,
     restrictions,
+    productsCard,
+    scrapersDataFinal,
 }: {
     clientsInput?: Client[];
     adminsAndSalesmenInput?: Client[];
@@ -32,6 +33,12 @@ export const DashboardPages = ({
         id: number;
     };
     restrictions: Restriction[];
+    productsCard: Database["public"]["Tables"]["cups"]["Row"][];
+    scrapersDataFinal: {
+        cup_code: string;
+        cup_id: number;
+        scrapers: { provider: string; code_link: string }[];
+    }[];
 }) => {
     const [chosenTab, setChosenTab] = useState<
         | "activationRequests"
@@ -52,82 +59,15 @@ export const DashboardPages = ({
     const [newPricing, setNewPricing] = useState(false);
     const [additionalValuesState, setAdditionalValuesState] = useState(additionalValues);
     const [restrictionsState, setRestrictionsState] = useState<Restriction[]>(restrictions);
-    const [cupsData, setCupsData] = useState<Database["public"]["Tables"]["cups"]["Row"][]>([]);
+    const [cupsData, setCupsData] =
+        useState<Database["public"]["Tables"]["cups"]["Row"][]>(productsCard);
     const [scrapersData, setScrapersData] = useState<
-        { cup_code: string; cup_id: number; scrapers: { provider: string; code_link: string }[] }[]
-    >([]);
-
-    const supabase = createClientComponentClient<Database>();
-
-    const getTabsData = async () => {
-        // Get products data
-        const { data: data1, error: error1 } = await supabase.from("cups").select("*");
-        if (error1) {
-            toast.error("Wystąpił błąd przy pobieraniu daych do karty produktów");
-            return;
-        }
-        if (!data1 || data1.length === 0) {
-            console.error("No data");
-            return;
-        }
-        setCupsData(data1);
-
-        // Get scrapers data
-        const { data: data2, error: error2 } = await supabase
-            .from("scraped_warehouses")
-            .select("provider, code_link, cup_id, cups(code)");
-        if (error2) {
-            toast.error("Wystąpił błąd przy pobieraniu daych do scraperów");
-            return;
-        }
-        if (!data2 || data2.length === 0) {
-            console.error("No data");
-            return;
-        }
-        const scrapersDataPrep = (
-            data2.filter((item) => item.cups?.code) as {
-                provider: string;
-                code_link: string;
-                cup_id: number;
-                cups: {
-                    code: string;
-                };
-            }[]
-        ).map((item) => ({
-            provider: item.provider,
-            code_link: item.code_link,
-            cup_code: item.cups.code,
-            cup_id: item.cup_id,
-        }));
-        const uniqueCodes = scrapersDataPrep
-            .map((item) => item.cup_code)
-            .filter((value, index, self) => self.indexOf(value) === index);
-        const scrapersDataFinal = uniqueCodes
-            .map((cup_code) => ({
-                cup_code,
-                cup_id: scrapersDataPrep.find((item) => item.cup_code === cup_code)?.cup_id,
-                scrapers: scrapersDataPrep
-                    .filter((item) => item.cup_code === cup_code)
-                    .map((item) => ({
-                        provider: item.provider,
-                        code_link: item.code_link,
-                    })),
-            }))
-            .filter((item) => item.cup_id)
-            .sort((a, b) => a.cup_code.localeCompare(b.cup_code)) as {
+        {
             cup_code: string;
             cup_id: number;
-            scrapers: {
-                provider: string;
-                code_link: string;
-            }[];
-        }[];
-        setScrapersData(scrapersDataFinal);
-    };
-
-    useEffect(() => {
-        getTabsData();
-    }, []);
+            scrapers: { provider: string; code_link: string }[];
+        }[]
+    >(scrapersDataFinal);
 
     useEffect(() => {
         const cupsOrColorsDiv = document.querySelector("#cups_or_colors") as HTMLSelectElement;
@@ -159,12 +99,30 @@ export const DashboardPages = ({
             setLoading(false);
             return;
         }
-        const { error } = await supabase
-            .from("additional_values")
-            .update({ [attr]: value })
-            .eq("id", additionalValues.id);
 
-        if (error) {
+        const res = await fetch("/api/updateadditionalvalues", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                attr,
+                value,
+                id: additionalValuesState.id,
+            }),
+        });
+
+        if (res.status === 500) {
+            toast.error("Błąd serwera");
+            setLoading(false);
+            return;
+        }
+        if (res.status === 400) {
+            toast.error("Błędne dane");
+            setLoading(false);
+            return;
+        }
+        if (!res.ok) {
             toast.error("Wystąpił błąd");
             setLoading(false);
             return;
@@ -222,6 +180,9 @@ export const DashboardPages = ({
 
         const res = await fetch("/api/activateclient", {
             method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
             body: JSON.stringify({
                 user_id,
                 cup_pricing,
@@ -263,6 +224,9 @@ export const DashboardPages = ({
 
         const res = await fetch("/api/changerole", {
             method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
             body: JSON.stringify({
                 user_id,
                 role,
@@ -302,6 +266,9 @@ export const DashboardPages = ({
 
         const res = await fetch("/api/deleteuser", {
             method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
             body: JSON.stringify({
                 user_id,
             }),
@@ -377,6 +344,9 @@ export const DashboardPages = ({
 
         const res = await fetch("/api/addadmin", {
             method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
             body: JSON.stringify({
                 email,
                 password,
@@ -439,6 +409,9 @@ export const DashboardPages = ({
         if (cups_or_colors === "cups") {
             res = await fetch("/api/updatecups", {
                 method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 body: JSON.stringify({
                     pricing_name,
                     sheet_url,
@@ -479,6 +452,9 @@ export const DashboardPages = ({
         } else if (cups_or_colors === "colors") {
             res = await fetch("/api/updatecolors", {
                 method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
                 body: JSON.stringify({
                     pricing_name,
                     sheet_url,
@@ -1280,6 +1256,9 @@ export const DashboardPages = ({
 
                                 const res = await fetch("/api/changepricingname", {
                                     method: "POST",
+                                    headers: {
+                                        "Content-Type": "application/json",
+                                    },
                                     body: JSON.stringify({
                                         pricing_name: pricing_name.value,
                                         new_pricing_name: new_pricing_name.value,
@@ -1481,11 +1460,27 @@ export const DashboardPages = ({
                                         }`}
                                         onClick={async () => {
                                             setLoading(true);
-                                            const { error } = await supabase
-                                                .from("restrictions")
-                                                .delete()
-                                                .match({ id: restriction.id });
-                                            if (error) {
+                                            const res = await fetch("/api/restriction/delete", {
+                                                method: "POST",
+                                                headers: {
+                                                    "Content-Type": "application/json",
+                                                },
+                                                body: JSON.stringify({
+                                                    id: restriction.id,
+                                                }),
+                                            });
+
+                                            if (res.status === 500) {
+                                                toast.error("Błąd serwera");
+                                                setLoading(false);
+                                                return;
+                                            }
+                                            if (res.status === 400) {
+                                                toast.error("Błędne dane");
+                                                setLoading(false);
+                                                return;
+                                            }
+                                            if (!res.ok) {
                                                 toast.error("Wystąpił błąd");
                                                 setLoading(false);
                                                 return;
@@ -1510,23 +1505,40 @@ export const DashboardPages = ({
                                 onSubmit={async (e) => {
                                     e.preventDefault();
                                     setLoading(true);
-                                    const { error } = await supabase.from("restrictions").insert({
-                                        imprintType: (
-                                            document.getElementById(
-                                                "imprintType"
-                                            ) as HTMLInputElement
-                                        ).value,
-                                        anotherValue: (
-                                            document.getElementById(
-                                                "anotherValue"
-                                            ) as HTMLInputElement
-                                        ).value,
+                                    const res = await fetch("/api/restriction/add", {
+                                        method: "POST",
+                                        headers: {
+                                            "Content-Type": "application/json",
+                                        },
+                                        body: JSON.stringify({
+                                            imprintType: (
+                                                document.getElementById(
+                                                    "imprintType"
+                                                ) as HTMLInputElement
+                                            ).value as Restriction["imprintType"],
+                                            anotherValue: (
+                                                document.getElementById(
+                                                    "anotherValue"
+                                                ) as HTMLInputElement
+                                            ).value as Restriction["anotherValue"],
+                                        }),
                                     });
-                                    if (error) {
+                                    if (res.status === 500) {
+                                        toast.error("Błąd serwera");
+                                        setLoading(false);
+                                        return;
+                                    }
+                                    if (res.status === 400) {
+                                        toast.error("Błędne dane");
+                                        setLoading(false);
+                                        return;
+                                    }
+                                    if (!res.ok) {
                                         toast.error("Wystąpił błąd");
                                         setLoading(false);
                                         return;
                                     }
+
                                     setRestrictionsState([
                                         ...restrictionsState,
                                         {

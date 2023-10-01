@@ -1,10 +1,9 @@
+import { baseUrl } from "@/app/baseUrl";
+import { pgsql } from "@/database/pgsql";
 import { Database } from "@/database/types";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { NextRequest, NextResponse } from "next/server";
-import { baseUrl } from "@/app/baseUrl";
-import { pgsql } from "@/database/pgsql";
 import * as schema from "@/database/schema";
-import { eq } from "drizzle-orm";
 
 export const POST = async (req: NextRequest) => {
     const res = NextResponse.next();
@@ -14,11 +13,6 @@ export const POST = async (req: NextRequest) => {
     if (!auth_id) {
         return NextResponse.redirect(new URL("/login", baseUrl));
     }
-
-    const { user_id, role } = (await req.json()) as {
-        user_id: string;
-        role: "Admin" | "Salesman";
-    };
 
     const { data: roleData, error: error1 } = await pgsql.query.users_restricted
         .findMany({
@@ -42,31 +36,33 @@ export const POST = async (req: NextRequest) => {
         return NextResponse.redirect(new URL("/", baseUrl));
     }
 
-    const { error: error2 } = await pgsql
-        .update(schema.users_restricted)
-        .set({ role })
-        .where(eq(schema.users_restricted.user_id, user_id))
+    const { provider, code_link, cup_id } = await req.json();
+
+    if (!provider || !code_link || !cup_id) {
+        return NextResponse.json("Missing data", { status: 400 });
+    }
+
+    const { error } = await pgsql
+        .insert(schema.scraped_warehouses)
+        .values({
+            provider,
+            code_link,
+            cup_id,
+        })
+        .onConflictDoUpdate({
+            target: [schema.scraped_warehouses.provider, schema.scraped_warehouses.code_link],
+            set: {
+                provider,
+                code_link,
+                cup_id,
+            },
+        })
         .then(() => ({ error: null }))
-        .catch((error) => ({ error }));
+        .catch((e) => ({ error: e }));
 
-    if (error2) {
-        return NextResponse.json(error2.message, { status: 500 });
+    if (error) {
+        return NextResponse.json(error.message, { status: 500 });
     }
 
-    if (role == "Admin") {
-        const { error: error3 } = await pgsql
-            .update(schema.users_restricted)
-            .set({
-                salesman_id: null,
-            })
-            .where(eq(schema.users_restricted.salesman_id, user_id))
-            .then(() => ({ error: null }))
-            .catch((error) => ({ error }));
-
-        if (error3) {
-            return NextResponse.json(error3.message, { status: 500 });
-        }
-    }
-
-    return NextResponse.json({ message: "Role changed successfully" }, { status: 200 });
+    return NextResponse.json("Success", { status: 200 });
 };

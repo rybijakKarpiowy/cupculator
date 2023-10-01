@@ -3,6 +3,8 @@ import { Database } from "@/database/types";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { NextRequest, NextResponse } from "next/server";
 import { baseUrl } from "@/app/baseUrl";
+import { pgsql } from "@/database/pgsql";
+import * as schema from "@/database/schema";
 
 export const POST = async (req: NextRequest) => {
     const res = NextResponse.next();
@@ -19,16 +21,21 @@ export const POST = async (req: NextRequest) => {
         role: "Admin" | "Salesman";
     };
 
-    const { data: roleData, error: error1 } = await supabase
-        .from("users_restricted")
-        .select("role")
-        .eq("user_id", auth_id);
+    const { data: roleData, error: error1 } = await pgsql.query.users_restricted
+        .findMany({
+            where: (users_restricted, { eq }) => eq(users_restricted.user_id, auth_id),
+            columns: {
+                role: true,
+            },
+        })
+        .then((data) => ({ data, error: null }))
+        .catch((error) => ({ data: null, error }));
 
     if (error1) {
         return NextResponse.json(error1.message, { status: 500 });
     }
 
-    if (roleData.length === 0) {
+    if (!roleData || roleData.length === 0) {
         return NextResponse.redirect(new URL("/login", baseUrl));
     }
 
@@ -55,31 +62,47 @@ export const POST = async (req: NextRequest) => {
         return NextResponse.json("User ID not found", { status: 500 });
     }
 
-    const { error: error3 } = await supabase.from("users").upsert({
-        adress: "",
-        city: "",
-        company_name: "",
-        country: "",
-        email,
-        eu: false,
-        first_name: "",
-        last_name: "",
-        NIP: "",
-        phone: "",
-        postal_code: "",
-        region: "",
-        user_id,
-    });
+    const { error: error3 } = await pgsql
+        .insert(schema.users)
+        .values({
+            adress: "",
+            city: "",
+            company_name: "",
+            country: "",
+            email,
+            eu: false,
+            first_name: "",
+            last_name: "",
+            phone: "",
+            postal_code: "",
+            region: "",
+            user_id,
+            NIP: "",
+        })
+        .onConflictDoNothing({ target: schema.users.user_id })
+        .then((data) => ({ data, error: null }))
+        .catch((error) => ({ data: null, error }));
 
     if (error3) {
         return NextResponse.json(error3.message, { status: 500 });
     }
 
-    const { error: error4 } = await supabase.from("users_restricted").upsert({
-        user_id,
-        role,
-        activated: true,
-    });
+    const { error: error4 } = await pgsql
+        .insert(schema.users_restricted)
+        .values({
+            user_id,
+            role,
+            activated: true,
+        })
+        .onConflictDoUpdate({
+            target: schema.users_restricted.user_id,
+            set: {
+                role,
+                activated: true,
+            },
+        })
+        .then((data) => ({ data, error: null }))
+        .catch((error) => ({ data: null, error }));
 
     if (error4) {
         return NextResponse.json(error4.message, { status: 500 });

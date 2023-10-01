@@ -1,8 +1,9 @@
-import { supabase } from "@/database/supabase";
 import { Database } from "@/database/types";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { NextRequest, NextResponse } from "next/server";
 import { baseUrl } from "@/app/baseUrl";
+import { pgsql } from "@/database/pgsql";
+import * as schema from "@/database/schema";
 
 export const GET = async (req: NextRequest) => {
     const res = NextResponse.next();
@@ -13,9 +14,12 @@ export const GET = async (req: NextRequest) => {
         return NextResponse.redirect(new URL("/login", baseUrl));
     }
 
-    const { error } = await supabase
-        .from("users_restricted")
-        .upsert([{ user_id: auth_id }], { onConflict: "user_id" });
+    const { error } = await pgsql
+        .insert(schema.users_restricted)
+        .values({ user_id: auth_id })
+        .onConflictDoNothing({ target: schema.users_restricted.user_id })
+        .then(() => ({ error: null }))
+        .catch((error) => ({ error }));
 
     if (error) {
         return NextResponse.json(error.message, { status: 500 });

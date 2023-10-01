@@ -1,11 +1,9 @@
-import { supabase } from "@/database/supabase";
 import { Database } from "@/database/types";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { NextRequest, NextResponse } from "next/server";
 import { baseUrl } from "@/app/baseUrl";
-import { ColorPricing } from "@/lib/colorPricingType";
-import { PostgrestError } from "@supabase/supabase-js";
 import { Cup } from "../updatecups/route";
+import { pgsql } from "@/database/pgsql";
 
 export const POST = async (req: NextRequest) => {
     const res = NextResponse.next();
@@ -27,16 +25,20 @@ export const POST = async (req: NextRequest) => {
         auth_id = user_id;
     }
 
-    const { data: roleData, error: error0 } = await supabase
-        .from("users_restricted")
-        .select("role")
-        .eq("user_id", auth_id);
-
+    const { data: roleData, error: error0 } = await pgsql.query.users_restricted
+        .findMany({
+            where: (users_restricted, { eq }) => eq(users_restricted.user_id, auth_id!),
+            columns: {
+                role: true,
+            },
+        })
+        .then((data) => ({ data, error: null }))
+        .catch((error) => ({ data: null, error }));
     if (error0) {
         return NextResponse.json(error0.message, { status: 500 });
     }
 
-    if (roleData.length === 0) {
+    if (!roleData || roleData.length === 0) {
         return NextResponse.redirect(new URL("/login", baseUrl));
     }
 
@@ -46,11 +48,13 @@ export const POST = async (req: NextRequest) => {
 
     // Admins and salesmen with any user_id or users with their own user_id
     // get user data
-    const { data: user, error: error1 } = await supabase
-        .from("users_restricted")
-        .select("*")
-        .eq("user_id", user_id)
-        .single();
+    const { data: user, error: error1 } = await pgsql.query.users_restricted
+        .findFirst({
+            where: (users_restricted, { eq }) => eq(users_restricted.user_id, user_id),
+        })
+        .then((data) => ({ data, error: null }))
+        .catch((error) => ({ data: null, error }));
+
     if (error1) {
         console.log(error1, "error1");
         return NextResponse.json(error1.message, { status: 500 });
@@ -65,12 +69,21 @@ export const POST = async (req: NextRequest) => {
     }
 
     // get cups (it is one cup in multiple color variants) and its pricings
-    const { data: cupDataRaw, error: error2 } = await supabase
-        .from("cups")
-        .select(
-            "*, cup_pricings(pricing_name, price_24, price_72, price_108, price_216, price_504, price_1008, price_2520)"
-        )
-        .eq("link", cupLink);
+    const { data: cupDataRaw, error: error2 } = await pgsql.query.cups
+        .findMany({
+            where: (cups, { eq }) => eq(cups.link, cupLink),
+            with: {
+                cup_pricings: {
+                    columns: {
+                        cup_id: false,
+                        id: false,
+                    },
+                },
+            },
+        })
+        .then((data) => ({ data, error: null }))
+        .catch((error) => ({ data: null, error }));
+
     if (error2) {
         console.log(error2, "error2");
         return NextResponse.json(error2.message, { status: 500 });
@@ -111,11 +124,14 @@ export const POST = async (req: NextRequest) => {
     });
 
     // get color pricing
-    const { data: colorPricing, error: error4 } = (await supabase
-        .from("color_pricings")
-        .select("*")
-        .eq("pricing_name", user.color_pricing)
-        .single()) as { data: ColorPricing | null; error: PostgrestError | null };
+    const { data: colorPricing, error: error4 } = await pgsql.query.color_pricings
+        .findFirst({
+            where: (color_pricings, { eq }) =>
+                eq(color_pricings.pricing_name, user.color_pricing || ""),
+        })
+        .then((data) => ({ data, error: null }))
+        .catch((error) => ({ data: null, error }))
+        .catch((error) => ({ data: null, error }));
     if (error4) {
         console.log(error4, "error4");
         return NextResponse.json(error4.message, { status: 500 });

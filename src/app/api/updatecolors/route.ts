@@ -1,4 +1,3 @@
-import { supabase } from "@/database/supabase";
 import { NextRequest, NextResponse } from "next/server";
 import { JWT } from "google-auth-library";
 import { GoogleSpreadsheet } from "google-spreadsheet";
@@ -6,6 +5,8 @@ import { colorSheetParser } from "@/lib/colorSheetParser";
 import { Database } from "@/database/types";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { baseUrl } from "@/app/baseUrl";
+import { pgsql } from "@/database/pgsql";
+import * as schema from "@/database/schema";
 
 export const POST = async (req: NextRequest) => {
     const res = NextResponse.next();
@@ -21,17 +22,22 @@ export const POST = async (req: NextRequest) => {
         sheet_url: string;
     };
 
-    const { data: roleData, error: error1 } = await supabase
-        .from("users_restricted")
-        .select("role")
-        .eq("user_id", auth_id);
+    const { data: roleData, error: error1 } = await pgsql.query.users_restricted
+        .findMany({
+            where: (users_restricted, { eq }) => eq(users_restricted.user_id, auth_id),
+            columns: {
+                role: true,
+            },
+        })
+        .then((data) => ({ data, error: null }))
+        .catch((error) => ({ data: null, error }));
 
     if (error1) {
         console.log(error1);
         return NextResponse.json(error1.message, { status: 500 });
     }
 
-    if (roleData.length === 0) {
+    if (!roleData || roleData.length === 0) {
         return NextResponse.redirect(new URL("/login", baseUrl));
     }
 
@@ -71,14 +77,18 @@ export const POST = async (req: NextRequest) => {
     try {
         // parse sheet
         const sheetDataParsed = await colorSheetParser(sheet);
-
-        // upsert to db
-        const { error: error2 } = await supabase
-            .from("color_pricings")
-            .upsert(
-                { ...sheetDataParsed, pricing_name },
-                { onConflict: "pricing_name", ignoreDuplicates: false }
-            );
+        const { error: error2 } = await pgsql
+            .insert(schema.color_pricings)
+            .values({ ...sheetDataParsed, pricing_name })
+            .onConflictDoUpdate({
+                target: schema.color_pricings.pricing_name,
+                set: {
+                    ...sheetDataParsed,
+                    pricing_name,
+                },
+            })
+            .then(() => ({ error: null }))
+            .catch((err) => ({ error: err }));
 
         if (error2) {
             console.log(error2);

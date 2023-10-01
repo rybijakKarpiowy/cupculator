@@ -190,30 +190,18 @@ export default function AccountDetails() {
             return;
         }
 
-        const { data: userDataCheck } = await supabase
-            .from("users")
-            .select("*")
-            .eq("user_id", user?.id);
-
-        if (userDataCheck && userDataCheck.length > 0) {
-            toast.warn(
-                `${
-                    lang === "1"
-                        ? "Dane zostały już uzupełnione!"
-                        : "Data has already been completed!"
-                }`,
-                { autoClose: 3000 }
-            );
-            setTimeout(() => (window.location.href = `/?cup=${cup}&lang=${lang}`), 3000);
-            setLoading(false);
-            return;
-        }
+        await fetch("/api/userdatacheck", {
+            method: "GET",
+        });
 
         const eu = userData.NIPprefix === "PL" ? false : true;
 
-        const { error } = await supabase.from("users").upsert(
-            {
-                user_id: user?.id,
+        const completeAccDetailsRes = await fetch("/api/completeaccdetails", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
                 email: user?.email as string,
                 first_name: userData.firstName,
                 last_name: userData.lastName,
@@ -226,12 +214,11 @@ export default function AccountDetails() {
                 phone: userData.phone,
                 NIP: userData.NIPprefix + userData.NIP,
                 eu: eu,
-            },
-            { onConflict: "user_id" }
-        );
+            }),
+        });
 
-        if (error) {
-            console.log(error);
+        if (!completeAccDetailsRes.ok) {
+            console.log(await completeAccDetailsRes.text());
             toast.error(
                 `${
                     lang === "1"

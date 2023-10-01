@@ -1,10 +1,10 @@
+import { baseUrl } from "@/app/baseUrl";
+import { pgsql } from "@/database/pgsql";
 import { Database } from "@/database/types";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { NextRequest, NextResponse } from "next/server";
-import { baseUrl } from "@/app/baseUrl";
-import { pgsql } from "@/database/pgsql";
 import * as schema from "@/database/schema";
-import { eq } from "drizzle-orm";
+import { sql } from "drizzle-orm";
 
 export const POST = async (req: NextRequest) => {
     const res = NextResponse.next();
@@ -14,11 +14,6 @@ export const POST = async (req: NextRequest) => {
     if (!auth_id) {
         return NextResponse.redirect(new URL("/login", baseUrl));
     }
-
-    const { user_id, role } = (await req.json()) as {
-        user_id: string;
-        role: "Admin" | "Salesman";
-    };
 
     const { data: roleData, error: error1 } = await pgsql.query.users_restricted
         .findMany({
@@ -42,31 +37,22 @@ export const POST = async (req: NextRequest) => {
         return NextResponse.redirect(new URL("/", baseUrl));
     }
 
-    const { error: error2 } = await pgsql
-        .update(schema.users_restricted)
-        .set({ role })
-        .where(eq(schema.users_restricted.user_id, user_id))
-        .then(() => ({ error: null }))
-        .catch((error) => ({ error }));
+    const { provider, cup_id } = await req.json();
 
-    if (error2) {
-        return NextResponse.json(error2.message, { status: 500 });
+    if (!provider || !cup_id) {
+        return NextResponse.json("Missing data", { status: 400 });
     }
 
-    if (role == "Admin") {
-        const { error: error3 } = await pgsql
-            .update(schema.users_restricted)
-            .set({
-                salesman_id: null,
-            })
-            .where(eq(schema.users_restricted.salesman_id, user_id))
+    const { error } = await pgsql
+            .delete(schema.scraped_warehouses)
+            .where(sql`provider = ${provider} AND cup_id = ${cup_id}`)
             .then(() => ({ error: null }))
-            .catch((error) => ({ error }));
+            .catch((e) => ({ error: e }));
+            
 
-        if (error3) {
-            return NextResponse.json(error3.message, { status: 500 });
-        }
+    if (error) {
+        return NextResponse.json(error.message, { status: 500 });
     }
 
-    return NextResponse.json({ message: "Role changed successfully" }, { status: 200 });
-};
+    return NextResponse.json("Success", { status: 200 })
+}

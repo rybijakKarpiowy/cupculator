@@ -31,45 +31,63 @@ export async function middleware(req: NextRequest) {
                     new URL(`${req.nextUrl.pathname}?cup=${cup}&lang=${lang}`, baseUrl)
                 );
             }
-            return NextResponse.next();
         }
 
         if (["/login", "/recovery", "/register"].includes(req.nextUrl.pathname)) {
             return NextResponse.redirect(new URL(`/?cup=${cup}&lang=${lang}`, baseUrl));
         }
 
-        const { data, error } = await supabase
-            .from("users")
-            .select(`*, users_restricted(role)`)
-            .eq("user_id", session.data.session?.user.id)
-            .single();
+        const userRoleRes = await fetch(new URL("/api/getuserrole", baseUrl), {
+            headers: {
+                cookie: req.headers.get("cookie") || "",
+            },
+        });
 
-        if (error) {
-            console.log(error);
+        if (!userRoleRes.ok) {
+            if (req.nextUrl.pathname === "/account/details") {
+                return NextResponse.next();
+            }
             return NextResponse.redirect(
                 new URL(`/account/details?cup=${cup}&lang=${lang}`, baseUrl)
             );
         }
 
-        if (!data) {
+        const data = (await userRoleRes.json()) as {
+            email: string;
+            first_name: string;
+            last_name: string;
+            company_name: string;
+            country: string;
+            region: string;
+            adress: string;
+            postal_code: string;
+            city: string;
+            phone: string;
+            NIP: string;
+            eu: boolean;
+            role: "User" | "Admin" | "Salesman";
+            user_id: string;
+        };
+
+        if (!data || !data.role) {
+            if (req.nextUrl.pathname === "/account/details") {
+                return NextResponse.next();
+            }
             return NextResponse.redirect(
                 new URL(`/account/details?cup=${cup}&lang=${lang}`, baseUrl)
             );
         }
 
-        // @ts-ignore
-        if (!data.users_restricted.role) {
-            console.log("No users_restricted entry");
-            return NextResponse.redirect(
-                new URL(`/account/details?cup=${cup}&lang=${lang}`, baseUrl)
-            );
-        }
-
-        // @ts-ignore
-        if (data.users_restricted.role === "User") {
+        if (data.role === "User") {
             for (const key in data) {
                 // @ts-ignore
                 if (data[key] === null || data[key] === undefined || data[key] === "") {
+                    if (key === "region") {
+                        continue;
+                    }
+                    if (req.nextUrl.pathname === "/account/details") {
+                        return NextResponse.next();
+                    }
                     return NextResponse.redirect(
                         new URL(`/account/details?cup=${cup}&lang=${lang}`, baseUrl)
                     );
@@ -77,11 +95,7 @@ export async function middleware(req: NextRequest) {
             }
         }
 
-        if (
-            (!cup || cup === "" || cup === "null" || cup === "undefined") &&
-            // @ts-ignore
-            data.users_restricted.role === "User"
-        ) {
+        if ((!cup || cup === "" || cup === "null" || cup === "undefined") && data.role === "User") {
             return NextResponse.redirect(new URL(`https://kubki.com.pl/Kubki?lang=${lang}`));
         }
 

@@ -8,6 +8,7 @@ import { Restriction } from "@/lib/checkRestriction";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { baseUrl } from "@/app/baseUrl";
+import { pgsql } from "@/database/pgsql";
 
 export const dynamic = "force-dynamic";
 
@@ -94,34 +95,86 @@ export default async function Dashboard({
     const pricings = await getPricings(authUser);
     const { available_color_pricings, available_cup_pricings } = pricings;
 
-    const { data: additionalValues, error } = await supabase
-        .from("additional_values")
-        .select("*")
-        .single();
+    const { data: additionalValues, error } = await pgsql.query.additional_values
+        .findFirst()
+        .then((data) => ({ data, error: null }))
+        .catch((e) => ({ data: null, error: e }));
     if (error) {
         console.log(error);
         redirect(`/?lang=${lang}&cup=${cup}`);
     }
 
-    const { data: restrictions, error: error2 } = (await supabase
-        .from("restrictions")
-        .select("*")) as {
-        data: Restriction[] | null;
-        error: PostgrestError | null;
-    };
-    if (error2) {
+    const { data: restrictions, error: error2 } = await pgsql.query.restrictions
+        .findMany()
+        .then(
+            (data) =>
+                ({
+                    data: data.sort((a, b) => a.imprintType.localeCompare(b.imprintType)),
+                    error: null,
+                } as { data: Restriction[]; error: null })
+        )
+        .catch((error) => ({ data: null, error }));
+    if (error2 || !restrictions) {
         toast.error("Coś poszło nie tak (brak wykluczeń)", {
             autoClose: 3000,
         });
         setTimeout(() => {
             redirect(`/?lang=${lang}&cup=${cup}`);
         }, 3000);
+        return;
     }
-    if (!restrictions) {
-        toast.error("Coś poszło nie tak (brak wykluczeń)", {
+
+    // get products tab data
+    const { data: productsCard, error: productsCardError } = await pgsql.query.cups
+        .findMany()
+        .then((data) => ({ data, error: null }))
+        .catch((error) => ({ data: null, error }));
+    if (productsCardError || !productsCard) {
+        toast.error("Coś poszło nie tak (brak produktów)", {
             autoClose: 3000,
         });
-        redirect(`/?lang=${lang}&cup=${cup}`);
+        setTimeout(() => {
+            redirect(`/?lang=${lang}&cup=${cup}`);
+        }, 3000);
+        return;
+    }
+
+    // Get scrapers data
+    const { data: scrWarehouses, error: scrWarehousesError } = await pgsql.query.cups
+        .findMany({
+            columns: {
+                id: true,
+                code: true,
+            },
+            with: {
+                scraped_warehouses: {
+                    columns: {
+                        provider: true,
+                        code_link: true,
+                    },
+                },
+            },
+        })
+        .then((data) => {
+            const renamedData = data
+                .map((item) => ({
+                    cup_id: item.id,
+                    cup_code: item.code,
+                    scrapers: item.scraped_warehouses,
+                }))
+                .sort((a, b) => a.cup_code.localeCompare(b.cup_code));
+            return { data: renamedData, error: null };
+        })
+        .catch((error) => ({ data: null, error }));
+
+    if (scrWarehousesError || !scrWarehouses) {
+        toast.error("Coś poszło nie tak (brak scraperow)", {
+            autoClose: 3000,
+        });
+        setTimeout(() => {
+            redirect(`/?lang=${lang}&cup=${cup}`);
+        }, 3000);
+        return;
     }
 
     return (
@@ -131,8 +184,10 @@ export default async function Dashboard({
             adminsAndSalesmenInput={adminsAndSalesmen}
             available_color_pricings={available_color_pricings}
             available_cup_pricings={available_cup_pricings}
-            additionalValues={additionalValues}
+            additionalValues={additionalValues!}
             restrictions={restrictions}
+            productsCard={productsCard}
+            scrapersDataFinal={scrWarehouses}
         />
     );
 }

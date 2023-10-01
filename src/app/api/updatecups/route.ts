@@ -1,10 +1,12 @@
-import { supabase } from "@/database/supabase";
 import { NextRequest, NextResponse } from "next/server";
 import { JWT } from "google-auth-library";
 import { GoogleSpreadsheet } from "google-spreadsheet";
 import { Database } from "@/database/types";
 import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { baseUrl } from "@/app/baseUrl";
+import { pgsql } from "@/database/pgsql";
+import * as schema from "@/database/schema";
+import { sql } from "drizzle-orm";
 
 export const POST = async (req: NextRequest) => {
     const res = NextResponse.next();
@@ -20,16 +22,21 @@ export const POST = async (req: NextRequest) => {
         sheet_url: string;
     };
 
-    const { data: roleData, error: error1 } = await supabase
-        .from("users_restricted")
-        .select("role")
-        .eq("user_id", auth_id);
+    const { data: roleData, error: error1 } = await pgsql.query.users_restricted
+        .findMany({
+            where: (users_restricted, { eq }) => eq(users_restricted.user_id, auth_id),
+            columns: {
+                role: true,
+            },
+        })
+        .then((data) => ({ data, error: null }))
+        .catch((error) => ({ data: null, error }));
 
     if (error1) {
         return NextResponse.json(error1.message, { status: 500 });
     }
 
-    if (roleData.length === 0) {
+    if (!roleData || roleData.length === 0) {
         return NextResponse.redirect(new URL("/login", baseUrl));
     }
 
@@ -202,13 +209,25 @@ export const POST = async (req: NextRequest) => {
     });
 
     // upsert cups from sheet and get their ids
-    const { data: dbCupIds, error: error2 } = await supabase
-        .from("cups")
-        .upsert(cupData, {
-            onConflict: "code",
-            ignoreDuplicates: false,
+    const { data: dbCupIds, error: error2 } = await pgsql
+        .insert(schema.cups)
+        .values(cupData)
+        .onConflictDoUpdate({
+            target: schema.cups.code,
+            set: {
+                code: sql`EXCLUDED.code`,
+                name: sql`EXCLUDED.name`,
+                color: sql`EXCLUDED.color`,
+                link: sql`EXCLUDED.link`,
+                material: sql`EXCLUDED.material`,
+                category: sql`EXCLUDED.category`,
+                icon: sql`EXCLUDED.icon`,
+                volume: sql`EXCLUDED.volume`,
+            },
         })
-        .select("id, code");
+        .returning({ id: schema.cups.id, code: schema.cups.code })
+        .then((data) => ({ data, error: null }))
+        .catch((err) => ({ data: null, error: err }));
     if (error2) {
         console.error(error2);
         return NextResponse.json(error2.message, { status: 500 });
@@ -217,18 +236,19 @@ export const POST = async (req: NextRequest) => {
     const sheetCupIds = preparedData
         .map((row) => {
             const { code } = row!;
-            const dbCupId = dbCupIds.find((cup) => cup.code === code)?.id;
+            const dbCupId = dbCupIds!.find((cup) => cup.code === code)?.id;
             return dbCupId;
         })
         .filter((id) => id !== undefined) as number[];
 
     // delete all cup pricings that are not in the sheet
-    const { error: error3 } = await supabase
-        .from("cup_pricings")
-        .delete()
-        .match({ pricing_name })
-        .not("cup_id", "in", `(${sheetCupIds.join(",")})`);
-
+    const { error: error3 } = await pgsql
+        .delete(schema.cup_pricings)
+        .where(
+            sql`${schema.cup_pricings.pricing_name} = ${pricing_name} AND ${schema.cup_pricings.cup_id} NOT IN ${sheetCupIds}`
+        )
+        .then(() => ({ error: null }))
+        .catch((err) => ({ error: err }));
     if (error3) {
         console.error(error3);
         return NextResponse.json(error3.message, { status: 500 });
@@ -237,7 +257,7 @@ export const POST = async (req: NextRequest) => {
     // update all cup pricings that are in the sheet
     const cupPricingsData = preparedData.map((row) => {
         const { code, prices } = row!;
-        const dbCupId = dbCupIds.find((cup) => cup.code === code)?.id as number;
+        const dbCupId = dbCupIds!.find((cup) => cup.code === code)?.id as number;
         return {
             cup_id: dbCupId,
             pricing_name,
@@ -245,35 +265,57 @@ export const POST = async (req: NextRequest) => {
         };
     });
 
-    const { error: error4 } = await supabase.from("cup_pricings").upsert(cupPricingsData, {
-        onConflict: "cup_id,pricing_name",
-        ignoreDuplicates: false,
-    });
-
+    const { error: error4 } = await pgsql
+        .insert(schema.cup_pricings)
+        .values(cupPricingsData)
+        .onConflictDoUpdate({
+            target: [schema.cup_pricings.cup_id, schema.cup_pricings.pricing_name],
+            set: {
+                cup_id: sql`EXCLUDED.cup_id`,
+                pricing_name: sql`EXCLUDED.pricing_name`,
+                price_24: sql`EXCLUDED.price_24`,
+                price_72: sql`EXCLUDED.price_72`,
+                price_108: sql`EXCLUDED.price_108`,
+                price_216: sql`EXCLUDED.price_216`,
+                price_504: sql`EXCLUDED.price_504`,
+                price_1008: sql`EXCLUDED.price_1008`,
+                price_2520: sql`EXCLUDED.price_2520`,
+            },
+        })
+        .then(() => ({ error: null }))
+        .catch((err) => ({ error: err }));
     if (error4) {
         console.error(error4);
         return NextResponse.json(error4.message, { status: 500 });
     }
 
     // if there is a cup which is not in any pricing, delete it from db
-    const { data: cupIdsInPricings, error: error5 } = await supabase
-        .from("cup_ids_in_pricings")
-        .select("cup_id");
+    const { data: cupIdsInPricings, error: error5 } = await pgsql.query.cup_ids_in_pricings
+        .findMany({
+            columns: {
+                cup_id: true,
+            },
+        })
+        .then((data) => ({ data, error: null }))
+        .catch((err) => ({ data: null, error: err }));
     if (error5) {
         console.error(error5);
         return NextResponse.json(error5.message, { status: 500 });
     }
     if (cupIdsInPricings) {
-        const cupIdsToDelete = dbCupIds.filter(
+        const cupIdsToDelete = dbCupIds!.filter(
             (cup) => !cupIdsInPricings.find((cupId) => cupId.cup_id === cup.id)
         );
-        const { error: error6 } = await supabase
-            .from("cups")
-            .delete()
-            .in(
-                "id",
-                cupIdsToDelete.map((cup) => cup.id)
-            );
+        const { error: error6 } = await pgsql
+            .delete(schema.cups)
+            .where(
+                sql`${
+                    cupIdsToDelete.length &&
+                    `${schema.cups.id} IN ${cupIdsToDelete.map((cup) => cup.id)}`
+                }`
+            )
+            .then(() => ({ error: null }))
+            .catch((err) => ({ error: err }));
 
         if (error6) {
             console.error(error6);

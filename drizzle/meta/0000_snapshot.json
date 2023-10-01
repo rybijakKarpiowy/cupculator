@@ -1,0 +1,719 @@
+{
+  "version": "5",
+  "dialect": "pg",
+  "id": "852786ee-499f-428d-89ac-1619a5eb714e",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "tables": {
+    "additional_values": {
+      "name": "additional_values",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "plain_cup_markup_percent": {
+          "name": "plain_cup_markup_percent",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 20
+        },
+        "mini_pallet_price": {
+          "name": "mini_pallet_price",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "half_pallet_price": {
+          "name": "half_pallet_price",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "full_pallet_price": {
+          "name": "full_pallet_price",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "available_color_pricings": {
+      "name": "available_color_pricings",
+      "schema": "",
+      "columns": {
+        "pricing_name": {
+          "name": "pricing_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "available_cup_pricings": {
+      "name": "available_cup_pricings",
+      "schema": "",
+      "columns": {
+        "pricing_name": {
+          "name": "pricing_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "color_pricings": {
+      "name": "color_pricings",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "pricing_name": {
+          "name": "pricing_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "transfer_plus": {
+          "name": "transfer_plus",
+          "type": "json[]",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "polylux": {
+          "name": "polylux",
+          "type": "json[]",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "direct_print": {
+          "name": "direct_print",
+          "type": "json[]",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "trend_color": {
+          "name": "trend_color",
+          "type": "json[]",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "pro_color": {
+          "name": "pro_color",
+          "type": "json[]",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "deep_effect": {
+          "name": "deep_effect",
+          "type": "json[]",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "digital_print": {
+          "name": "digital_print",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cardboard_print": {
+          "name": "cardboard_print",
+          "type": "json[]",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "soft_touch": {
+          "name": "soft_touch",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "deep_effect_plus": {
+          "name": "deep_effect_plus",
+          "type": "json[]",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "trend_color_lowered_edge": {
+          "name": "trend_color_lowered_edge",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "additional_costs": {
+          "name": "additional_costs",
+          "type": "json",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "cardboards": {
+          "name": "cardboards",
+          "type": "json[]",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "color_pricings_pricing_name_key": {
+          "name": "color_pricings_pricing_name_key",
+          "nullsNotDistinct": false,
+          "columns": [
+            "pricing_name"
+          ]
+        }
+      }
+    },
+    "cup_ids_in_pricings": {
+      "name": "cup_ids_in_pricings",
+      "schema": "",
+      "columns": {
+        "cup_id": {
+          "name": "cup_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "cup_pricings": {
+      "name": "cup_pricings",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "cup_id": {
+          "name": "cup_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "pricing_name": {
+          "name": "pricing_name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "price_24": {
+          "name": "price_24",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "price_72": {
+          "name": "price_72",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "price_108": {
+          "name": "price_108",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "price_216": {
+          "name": "price_216",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "price_504": {
+          "name": "price_504",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "price_1008": {
+          "name": "price_1008",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "price_2520": {
+          "name": "price_2520",
+          "type": "real",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "cup_pricings_cup_id_cups_id_fk": {
+          "name": "cup_pricings_cup_id_cups_id_fk",
+          "tableFrom": "cup_pricings",
+          "tableTo": "cups",
+          "columnsFrom": [
+            "cup_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "cup_pricings_cup_id_pricing_name_key": {
+          "name": "cup_pricings_cup_id_pricing_name_key",
+          "nullsNotDistinct": false,
+          "columns": [
+            "cup_id",
+            "pricing_name"
+          ]
+        }
+      }
+    },
+    "cups": {
+      "name": "cups",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "code": {
+          "name": "code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "color": {
+          "name": "color",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "material": {
+          "name": "material",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "category": {
+          "name": "category",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "icon": {
+          "name": "icon",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "volume": {
+          "name": "volume",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "supplier": {
+          "name": "supplier",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "supplier_code": {
+          "name": "supplier_code",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "mini_pallet": {
+          "name": "mini_pallet",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
+        "half_pallet": {
+          "name": "half_pallet",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
+        "full_pallet": {
+          "name": "full_pallet",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
+        "deep_effect": {
+          "name": "deep_effect",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "deep_effect_plus": {
+          "name": "deep_effect_plus",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "digital_print": {
+          "name": "digital_print",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "direct_print": {
+          "name": "direct_print",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "polylux": {
+          "name": "polylux",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "transfer_plus": {
+          "name": "transfer_plus",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "nadruk_apla": {
+          "name": "nadruk_apla",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "nadruk_dookola_pod_uchem": {
+          "name": "nadruk_dookola_pod_uchem",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "nadruk_na_dnie": {
+          "name": "nadruk_na_dnie",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "nadruk_na_powloce_magicznej_1_kolor": {
+          "name": "nadruk_na_powloce_magicznej_1_kolor",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "nadruk_na_uchu": {
+          "name": "nadruk_na_uchu",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "nadruk_przez_rant": {
+          "name": "nadruk_przez_rant",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "nadruk_wewnatrz_na_sciance": {
+          "name": "nadruk_wewnatrz_na_sciance",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "nadruk_zlotem_do_25cm2": {
+          "name": "nadruk_zlotem_do_25cm2",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "nadruk_zlotem_do_50cm2": {
+          "name": "nadruk_zlotem_do_50cm2",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "naklejka_papierowa_z_nadrukiem": {
+          "name": "naklejka_papierowa_z_nadrukiem",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "personalizacja": {
+          "name": "personalizacja",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "pro_color": {
+          "name": "pro_color",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "soft_touch": {
+          "name": "soft_touch",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "trend_color": {
+          "name": "trend_color",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "trend_color_lowered_edge": {
+          "name": "trend_color_lowered_edge",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "wkladanie_ulotek_do_kubka": {
+          "name": "wkladanie_ulotek_do_kubka",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "zdobienie_paskiem_bez_laczenia": {
+          "name": "zdobienie_paskiem_bez_laczenia",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "zdobienie_paskiem_z_laczeniem": {
+          "name": "zdobienie_paskiem_z_laczeniem",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "zdobienie_tapeta_na_barylce_II_stopien_trudnosci": {
+          "name": "zdobienie_tapeta_na_barylce_II_stopien_trudnosci",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "zdobienie_tapeta_na_barylce_I_stopien_trudnosci": {
+          "name": "zdobienie_tapeta_na_barylce_I_stopien_trudnosci",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "digital_print_additional": {
+          "name": "digital_print_additional",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "nadruk_na_spodzie": {
+          "name": "nadruk_na_spodzie",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false,
+          "default": false
+        },
+        "link": {
+          "name": "link",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "mini_pallet_singular": {
+          "name": "mini_pallet_singular",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
+        "half_pallet_singular": {
+          "name": "half_pallet_singular",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        },
+        "full_pallet_singular": {
+          "name": "full_pallet_singular",
+          "type": "smallint",
+          "primaryKey": false,
+          "notNull": false,
+          "default": 0
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "cups_code_key": {
+          "name": "cups_code_key",
+          "nullsNotDistinct": false,
+          "columns": [
+            "code"
+          ]
+        }
+      }
+    },
+    "restrictions": {
+      "name": "restrictions",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "imprintType": {
+          "name": "imprintType",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "anotherValue": {
+          "name": "anotherValue",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {}
+    },
+    "scraped_warehouses": {
+      "name": "scraped_warehouses",
+      "schema": "",
+      "columns": {
+        "cup_id": {
+          "name": "cup_id",
+          "type": "bigint",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "provider": {
+          "name": "provider",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "code_link": {
+          "name": "code_link",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "timestamp with time zone",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "now()"
+        },
+        "amount": {
+          "name": "amount",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "scraped_warehouses_cup_id_cups_id_fk": {
+          "name": "scraped_warehouses_cup_id_cups_id_fk",
+          "tableFrom": "scraped_warehouses",
+          "tableTo": "cups",
+          "columnsFrom": [
+            "cup_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        }
+      },
+      "compositePrimaryKeys": {
+        "scraped_warehouses_provider_code_link": {
+          "name": "scraped_warehouses_provider_code_link",
+          "columns": [
+            "provider",
+            "code_link"
+          ]
+        }
+      },
+      "uniqueConstraints": {}
+    }
+  },
+  "enums": {},
+  "schemas": {},
+  "_meta": {
+    "schemas": {},
+    "tables": {},
+    "columns": {}
+  }
+}

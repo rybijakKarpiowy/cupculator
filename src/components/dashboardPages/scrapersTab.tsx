@@ -1,7 +1,5 @@
 "use client";
 
-import { Database } from "@/database/types";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 
@@ -17,8 +15,6 @@ export const ScrapersTab = ({
         }[];
     }[];
 }) => {
-    const supabase = createClientComponentClient<Database>();
-
     const [scrapersData, setScrapersData] = useState(scrapersDataInput);
     const [selectedItem, setSelectedItem] = useState<{
         cup_code: string;
@@ -80,13 +76,31 @@ export const ScrapersTab = ({
                     setLoading(false);
                     return;
                 }
-                const { error } = await supabase.from("scraped_warehouses").upsert({
-                    provider,
-                    code_link,
-                    cup_id,
+
+                const res2 = await fetch("/api/updatescrdata", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                    },
+                    body: JSON.stringify({
+                        provider,
+                        code_link,
+                        cup_id,
+                    }),
                 });
-                if (error) {
-                    toast.error("Błąd przy zapisywaniu danych");
+
+                if (res2.status === 500) {
+                    toast.error("Bład serwera");
+                    setLoading(false);
+                    return;
+                }
+                if (res2.status === 400) {
+                    toast.error("Niepoprawne dane");
+                    setLoading(false);
+                    return;
+                }
+                if (!res2.ok) {
+                    toast.error("Wystąpił błąd");
                     setLoading(false);
                     return;
                 }
@@ -133,12 +147,30 @@ export const ScrapersTab = ({
             setLoading(false);
             return;
         }
-        const { error } = await supabase.from("scraped_warehouses").delete().match({
-            cup_code: scrapersItem.cup_code,
-            provider,
+
+        const res = await fetch("/api/deletescr", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                provider,
+                cup_id: scrapersItem.cup_id,
+            }),
         });
-        if (error) {
-            toast.error(error.message);
+
+        if (res.status === 500) {
+            toast.error("Bład serwera");
+            setLoading(false);
+            return;
+        }
+        if (res.status === 400) {
+            toast.error("Niepoprawne dane");
+            setLoading(false);
+            return;
+        }
+        if (!res.ok) {
+            toast.error("Wystąpił błąd");
             setLoading(false);
             return;
         }

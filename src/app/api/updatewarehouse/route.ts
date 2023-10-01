@@ -28,13 +28,10 @@ export const GET = async (req: NextRequest) => {
     // if latest update was less than 5 minutes ago, return 409
     const diffInMinutes =
         Math.round(
-            ((new Date(new Date().toLocaleString("pl-PL")).getTime() -
-                new Date(warehouseData[0].updated_at).getTime()) /
-                60000) *
-                100
+            ((new Date().getTime() - new Date(warehouseData[0].updated_at).getTime()) / 60000) * 100
         ) /
-            100 -
-        120;
+            100 +
+        new Date().getTimezoneOffset();
     console.log(diffInMinutes);
     if (diffInMinutes < 5) {
         return NextResponse.json("Magazyn był aktualizowany mniej niż 5 minut temu", {

@@ -68,7 +68,10 @@ export const getQBSWarehouse = async (cups: { cup_id: number; code: string }[]) 
                 provider: "QBS",
                 code_link: cup.code,
                 cup_id: cup.cup_id,
-                updated_at: new Date().toISOString().slice(0, 19).replace("T", " "),
+                updated_at: new Date(new Date().toLocaleString("pl-PL"))
+                    .toISOString()
+                    .slice(0, 19)
+                    .replace("T", " "),
                 amount: "error",
             };
         }
@@ -77,7 +80,10 @@ export const getQBSWarehouse = async (cups: { cup_id: number; code: string }[]) 
             provider: "QBS",
             code_link: cup.code,
             cup_id: cup.cup_id,
-            updated_at: new Date().toISOString().slice(0, 19).replace("T", " "),
+            updated_at: new Date(new Date().toLocaleString("pl-PL"))
+                .toISOString()
+                .slice(0, 19)
+                .replace("T", " "),
             amount: cupData.amount,
         };
     });

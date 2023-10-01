@@ -28,7 +28,10 @@ export const GET = async (req: NextRequest) => {
     // if latest update was less than 5 minutes ago, return 409
     const diffInMinutes =
         Math.round(
-            ((new Date().getTime() - new Date(warehouseData[0].updated_at).getTime()) / 60000) * 100
+            ((new Date(new Date().toLocaleString("pl-PL")).getTime() -
+                new Date(warehouseData[0].updated_at).getTime()) /
+                60000) *
+                100
         ) /
             100 -
         120;

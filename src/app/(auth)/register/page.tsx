@@ -133,7 +133,10 @@ export default function Register() {
             // Users have 14 days to verify their email
             if (
                 data.user &&
-                new Date().setDate(new Date().getDate() - 14) > Date.parse(data.user.created_at)
+                new Date(
+                    new Date().setDate(new Date().getDate() - 14).toLocaleString("pl-PL")
+                ).getTime() >
+                    new Date(Date.parse(data.user.created_at).toLocaleString("pl-PL")).getTime()
             ) {
                 toast.error(
                     `${

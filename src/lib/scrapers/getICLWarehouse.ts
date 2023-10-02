@@ -82,16 +82,16 @@ export const getICLWarehouse = async (cups: { cup_id: number; link: string }[]) 
                 provider: "ICL",
                 code_link: cup.link,
                 cup_id: cup.cup_id,
-                updated_at: new Date().toISOString().slice(0, 19).replace("T", " "),
+                updated_at: new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 19).replace("T", " "),
                 amount: "error",
             };
         }
-
+        
         return {
             provider: "ICL",
             code_link: cup.link,
             cup_id: cup.cup_id,
-            updated_at: new Date().toISOString().slice(0, 19).replace("T", " "),
+            updated_at: new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 19).replace("T", " "),
             amount: cupData.amount,
         };
     });

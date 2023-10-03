@@ -68,7 +68,6 @@ export const POST = async (req: NextRequest) => {
     }
 
     // If Client is activated first time, send email
-    console.log("eu", eu)
     if (eu !== undefined) {
         const { error: error3 } = await pgsql
             .update(schema.users)
@@ -95,7 +94,7 @@ export const POST = async (req: NextRequest) => {
         if (error4) {
             return NextResponse.json(error4.message, { status: 500 });
         }
-        console.log("activatedUserEmail", activatedUserEmail)
+
         if (!activatedUserEmail) {
             return NextResponse.json("User not found", { status: 500 });
         }
@@ -115,8 +114,10 @@ export const POST = async (req: NextRequest) => {
             html: eu === true ? activationEu : activationPl,
         };
 
+        console.log(msg)
+        // console.log(process.env.SENDGRID_KEY)
         sgmail.setApiKey(process.env.SENDGRID_KEY!);
-        sgmail
+        await sgmail
             .send(msg)
             .then(() => {
                 console.log("Email sent");

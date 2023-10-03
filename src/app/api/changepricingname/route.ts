@@ -44,12 +44,13 @@ export const POST = async (req: NextRequest) => {
     }
 
     if (cups_or_colors === "cups") {
-        const error2 = await pgsql
+        const { error: error2 } = await pgsql
             .update(schema.cup_pricings)
             .set({ pricing_name: new_pricing_name })
             .where(eq(schema.cup_pricings.pricing_name, pricing_name))
-            .catch((e) => e);
-        if (error2.length) {
+            .then(() => ({ error: null }))
+            .catch((error) => ({ error }));
+        if (error2) {
             return NextResponse.json("Error during updating pricing name", { status: 500 });
         }
         const { error: error3 } = await pgsql
@@ -64,12 +65,13 @@ export const POST = async (req: NextRequest) => {
             return NextResponse.json(error3.message, { status: 500 });
         }
     } else if (cups_or_colors === "colors") {
-        const error2 = await pgsql
+        const { error: error2 } = await pgsql
             .update(schema.color_pricings)
             .set({ pricing_name: new_pricing_name })
             .where(eq(schema.color_pricings.pricing_name, pricing_name))
-            .catch((e) => e);
-        if (error2.length) {
+            .then(() => ({ error: null }))
+            .catch((error) => ({ error }));
+        if (error2) {
             return NextResponse.json("Error during updating pricing name", { status: 500 });
         }
         const { error: error3 } = await pgsql

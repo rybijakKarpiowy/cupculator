@@ -69,7 +69,7 @@ export const POST = async (req: NextRequest) => {
             .set({ pricing_name: new_pricing_name })
             .where(eq(schema.color_pricings.pricing_name, pricing_name))
             .catch((e) => e);
-        if (error2) {
+        if (error2.length) {
             return NextResponse.json("Error during updating pricing name", { status: 500 });
         }
         const { error: error3 } = await pgsql

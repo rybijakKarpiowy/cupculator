@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ProductsCardTab } from "./dashboardPages/productsCardTab";
 import { ScrapersTab } from "./dashboardPages/scrapersTab";
+import { EditUserPopup } from "./dashboardPages/components/editUserPopup";
 
 export const DashboardPages = ({
     clientsInput,
@@ -820,7 +821,7 @@ export const DashboardPages = ({
                                     Telefon
                                 </li>
                                 <li className="px-2 border border-black w-48 text-center">NIP</li>
-                                <li className="px-2 border border-black w-12 text-center">
+                                <li className="px-2 border border-black w-16 text-center">
                                     Waluta
                                 </li>
                                 <li className="px-2 border border-black w-32 text-center">Kraj</li>
@@ -848,137 +849,175 @@ export const DashboardPages = ({
                                         id={client.user_id}
                                         className="flex flex-row min-w-max"
                                     >
-                                        <li className="px-2 border border-black w-48 text-center">
-                                            {client.first_name} {client.last_name}
-                                        </li>
-                                        <li className="px-2 border border-black w-64 text-center">
-                                            {client.company_name}
-                                        </li>
-                                        <li className="px-2 border border-black w-64 text-center">
-                                            {client.adress}
-                                        </li>
-                                        <li className="px-2 border border-black w-24 text-center">
-                                            {client.postal_code}
-                                        </li>
-                                        <li className="px-2 border border-black w-32 text-center">
-                                            {client.city}
-                                        </li>
-                                        <li className="px-2 border border-black w-32 text-center">
-                                            {client.region}
-                                        </li>
-                                        <li className="px-2 border border-black w-48 text-center">
-                                            {client.phone}
-                                        </li>
-                                        <li className="px-2 border border-black w-48 text-center">
-                                            {client.NIP}
-                                        </li>
-                                        <li className="px-2 border border-black w-12 text-center">
-                                            {client.eu ? "EUR" : "PLN"}
-                                        </li>
-                                        <li className="px-2 border border-black w-32 text-center">
-                                            {client.country}
-                                        </li>
-                                        <li className="px-2 border border-black w-64 text-center">
-                                            {client.email}
-                                        </li>
-                                        <li className="px-2 border border-black w-80 text-center">
-                                            <select
-                                                id="cup_pricing"
-                                                disabled={loading}
-                                                onChange={() => handleActication(client.user_id)}
-                                                className={`${loading && "bg-slate-400"}`}
-                                                defaultValue={
-                                                    client.cup_pricing ? client.cup_pricing : ""
-                                                }
+                                        <div className="flex flex-row min-w-max relative">
+                                            <li className="px-2 border border-black w-48 text-center">
+                                                {client.first_name} {client.last_name}
+                                            </li>
+                                            <li className="px-2 border border-black w-64 text-center">
+                                                {client.company_name}
+                                            </li>
+                                            <li className="px-2 border border-black w-64 text-center">
+                                                {client.adress}
+                                            </li>
+                                            <li className="px-2 border border-black w-24 text-center">
+                                                {client.postal_code}
+                                            </li>
+                                            <li className="px-2 border border-black w-32 text-center">
+                                                {client.city}
+                                            </li>
+                                            <li className="px-2 border border-black w-32 text-center">
+                                                {client.region}
+                                            </li>
+                                            <li className="px-2 border border-black w-48 text-center">
+                                                {client.phone}
+                                            </li>
+                                            <li className="px-2 border border-black w-48 text-center">
+                                                {client.NIP}
+                                            </li>
+                                            <li className="px-2 border border-black w-16 text-center">
+                                                {client.eu ? "EUR" : "PLN"}
+                                            </li>
+                                            <li className="px-2 border border-black w-32 text-center">
+                                                {client.country}
+                                            </li>
+                                            <li className="px-2 border border-black w-64 text-center">
+                                                {client.email}
+                                            </li>
+                                            <li className="px-2 border border-black w-80 text-center">
+                                                <select
+                                                    id="cup_pricing"
+                                                    disabled={loading}
+                                                    onChange={() =>
+                                                        handleActication(client.user_id)
+                                                    }
+                                                    className={`${loading && "bg-slate-400"}`}
+                                                    defaultValue={
+                                                        client.cup_pricing ? client.cup_pricing : ""
+                                                    }
+                                                >
+                                                    <option value="" key="brak" disabled hidden>
+                                                        Brak
+                                                    </option>
+                                                    {available_cup_pricings
+                                                        .sort()
+                                                        .map((cup_pricing) => (
+                                                            <option
+                                                                key={cup_pricing}
+                                                                value={cup_pricing}
+                                                            >
+                                                                {cup_pricing}
+                                                            </option>
+                                                        ))}
+                                                </select>
+                                            </li>
+                                            <li className="px-2 border border-black w-80 text-center">
+                                                <select
+                                                    id="color_pricing"
+                                                    disabled={loading}
+                                                    onChange={() =>
+                                                        handleActication(client.user_id)
+                                                    }
+                                                    className={`${loading && "bg-slate-400"}`}
+                                                    defaultValue={
+                                                        client.color_pricing
+                                                            ? client.color_pricing
+                                                            : ""
+                                                    }
+                                                >
+                                                    <option value="" key="brak" disabled hidden>
+                                                        Brak
+                                                    </option>
+                                                    {available_color_pricings
+                                                        .sort()
+                                                        .map((color_pricing) => (
+                                                            <option
+                                                                key={color_pricing}
+                                                                value={color_pricing}
+                                                            >
+                                                                {color_pricing}
+                                                            </option>
+                                                        ))}
+                                                </select>
+                                            </li>
+                                            <li className="px-2 border border-black w-60 text-center">
+                                                <select
+                                                    id="assigned_salesman"
+                                                    disabled={loading}
+                                                    onChange={() =>
+                                                        handleActication(client.user_id)
+                                                    }
+                                                    className={`${loading && "bg-slate-400"}`}
+                                                    defaultValue={
+                                                        client.salesman_id ? client.salesman_id : ""
+                                                    }
+                                                >
+                                                    <option value="" key="brak" disabled hidden>
+                                                        Brak
+                                                    </option>
+                                                    {adminsAndSalesmen
+                                                        ?.filter((item) => item.role === "Salesman")
+                                                        .sort((a, b) =>
+                                                            a.email.localeCompare(b.email)
+                                                        )
+                                                        .map((salesman) => (
+                                                            <option
+                                                                key={salesman.user_id}
+                                                                value={salesman.user_id}
+                                                            >
+                                                                {salesman.email}
+                                                            </option>
+                                                        ))}
+                                                </select>
+                                            </li>
+                                            <li className="px-2 border border-black w-60 text-center">
+                                                <select
+                                                    id="warehouse_acces"
+                                                    disabled={loading}
+                                                    onChange={() =>
+                                                        handleActication(client.user_id)
+                                                    }
+                                                    className={`${
+                                                        loading && "bg-slate-400"
+                                                    } text-center`}
+                                                    defaultValue={
+                                                        client.warehouse_acces
+                                                            ? client.warehouse_acces
+                                                            : ""
+                                                    }
+                                                >
+                                                    <option value="" key="brak" disabled hidden>
+                                                        -
+                                                    </option>
+                                                    <option value="None">Brak dostępu</option>
+                                                    <option value="Actual">Faktyczne stany</option>
+                                                    <option value="Fictional">
+                                                        Fikcyjne stany
+                                                    </option>
+                                                </select>
+                                            </li>
+                                            <div
+                                                className="w-full h-full border border-black bg-blue-100 z-30 hidden absolute"
+                                                id={`${client.user_id}_popup`}
                                             >
-                                                <option value="" key="brak" disabled hidden>
-                                                    Brak
-                                                </option>
-                                                {available_cup_pricings
-                                                    .sort()
-                                                    .map((cup_pricing) => (
-                                                        <option
-                                                            key={cup_pricing}
-                                                            value={cup_pricing}
-                                                        >
-                                                            {cup_pricing}
-                                                        </option>
-                                                    ))}
-                                            </select>
-                                        </li>
-                                        <li className="px-2 border border-black w-80 text-center">
-                                            <select
-                                                id="color_pricing"
-                                                disabled={loading}
-                                                onChange={() => handleActication(client.user_id)}
-                                                className={`${loading && "bg-slate-400"}`}
-                                                defaultValue={
-                                                    client.color_pricing ? client.color_pricing : ""
-                                                }
-                                            >
-                                                <option value="" key="brak" disabled hidden>
-                                                    Brak
-                                                </option>
-                                                {available_color_pricings
-                                                    .sort()
-                                                    .map((color_pricing) => (
-                                                        <option
-                                                            key={color_pricing}
-                                                            value={color_pricing}
-                                                        >
-                                                            {color_pricing}
-                                                        </option>
-                                                    ))}
-                                            </select>
-                                        </li>
-                                        <li className="px-2 border border-black w-60 text-center">
-                                            <select
-                                                id="assigned_salesman"
-                                                disabled={loading}
-                                                onChange={() => handleActication(client.user_id)}
-                                                className={`${loading && "bg-slate-400"}`}
-                                                defaultValue={
-                                                    client.salesman_id ? client.salesman_id : ""
-                                                }
-                                            >
-                                                <option value="" key="brak" disabled hidden>
-                                                    Brak
-                                                </option>
-                                                {adminsAndSalesmen
-                                                    ?.filter((item) => item.role === "Salesman")
-                                                    .sort((a, b) => a.email.localeCompare(b.email))
-                                                    .map((salesman) => (
-                                                        <option
-                                                            key={salesman.user_id}
-                                                            value={salesman.user_id}
-                                                        >
-                                                            {salesman.email}
-                                                        </option>
-                                                    ))}
-                                            </select>
-                                        </li>
-                                        <li className="px-2 border border-black w-60 text-center">
-                                            <select
-                                                id="warehouse_acces"
-                                                disabled={loading}
-                                                onChange={() => handleActication(client.user_id)}
-                                                className={`${
-                                                    loading && "bg-slate-400"
-                                                } text-center`}
-                                                defaultValue={
-                                                    client.warehouse_acces
-                                                        ? client.warehouse_acces
-                                                        : ""
-                                                }
-                                            >
-                                                <option value="" key="brak" disabled hidden>
-                                                    -
-                                                </option>
-                                                <option value="None">Brak dostępu</option>
-                                                <option value="Actual">Faktyczne stany</option>
-                                                <option value="Fictional">Fikcyjne stany</option>
-                                            </select>
-                                        </li>
+                                                <EditUserPopup
+                                                    client={client}
+                                                    parentDiv={
+                                                        document.getElementById(
+                                                            `${client.user_id}_popup`
+                                                        ) as HTMLDivElement
+                                                    }
+                                                    editButton={
+                                                        document.getElementById(
+                                                            `${client.user_id}_edit_button`
+                                                        ) as HTMLButtonElement
+                                                    }
+                                                    loading={loading}
+                                                    setLoading={setLoading}
+                                                    clients={clients}
+                                                    setClients={setClients}
+                                                />
+                                            </div>
+                                        </div>
                                         <button
                                             type="button"
                                             disabled={loading}
@@ -990,6 +1029,31 @@ export const DashboardPages = ({
                                             }`}
                                         >
                                             Usuń
+                                        </button>
+                                        <button
+                                            type="button"
+                                            id={`${client.user_id}_edit_button`}
+                                            disabled={loading}
+                                            onClick={(e) => {
+                                                const popup = document.getElementById(
+                                                    `${client.user_id}_popup`
+                                                );
+                                                if (popup) {
+                                                    popup.classList.toggle("hidden");
+                                                }
+                                                const self = e.target as HTMLButtonElement;
+                                                self.disabled = true;
+                                                self.classList.toggle("bg-blue-300");
+                                                self.classList.toggle("hover:bg-blue-400");
+                                                self.classList.toggle("bg-slate-400");
+                                            }}
+                                            className={`px-2 w-16 rounded-md ${
+                                                loading
+                                                    ? "bg-slate-400"
+                                                    : "bg-blue-300 hover:bg-blue-400"
+                                            }`}
+                                        >
+                                            Edytuj
                                         </button>
                                     </div>
                                 ))}

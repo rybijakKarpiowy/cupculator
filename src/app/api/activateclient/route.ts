@@ -114,8 +114,6 @@ export const POST = async (req: NextRequest) => {
             html: eu === true ? activationEu : activationPl,
         };
 
-        console.log(msg)
-        // console.log(process.env.SENDGRID_KEY)
         sgmail.setApiKey(process.env.SENDGRID_KEY!);
         await sgmail
             .send(msg)

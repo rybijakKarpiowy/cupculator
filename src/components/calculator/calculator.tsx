@@ -553,6 +553,202 @@ export const Calculator = ({
                             </div>
                         </div>
                         <div className="flex flex-col gap-2 w-[386px] bg-slate-100 p-4">
+                            {selectedCup.trend_color && (
+                                <div className="flex flex-row justify-between items-center">
+                                    Trend Color:
+                                    <select
+                                        defaultValue=""
+                                        id="trend_color"
+                                        onChange={(e) => {
+                                            if (e.target.value === cupConfig.trend_color) return;
+                                            setCupConfig({
+                                                ...cupConfig,
+                                                imprintType: "",
+                                                imprintColors: 1,
+                                                trend_color: e.target
+                                                    .value as CupConfigInterface["trend_color"],
+                                                pro_color: false,
+                                                soft_touch: false,
+                                                nadruk_wewnatrz_na_sciance: 0,
+                                                nadruk_na_uchu: false,
+                                                nadruk_na_spodzie: false,
+                                                nadruk_na_dnie: false,
+                                                nadruk_przez_rant: false,
+                                                nadruk_apla: false,
+                                                nadruk_dookola_pod_uchem: false,
+                                                nadruk_zlotem: false,
+                                                personalizacja: false,
+                                                zdobienie_paskiem: false,
+                                                zdobienie_tapeta_na_barylce: false,
+                                                nadruk_na_powloce_magicznej_1_kolor: false,
+                                                naklejka_papierowa_z_nadrukiem: false,
+                                                wkladanie_ulotek_do_kubka: false,
+                                            });
+                                            resetInputs(document, {
+                                                imprintType: true,
+                                                imprintColors: true,
+                                                pro_color: true,
+                                                soft_touch: true,
+                                                nadruk_na_wewnatrz_sciance: true,
+                                                nadruk_na_uchu: true,
+                                                nadruk_na_spodzie: true,
+                                                nadruk_na_dnie: true,
+                                                nadruk_przez_rant: true,
+                                                nadruk_apla: true,
+                                                nadruk_dookola_pod_uchem: true,
+                                                nadruk_zlotem: true,
+                                                personalizacja: true,
+                                                zdobienie_paskiem: true,
+                                                nadruk_na_powloce_magicznej_1_kolor: true,
+                                                zdobienie_tapeta_na_barylce: true,
+                                                naklejka_papierowa_z_nadrukiem: true,
+                                                wkladanie_ulotek_do_kubka: true,
+                                            });
+                                        }}
+                                        className="border w-max border-[#bbb] bg-slate-50 text-black px-2 py-[2px] rounded-md"
+                                    >
+                                        <option value="">
+                                            {lang === "1" ? "Bez Trend Color" : "No Trend Color"}
+                                        </option>
+                                        <option value="inside">
+                                            {lang === "1" ? "Wewnątrz" : "Inside"}
+                                        </option>
+                                        <option value="outside">
+                                            {lang === "1" ? "Zewnątrz" : "Outside"}
+                                        </option>
+                                        <option value="both">
+                                            {lang === "1"
+                                                ? "Wenątrz i na zewnątrz"
+                                                : "Inside and outside"}
+                                        </option>
+                                        {selectedCup.trend_color_lowered_edge && (
+                                            <option value="lowered_edge">
+                                                {lang === "1"
+                                                    ? "Na zewnątrz z obniżonym rantem"
+                                                    : "Outside with lowered edge"}
+                                            </option>
+                                        )}
+                                    </select>
+                                </div>
+                            )}
+                            {selectedCup.pro_color && !(cupConfig.trend_color === "inside") && (
+                                <div className="flex flex-row justify-between items-center">
+                                    Pro Color:
+                                    <select
+                                        defaultValue=""
+                                        id="pro_color"
+                                        onChange={(e) => {
+                                            setCupConfig({
+                                                ...cupConfig,
+                                                imprintType: "",
+                                                imprintColors: 1,
+                                                pro_color: e.target.value ? true : false,
+                                                soft_touch: false,
+                                                nadruk_wewnatrz_na_sciance: 0,
+                                                nadruk_na_uchu: false,
+                                                nadruk_na_spodzie: false,
+                                                nadruk_na_dnie: false,
+                                                nadruk_przez_rant: false,
+                                                nadruk_apla: false,
+                                                nadruk_dookola_pod_uchem: false,
+                                                nadruk_zlotem: false,
+                                                personalizacja: false,
+                                                zdobienie_paskiem: false,
+                                                zdobienie_tapeta_na_barylce: false,
+                                                nadruk_na_powloce_magicznej_1_kolor: false,
+                                                naklejka_papierowa_z_nadrukiem: false,
+                                                wkladanie_ulotek_do_kubka: false,
+                                            });
+                                            resetInputs(document, {
+                                                imprintType: true,
+                                                imprintColors: true,
+                                                soft_touch: true,
+                                                nadruk_na_wewnatrz_sciance: true,
+                                                nadruk_na_uchu: true,
+                                                nadruk_na_spodzie: true,
+                                                nadruk_na_dnie: true,
+                                                nadruk_przez_rant: true,
+                                                nadruk_apla: true,
+                                                nadruk_dookola_pod_uchem: true,
+                                                nadruk_zlotem: true,
+                                                personalizacja: true,
+                                                zdobienie_paskiem: true,
+                                                nadruk_na_powloce_magicznej_1_kolor: true,
+                                                zdobienie_tapeta_na_barylce: true,
+                                                naklejka_papierowa_z_nadrukiem: true,
+                                                wkladanie_ulotek_do_kubka: true,
+                                                cardboard: true,
+                                            });
+                                        }}
+                                        className="border w-max border-[#bbb] bg-slate-50 text-black px-2 py-[2px] rounded-md"
+                                    >
+                                        <option value="">
+                                            {lang === "1" ? "Bez Pro Color" : "No Pro Color"}
+                                        </option>
+                                        <option value="pro_color">
+                                            {lang === "1" ? "Wewnątrz" : "Inside"}
+                                        </option>
+                                    </select>
+                                </div>
+                            )}
+                            {selectedCup.soft_touch && (
+                                <div className="flex flex-row justify-between items-center">
+                                    Soft Touch:
+                                    <select
+                                        defaultValue=""
+                                        id="soft_touch"
+                                        onChange={(e) => {
+                                            setCupConfig({
+                                                ...cupConfig,
+                                                imprintType: "",
+                                                imprintColors: 1,
+                                                soft_touch: e.target.value ? true : false,
+                                                nadruk_wewnatrz_na_sciance: 0,
+                                                nadruk_na_uchu: false,
+                                                nadruk_na_spodzie: false,
+                                                nadruk_na_dnie: false,
+                                                nadruk_przez_rant: false,
+                                                nadruk_apla: false,
+                                                nadruk_dookola_pod_uchem: false,
+                                                nadruk_zlotem: false,
+                                                personalizacja: false,
+                                                zdobienie_paskiem: false,
+                                                zdobienie_tapeta_na_barylce: false,
+                                                nadruk_na_powloce_magicznej_1_kolor: false,
+                                                naklejka_papierowa_z_nadrukiem: false,
+                                                wkladanie_ulotek_do_kubka: false,
+                                            });
+                                            resetInputs(document, {
+                                                imprintType: true,
+                                                imprintColors: true,
+                                                nadruk_na_wewnatrz_sciance: true,
+                                                nadruk_na_uchu: true,
+                                                nadruk_na_spodzie: true,
+                                                nadruk_na_dnie: true,
+                                                nadruk_przez_rant: true,
+                                                nadruk_apla: true,
+                                                nadruk_dookola_pod_uchem: true,
+                                                nadruk_zlotem: true,
+                                                personalizacja: true,
+                                                zdobienie_paskiem: true,
+                                                nadruk_na_powloce_magicznej_1_kolor: true,
+                                                zdobienie_tapeta_na_barylce: true,
+                                                naklejka_papierowa_z_nadrukiem: true,
+                                                wkladanie_ulotek_do_kubka: true,
+                                                cardboard: true,
+                                            });
+                                        }}
+                                        className="border w-max border-[#bbb] bg-slate-50 text-black px-2 py-[2px] rounded-md"
+                                    >
+                                        <option value="">
+                                            {lang === "1" ? "Bez Soft Touch" : "No Soft Touch"}
+                                        </option>
+                                        <option value="soft_touch">
+                                            {lang === "1" ? "Zewnątrz" : "Outside"}
+                                        </option>
+                                    </select>
+                                </div>
+                            )}
                             <div className="flex flex-row justify-between items-center">
                                 {lang === "1" ? "Wybierz nadruk: " : "Select print type: "}
                                 <select
@@ -565,9 +761,6 @@ export const Calculator = ({
                                             imprintType: e.target
                                                 .value as CupConfigInterface["imprintType"],
                                             imprintColors: 1,
-                                            trend_color: "",
-                                            pro_color: false,
-                                            soft_touch: false,
                                             nadruk_wewnatrz_na_sciance: 0,
                                             nadruk_na_uchu: false,
                                             nadruk_na_spodzie: false,
@@ -584,9 +777,6 @@ export const Calculator = ({
                                             wkladanie_ulotek_do_kubka: false,
                                         });
                                         resetInputs(document, {
-                                            trend_color: true,
-                                            soft_touch: true,
-                                            pro_color: true,
                                             imprintColors: true,
                                             nadruk_na_wewnatrz_sciance: true,
                                             nadruk_na_uchu: true,
@@ -629,7 +819,7 @@ export const Calculator = ({
                                     {selectedCup.direct_print && !forbidden.direct_print && (
                                         <option value="direct_print">Direct print</option>
                                     )}
-                                    {selectedCup.transfer_plus && (
+                                    {selectedCup.transfer_plus && !forbidden.transfer_plus && (
                                         <>
                                             <option value="transfer_plus_1">
                                                 {lang === "1"
@@ -648,20 +838,22 @@ export const Calculator = ({
                                             </option>
                                         </>
                                     )}
-                                    {selectedCup.polylux && !selectedCup.digital_print && (
-                                        <>
-                                            <option value="polylux_1">
-                                                Polylux {lang === "1" ? "1 strona" : "1 side"}
-                                            </option>
-                                            <option value="polylux_2">
-                                                Polylux {lang === "1" ? "2 strony" : "2 sides"}
-                                            </option>
-                                            <option value="polylux_round">
-                                                Polylux {lang === "1" ? "tapeta" : "wallpaper"}
-                                            </option>
-                                        </>
-                                    )}
-                                    {selectedCup.deep_effect && (
+                                    {selectedCup.polylux &&
+                                        !forbidden.polylux &&
+                                        !selectedCup.digital_print && (
+                                            <>
+                                                <option value="polylux_1">
+                                                    Polylux {lang === "1" ? "1 strona" : "1 side"}
+                                                </option>
+                                                <option value="polylux_2">
+                                                    Polylux {lang === "1" ? "2 strony" : "2 sides"}
+                                                </option>
+                                                <option value="polylux_round">
+                                                    Polylux {lang === "1" ? "tapeta" : "wallpaper"}
+                                                </option>
+                                            </>
+                                        )}
+                                    {selectedCup.deep_effect && !forbidden.deep_effect && (
                                         <>
                                             <option value="deep_effect_1">
                                                 Deep effect {lang === "1" ? "1 strona" : "1 side"}
@@ -671,19 +863,20 @@ export const Calculator = ({
                                             </option>
                                         </>
                                     )}
-                                    {selectedCup.deep_effect_plus && (
-                                        <>
-                                            <option value="deep_effect_plus_1">
-                                                Deep effect plus{" "}
-                                                {lang === "1" ? "1 strona" : "1 side"}
-                                            </option>
-                                            <option value="deep_effect_plus_2">
-                                                Deep effect plus{" "}
-                                                {lang === "1" ? "2 strony" : "2 sides"}
-                                            </option>
-                                        </>
-                                    )}
-                                    {selectedCup.digital_print && (
+                                    {selectedCup.deep_effect_plus &&
+                                        !forbidden.deep_effect_plus && (
+                                            <>
+                                                <option value="deep_effect_plus_1">
+                                                    Deep effect plus{" "}
+                                                    {lang === "1" ? "1 strona" : "1 side"}
+                                                </option>
+                                                <option value="deep_effect_plus_2">
+                                                    Deep effect plus{" "}
+                                                    {lang === "1" ? "2 strony" : "2 sides"}
+                                                </option>
+                                            </>
+                                        )}
+                                    {selectedCup.digital_print && !forbidden.digital_print && (
                                         <option value="digital_print">
                                             {lang === "1"
                                                 ? "Nadruk cyfrowy - pełny kolor"
@@ -769,202 +962,6 @@ export const Calculator = ({
                                                     : "Number of colors applies to additional prints only (lower frame)"}
                                             </span>
                                         )}
-                                </div>
-                            )}
-                            {selectedCup.trend_color &&
-                                (!forbidden.trend_color_both ||
-                                    !forbidden.trend_color_inside ||
-                                    !forbidden.trend_color_lowered_edge ||
-                                    !forbidden.trend_color_outside) && (
-                                    <div className="flex flex-row justify-between items-center">
-                                        Trend Color:
-                                        <select
-                                            defaultValue=""
-                                            id="trend_color"
-                                            onChange={(e) => {
-                                                if (e.target.value === cupConfig.trend_color)
-                                                    return;
-                                                setCupConfig({
-                                                    ...cupConfig,
-                                                    trend_color: e.target
-                                                        .value as CupConfigInterface["trend_color"],
-                                                    pro_color: false,
-                                                    nadruk_wewnatrz_na_sciance: 0,
-                                                    nadruk_na_uchu: false,
-                                                    nadruk_na_spodzie: false,
-                                                    nadruk_na_dnie: false,
-                                                    nadruk_przez_rant: false,
-                                                    nadruk_apla: false,
-                                                    nadruk_dookola_pod_uchem: false,
-                                                    nadruk_zlotem: false,
-                                                    personalizacja: false,
-                                                    zdobienie_paskiem: false,
-                                                    zdobienie_tapeta_na_barylce: false,
-                                                    nadruk_na_powloce_magicznej_1_kolor: false,
-                                                    naklejka_papierowa_z_nadrukiem: false,
-                                                    wkladanie_ulotek_do_kubka: false,
-                                                });
-                                                resetInputs(document, {
-                                                    pro_color: true,
-                                                    nadruk_na_wewnatrz_sciance: true,
-                                                    nadruk_na_uchu: true,
-                                                    nadruk_na_spodzie: true,
-                                                    nadruk_na_dnie: true,
-                                                    nadruk_przez_rant: true,
-                                                    nadruk_apla: true,
-                                                    nadruk_dookola_pod_uchem: true,
-                                                    nadruk_zlotem: true,
-                                                    personalizacja: true,
-                                                    zdobienie_paskiem: true,
-                                                    nadruk_na_powloce_magicznej_1_kolor: true,
-                                                    zdobienie_tapeta_na_barylce: true,
-                                                    naklejka_papierowa_z_nadrukiem: true,
-                                                    wkladanie_ulotek_do_kubka: true,
-                                                });
-                                            }}
-                                            className="border w-max border-[#bbb] bg-slate-50 text-black px-2 py-[2px] rounded-md"
-                                        >
-                                            <option value="">
-                                                {lang === "1"
-                                                    ? "Bez Trend Color"
-                                                    : "No Trend Color"}
-                                            </option>
-                                            {!forbidden.trend_color_inside && (
-                                                <option value="inside">
-                                                    {lang === "1" ? "Wewnątrz" : "Inside"}
-                                                </option>
-                                            )}
-                                            {!forbidden.trend_color_outside && (
-                                                <option value="outside">
-                                                    {lang === "1" ? "Zewnątrz" : "Outside"}
-                                                </option>
-                                            )}
-                                            {!forbidden.trend_color_both && (
-                                                <option value="both">
-                                                    {lang === "1"
-                                                        ? "Wenątrz i na zewnątrz"
-                                                        : "Inside and outside"}
-                                                </option>
-                                            )}
-                                            {selectedCup.trend_color_lowered_edge &&
-                                                !forbidden.trend_color_lowered_edge && (
-                                                    <option value="lowered_edge">
-                                                        {lang === "1"
-                                                            ? "Na zewnątrz z obniżonym rantem"
-                                                            : "Outside with lowered edge"}
-                                                    </option>
-                                                )}
-                                        </select>
-                                    </div>
-                                )}
-                            {selectedCup.pro_color &&
-                                !(cupConfig.trend_color === "inside") &&
-                                !forbidden.pro_color && (
-                                    <div className="flex flex-row justify-between items-center">
-                                        Pro Color:
-                                        <select
-                                            defaultValue=""
-                                            id="pro_color"
-                                            onChange={(e) => {
-                                                setCupConfig({
-                                                    ...cupConfig,
-                                                    pro_color: e.target.value ? true : false,
-                                                    nadruk_wewnatrz_na_sciance: 0,
-                                                    nadruk_na_uchu: false,
-                                                    nadruk_na_spodzie: false,
-                                                    nadruk_na_dnie: false,
-                                                    nadruk_przez_rant: false,
-                                                    nadruk_apla: false,
-                                                    nadruk_dookola_pod_uchem: false,
-                                                    nadruk_zlotem: false,
-                                                    personalizacja: false,
-                                                    zdobienie_paskiem: false,
-                                                    zdobienie_tapeta_na_barylce: false,
-                                                    nadruk_na_powloce_magicznej_1_kolor: false,
-                                                    naklejka_papierowa_z_nadrukiem: false,
-                                                    wkladanie_ulotek_do_kubka: false,
-                                                });
-                                                resetInputs(document, {
-                                                    nadruk_na_wewnatrz_sciance: true,
-                                                    nadruk_na_uchu: true,
-                                                    nadruk_na_spodzie: true,
-                                                    nadruk_na_dnie: true,
-                                                    nadruk_przez_rant: true,
-                                                    nadruk_apla: true,
-                                                    nadruk_dookola_pod_uchem: true,
-                                                    nadruk_zlotem: true,
-                                                    personalizacja: true,
-                                                    zdobienie_paskiem: true,
-                                                    nadruk_na_powloce_magicznej_1_kolor: true,
-                                                    zdobienie_tapeta_na_barylce: true,
-                                                    naklejka_papierowa_z_nadrukiem: true,
-                                                    wkladanie_ulotek_do_kubka: true,
-                                                    cardboard: true,
-                                                });
-                                            }}
-                                            className="border w-max border-[#bbb] bg-slate-50 text-black px-2 py-[2px] rounded-md"
-                                        >
-                                            <option value="">
-                                                {lang === "1" ? "Bez Pro Color" : "No Pro Color"}
-                                            </option>
-                                            <option value="pro_color">
-                                                {lang === "1" ? "Wewnątrz" : "Inside"}
-                                            </option>
-                                        </select>
-                                    </div>
-                                )}
-                            {selectedCup.soft_touch && !forbidden.soft_touch && (
-                                <div className="flex flex-row justify-between items-center">
-                                    Soft Touch:
-                                    <select
-                                        defaultValue=""
-                                        id="soft_touch"
-                                        onChange={(e) => {
-                                            setCupConfig({
-                                                ...cupConfig,
-                                                soft_touch: e.target.value ? true : false,
-                                                nadruk_wewnatrz_na_sciance: 0,
-                                                nadruk_na_uchu: false,
-                                                nadruk_na_spodzie: false,
-                                                nadruk_na_dnie: false,
-                                                nadruk_przez_rant: false,
-                                                nadruk_apla: false,
-                                                nadruk_dookola_pod_uchem: false,
-                                                nadruk_zlotem: false,
-                                                personalizacja: false,
-                                                zdobienie_paskiem: false,
-                                                zdobienie_tapeta_na_barylce: false,
-                                                nadruk_na_powloce_magicznej_1_kolor: false,
-                                                naklejka_papierowa_z_nadrukiem: false,
-                                                wkladanie_ulotek_do_kubka: false,
-                                            });
-                                            resetInputs(document, {
-                                                nadruk_na_wewnatrz_sciance: true,
-                                                nadruk_na_uchu: true,
-                                                nadruk_na_spodzie: true,
-                                                nadruk_na_dnie: true,
-                                                nadruk_przez_rant: true,
-                                                nadruk_apla: true,
-                                                nadruk_dookola_pod_uchem: true,
-                                                nadruk_zlotem: true,
-                                                personalizacja: true,
-                                                zdobienie_paskiem: true,
-                                                nadruk_na_powloce_magicznej_1_kolor: true,
-                                                zdobienie_tapeta_na_barylce: true,
-                                                naklejka_papierowa_z_nadrukiem: true,
-                                                wkladanie_ulotek_do_kubka: true,
-                                                cardboard: true,
-                                            });
-                                        }}
-                                        className="border w-max border-[#bbb] bg-slate-50 text-black px-2 py-[2px] rounded-md"
-                                    >
-                                        <option value="">
-                                            {lang === "1" ? "Bez Soft Touch" : "No Soft Touch"}
-                                        </option>
-                                        <option value="soft_touch">
-                                            {lang === "1" ? "Zewnątrz" : "Outside"}
-                                        </option>
-                                    </select>
                                 </div>
                             )}
                         </div>

@@ -164,7 +164,7 @@ export const DashboardPages = ({
                 return;
             }
         } else {
-            const clientDiv = document.querySelector(`#${user_id}`);
+            const clientDiv = document.getElementById(user_id) as HTMLDivElement;
             cup_pricing = (clientDiv?.querySelector("#cup_pricing") as HTMLSelectElement)?.value;
             color_pricing = (clientDiv?.querySelector("#color_pricing") as HTMLSelectElement).value;
             salesman_id = (clientDiv?.querySelector("#assigned_salesman") as HTMLSelectElement)
@@ -621,7 +621,7 @@ export const DashboardPages = ({
                                 .map((client) => (
                                     <ul key={client.user_id}>
                                         <form
-                                            id={client.user_id}
+                                            // id={client.user_id}
                                             onSubmit={(e) => handleActication(client.user_id, e)}
                                             className="flex flex-row w-max"
                                         >

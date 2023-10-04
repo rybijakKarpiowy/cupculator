@@ -139,6 +139,7 @@ export const EditUserPopup = ({
                 <ul className="flex flex-row min-w-max">
                     <li className="border-r border-black w-24 text-center">
                         <input
+                            disabled={loading}
                             type="text"
                             defaultValue={client.first_name}
                             name="first_name"
@@ -147,6 +148,7 @@ export const EditUserPopup = ({
                     </li>
                     <li className=" border-r border-black w-24 text-center">
                         <input
+                            disabled={loading}
                             type="text"
                             defaultValue={client.last_name}
                             name="last_name"
@@ -155,6 +157,7 @@ export const EditUserPopup = ({
                     </li>
                     <li className=" border-r border-black w-64 text-center">
                         <input
+                            disabled={loading}
                             type="text"
                             defaultValue={client.company_name}
                             name="company_name"
@@ -163,6 +166,7 @@ export const EditUserPopup = ({
                     </li>
                     <li className=" border-r border-black w-64 text-center">
                         <input
+                            disabled={loading}
                             type="text"
                             defaultValue={client.adress}
                             name="adress"
@@ -171,6 +175,7 @@ export const EditUserPopup = ({
                     </li>
                     <li className=" border-r border-black w-24 text-center">
                         <input
+                            disabled={loading}
                             type="text"
                             defaultValue={client.postal_code}
                             name="postal_code"
@@ -179,6 +184,7 @@ export const EditUserPopup = ({
                     </li>
                     <li className=" border-r border-black w-32 text-center">
                         <input
+                            disabled={loading}
                             type="text"
                             defaultValue={client.city}
                             name="city"
@@ -187,6 +193,7 @@ export const EditUserPopup = ({
                     </li>
                     <li className=" border-r border-black w-32 text-center">
                         <input
+                            disabled={loading}
                             type="text"
                             defaultValue={client.region}
                             name="region"
@@ -195,6 +202,7 @@ export const EditUserPopup = ({
                     </li>
                     <li className=" border-r border-black w-48 text-center">
                         <input
+                            disabled={loading}
                             type="text"
                             defaultValue={client.phone}
                             name="phone"
@@ -203,6 +211,7 @@ export const EditUserPopup = ({
                     </li>
                     <li className=" border-r border-black w-48 text-center">
                         <input
+                            disabled={loading}
                             type="text"
                             defaultValue={client.NIP}
                             name="NIP"
@@ -221,6 +230,7 @@ export const EditUserPopup = ({
                     </li>
                     <li className=" border-r border-black w-32 text-center">
                         <input
+                            disabled={loading}
                             type="text"
                             defaultValue={client.country}
                             name="country"
@@ -229,6 +239,7 @@ export const EditUserPopup = ({
                     </li>
                     <li className=" border-r border-black w-64 text-center">
                         <input
+                            disabled={loading}
                             type="text"
                             defaultValue={client.email}
                             name="email"

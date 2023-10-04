@@ -631,5 +631,5 @@ export const activationEu =
     "            </table>" +
     "        </div>" +
     "    </body>" +
-    "</html" +
+    "</html>" +
     "";

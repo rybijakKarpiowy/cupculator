@@ -223,6 +223,11 @@ export const users_restricted = pgTable("users_restricted", {
     warehouse_acces: warehouseAccesEnum("warehouse_acces"),
 });
 
+export const admin_emails = pgTable("admin_emails", {
+    id: serial("id").primaryKey().notNull(),
+    email: text("email").unique().notNull(),
+})
+
 export const cupPricingRelations = relations(cup_pricings, ({ one }) => ({
     cup: one(cups, {
         fields: [cup_pricings.cup_id],

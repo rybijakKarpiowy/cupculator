@@ -177,6 +177,22 @@ export default async function Dashboard({
         return;
     }
 
+    // Get admin emails
+    const { data: adminEmails, error: adminEmailsError } = await pgsql.query.admin_emails
+        .findMany()
+        .then((data) => ({ data, error: null }))
+        .catch((error) => ({ data: null, error }));
+
+    if (adminEmailsError || !adminEmails) {
+        toast.error("Coś poszło nie tak (brak adresów email adminów)", {
+            autoClose: 3000,
+        });
+        setTimeout(() => {
+            redirect(`/?lang=${lang}&cup=${cup}`);
+        }, 3000);
+        return;
+    }
+
     return (
         <DashboardPages
             user={user}
@@ -188,6 +204,7 @@ export default async function Dashboard({
             restrictions={restrictions}
             productsCard={productsCard}
             scrapersDataFinal={scrWarehouses}
+            adminEmails={adminEmails.map((item) => item.email)}
         />
     );
 }

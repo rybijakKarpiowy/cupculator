@@ -9,6 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { ProductsCardTab } from "./dashboardPages/productsCardTab";
 import { ScrapersTab } from "./dashboardPages/scrapersTab";
 import { EditUserPopup } from "./dashboardPages/components/editUserPopup";
+import { AdminEmailsTab } from "./dashboardPages/adminEmailsTab";
 
 export const DashboardPages = ({
     clientsInput,
@@ -20,6 +21,7 @@ export const DashboardPages = ({
     restrictions,
     productsCard,
     scrapersDataFinal,
+    adminEmails,
 }: {
     clientsInput?: Client[];
     adminsAndSalesmenInput?: Client[];
@@ -40,6 +42,7 @@ export const DashboardPages = ({
         cup_id: number;
         scrapers: { provider: string; code_link: string }[];
     }[];
+    adminEmails: string[];
 }) => {
     const [chosenTab, setChosenTab] = useState<
         | "activationRequests"
@@ -50,6 +53,7 @@ export const DashboardPages = ({
         | "restrictions"
         | "productsCard"
         | "scrapers"
+        | "adminEmails"
     >("activationRequests");
     const [loading, setLoading] = useState(false);
     const [addAdmin, setAddAdmin] = useState(false);
@@ -562,6 +566,14 @@ export const DashboardPages = ({
                             onClick={() => setChosenTab("scrapers")}
                         >
                             Scrapery
+                        </button>
+                        <button
+                            className={`${
+                                chosenTab === "adminEmails" ? "bg-slate-400" : "bg-slate-300"
+                            } px-2 rounded-md`}
+                            onClick={() => setChosenTab("adminEmails")}
+                        >
+                            Emaile adminów
                         </button>
                     </>
                 )}
@@ -1704,6 +1716,9 @@ export const DashboardPages = ({
             )}
             {user?.role === "Admin" && chosenTab === "scrapers" && (
                 <ScrapersTab scrapersDataInput={scrapersData} />
+            )}
+            {user?.role === "Admin" && chosenTab === "adminEmails" && (
+                <AdminEmailsTab adminEmails={adminEmails} />
             )}
         </div>
     );

@@ -208,6 +208,7 @@ export const users = pgTable("users", {
     eu: boolean("eu").notNull(),
     country: text("country").notNull(),
     email: text("email").notNull(),
+    created_at: timestamp("created_at", { withTimezone: true, mode: "string" }),
 });
 
 export const users_restricted = pgTable("users_restricted", {
@@ -226,7 +227,7 @@ export const users_restricted = pgTable("users_restricted", {
 export const admin_emails = pgTable("admin_emails", {
     id: serial("id").primaryKey().notNull(),
     email: text("email").unique().notNull(),
-})
+});
 
 export const cupPricingRelations = relations(cup_pricings, ({ one }) => ({
     cup: one(cups, {

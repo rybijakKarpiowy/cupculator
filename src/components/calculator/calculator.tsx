@@ -172,6 +172,12 @@ export const Calculator = ({
                     );
                     return;
                 } else if (amount && amount < 216 && cupConfig.imprintColors > 1) {
+                    if (
+                        Math.max(amounts.amount1 || 0, amounts.amount2 || 0, amounts.amount3 || 0) <
+                        216
+                    ) {
+                        setCupConfig({ ...cupConfig, imprintColors: 1 });
+                    }
                     toast.warn(
                         lang === "1"
                             ? "Druk bezpośredni powyżej jednego koloru jest niedostępny dla zamówień poniżej 216 sztuk"
@@ -923,10 +929,15 @@ export const Calculator = ({
                                     >
                                         {cupConfig.imprintType &&
                                             cupConfig.imprintType === "direct_print" &&
-                                            [...Array(3)].map(
+                                            [...Array(4)].map(
                                                 (_, index) => (
-                                                    (index += 2),
-                                                    (
+                                                    (index += 1),
+                                                    index > 1 &&
+                                                    Math.max(
+                                                        amounts.amount1 || 0,
+                                                        amounts.amount2 || 0,
+                                                        amounts.amount3 || 0
+                                                    ) < 216 ? null : (
                                                         <option key={index} value={index}>
                                                             {index.toString()}
                                                         </option>

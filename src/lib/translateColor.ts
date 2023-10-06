@@ -1,6 +1,6 @@
 export const translateColor = (colorInput: string): string => {
     let color: string = colorInput;
-    if (colorInput.includes("_")) {
+    if (colorInput.includes("-") || colorInput.includes("_")) {
         color = colorInput.trim().replace(" ", "");
     }
 
@@ -71,6 +71,8 @@ export const translateColor = (colorInput: string): string => {
             return "coral";
         case "ciemnogranatowy":
             return "darknavy";
+        case "ciemnozielony":
+            return "darkgreen";
         default:
             return color;
     }

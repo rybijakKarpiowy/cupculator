@@ -184,7 +184,10 @@ export default function AccountDetails() {
             setLoading(false);
             return;
         }
-        if (!/^[0-9 ]+$/g.test(userData.NIP) || (userData.NIP.length !== 10 && lang === "1")) {
+
+        const eu = userData.NIPprefix === "PL" ? false : true;
+
+        if (!/^[0-9 ]+$/g.test(userData.NIP) || (userData.NIP.length !== 10 && !eu)) {
             toast.warn(`${lang === "1" ? "Niepoprawny NIP!" : "Invalid NIP!"}`);
             setLoading(false);
             return;
@@ -193,8 +196,6 @@ export default function AccountDetails() {
         await fetch("/api/userdatacheck", {
             method: "GET",
         });
-
-        const eu = userData.NIPprefix === "PL" ? false : true;
 
         const completeAccDetailsRes = await fetch("/api/completeaccdetails", {
             method: "POST",

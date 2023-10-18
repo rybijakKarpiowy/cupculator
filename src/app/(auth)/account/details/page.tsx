@@ -149,7 +149,27 @@ export default function AccountDetails() {
             return;
         }
         // region validation
-        if (!/^[a-zA-ZąćęłńóśźżĄĆĘŁŃÓŚŹŻ ]+$/g.test(userData.region) && lang === "1") {
+        if (
+            ![
+                "Dolnośląskie",
+                "Kujawsko-pomorskie",
+                "Lubelskie",
+                "Lubuskie",
+                "Łódzkie",
+                "Małopolskie",
+                "Mazowieckie",
+                "Opolskie",
+                "Podkarpackie",
+                "Podlaskie",
+                "Pomorskie",
+                "Śląskie",
+                "Świętokrzyskie",
+                "Warmińsko-mazurskie",
+                "Wielkopolskie",
+                "Zachodniopomorskie",
+            ].includes(userData.region) &&
+            lang === "1"
+        ) {
             toast.warn("Niepoprawne województwo!");
             setLoading(false);
             return;

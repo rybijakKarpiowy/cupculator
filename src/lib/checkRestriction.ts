@@ -25,21 +25,25 @@ export const checkRestriction = ({
 
         for (const element of imprintTypeRestriction) {
             const restr = element.anotherValue;
-            if (imprintType === "digital_print") {
-            }
             switch (restr) {
                 case "trend_color_inside":
                     if (cupConfig.trend_color === "inside") return true;
+                    break;
                 case "trend_color_outside":
                     if (cupConfig.trend_color === "outside") return true;
+                    break;
                 case "trend_color_both":
                     if (cupConfig.trend_color === "both") return true;
+                    break;
                 case "trend_color_lowered_edge":
                     if (cupConfig.trend_color === "lowered_edge") return true;
+                    break;
                 case "soft_touch":
                     if (cupConfig.soft_touch) return true;
+                    break;
                 case "pro_color":
                     if (cupConfig.pro_color) return true;
+                    break;
                 // case "nadruk_wewnatrz_na_sciance":
                 //     if (!!cupConfig.nadruk_wewnatrz_na_sciance) return true;
                 // case "nadruk_na_uchu":

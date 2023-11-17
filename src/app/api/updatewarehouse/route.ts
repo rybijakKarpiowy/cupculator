@@ -52,6 +52,9 @@ export const GET = async (req: NextRequest) => {
     const { data: ICLdata, error: ICLErrorLinks } = await getICLWarehouse(ICLCups);
     const { data: QBSdata, error: QBSErrorPages } = await getQBSWarehouse(QBSCups);
 
+    console.log(ICLdata, "ICLdata");
+    console.log(QBSdata, "QBSdata");
+
     const allCupsData = [
         ...(ICLdata.filter((item) => typeof item.amount === "number") as {
             provider: string;
@@ -83,6 +86,7 @@ export const GET = async (req: NextRequest) => {
         .returning()
         .then(() => ({ error: null }))
         .catch((error) => ({ error }));
+    console.log(error2, "error2");
     if (error2) {
         console.log(error2);
         return NextResponse.json(error2.message, { status: 500 });

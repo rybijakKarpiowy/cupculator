@@ -18,7 +18,9 @@ export const getQBSWarehouse = async (cups: { cup_id: number; code: string }[]) 
 
     const pagesPromises = await Promise.allSettled(
         allPages.map(async (page) => {
-            const res = await fetch(`https://qubarts.pl/products-page/${page}/`);
+            const res = await fetch(`https://qubarts.pl/products-page/${page}/`, {
+                cache: "no-cache",
+            });
             if (!res.ok) {
                 return { error: page.toString() };
             }

@@ -20,7 +20,7 @@ export const getICLWarehouse = async (cups: { cup_id: number; link: string }[]) 
         return acc;
     }, []);
 
-    const cupPromises: PromiseSettledResult<
+    const cupPromises: Promise<
         | {
               error: string;
               body?: undefined;
@@ -34,25 +34,40 @@ export const getICLWarehouse = async (cups: { cup_id: number; link: string }[]) 
     >[] = [];
 
     for (const chunk of cupChunks) {
-        const chunkPromises = await Promise.allSettled(
-            chunk.map(async (cup) => {
+        const chunkPromises = chunk.map(async (cup) => {
+            const cupPromise = new Promise<
+                | {
+                      error: string;
+                      body?: undefined;
+                      link?: undefined;
+                  }
+                | {
+                      body: string;
+                      link: string;
+                      error?: undefined;
+                  }
+            >(async (resolve) => {
                 const res = await fetch(cup.link, {
                     headers: {
                         cookie: cookie || "",
                     },
+                    cache: "no-cache",
                 });
                 if (!res.ok) {
-                    return { error: cup.link };
+                    resolve({ error: cup.link });
                 }
                 const raw = await res.text();
-                return { body: raw, link: cup.link };
-            })
-        );
+                resolve({ body: raw, link: cup.link });
+            });
+            return cupPromise;
+        });
         cupPromises.push(...chunkPromises);
     }
 
+    const promisesSettled = await Promise.allSettled(cupPromises);
+
     const cupPagesAndErrors = (
-        cupPromises.filter((promise) => promise.status === "fulfilled") as {
+        promisesSettled.filter((promise) => promise.status === "fulfilled") as {
             status: "fulfilled";
             value: { body: string; link: string } | { error: string };
         }[]
@@ -82,16 +97,22 @@ export const getICLWarehouse = async (cups: { cup_id: number; link: string }[]) 
                 provider: "ICL",
                 code_link: cup.link,
                 cup_id: cup.cup_id,
-                updated_at: new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 19).replace("T", " "),
+                updated_at: new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000)
+                    .toISOString()
+                    .slice(0, 19)
+                    .replace("T", " "),
                 amount: "error",
             };
         }
-        
+
         return {
             provider: "ICL",
             code_link: cup.link,
             cup_id: cup.cup_id,
-            updated_at: new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000).toISOString().slice(0, 19).replace("T", " "),
+            updated_at: new Date(new Date().getTime() - new Date().getTimezoneOffset() * 60000)
+                .toISOString()
+                .slice(0, 19)
+                .replace("T", " "),
             amount: cupData.amount,
         };
     });

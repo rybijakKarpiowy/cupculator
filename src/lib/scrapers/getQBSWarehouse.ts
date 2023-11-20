@@ -16,21 +16,24 @@ export const getQBSWarehouse = async (cups: { cup_id: number; code: string }[]) 
         allPages.push(i);
     }
 
-    const pagesPromises = await Promise.allSettled(
-        allPages.map(async (page) => {
+    const pagesPromises = allPages.map(async (page) => {
+        const pagePromise = new Promise<string | { error: string }>(async (resolve) => {
             const res = await fetch(`https://qubarts.pl/products-page/${page}/`, {
                 cache: "no-cache",
             });
             if (!res.ok) {
-                return { error: page.toString() };
+                resolve({ error: page.toString() });
             }
             const raw = await res.text();
-            return raw;
-        })
-    );
+            return resolve(raw);
+        });
+        return pagePromise;
+    });
+
+    const promisesSettled = await Promise.allSettled(pagesPromises);
 
     const allPagesFullfilled = (
-        pagesPromises.filter((promise) => promise.status === "fulfilled") as {
+        promisesSettled.filter((promise) => promise.status === "fulfilled") as {
             status: "fulfilled";
             value: string | { error: string };
         }[]

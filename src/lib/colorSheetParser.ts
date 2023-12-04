@@ -22,7 +22,7 @@ export const colorSheetParser = async (sheet: GoogleSpreadsheetWorksheet) => {
             row.push("0");
         }
         const obj = {
-            colorCount: row[0],
+            colorCount: row[0].split(",")[0].split(".")[0],
             prepCost: parseFloat(row[1].replace(",", ".")),
             nextOrderCost: parseFloat(row[2].replace(",", ".")),
             prices: {
@@ -71,7 +71,7 @@ export const colorSheetParser = async (sheet: GoogleSpreadsheetWorksheet) => {
             row.push("0");
         }
         const obj = {
-            colorCount: row[0],
+            colorCount: row[0].split(",")[0].split(".")[0],
             prepCost: parseFloat(row[1].replace(",", ".")),
             nextOrderCost: parseFloat(row[2].replace(",", ".")),
             prices: {
@@ -120,7 +120,7 @@ export const colorSheetParser = async (sheet: GoogleSpreadsheetWorksheet) => {
             row.push("0");
         }
         const obj = {
-            colorCount: row[0],
+            colorCount: row[0].split(",")[0].split(".")[0],
             prepCost: parseFloat(row[1].replace(",", ".")),
             nextOrderCost: parseFloat(row[2].replace(",", ".")),
             prices: {
@@ -217,7 +217,7 @@ export const colorSheetParser = async (sheet: GoogleSpreadsheetWorksheet) => {
             row.push("0");
         }
         const obj = {
-            colorCount: row[0],
+            colorCount: row[0].split(",")[0].split(".")[0],
             prepCost: parseFloat(row[1].replace(",", ".")),
             nextOrderCost: parseFloat(row[2].replace(",", ".")),
             prices: {

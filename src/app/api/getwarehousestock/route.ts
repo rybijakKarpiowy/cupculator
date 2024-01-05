@@ -68,25 +68,13 @@ export const GET = async (req: NextRequest) => {
         return NextResponse.json({}, { status: 500 });
     }
 
-    const ICLstockRaw = scrapedStock.scraped_warehouses.find(
+    const ICLstock = scrapedStock.scraped_warehouses.find(
         (warehouse) => warehouse.provider === "ICL"
     );
-    const ICLstock = ICLstockRaw
-        ? {
-              amount: Math.max(ICLstockRaw.amount, 0),
-              updated_at: ICLstockRaw.updated_at,
-          }
-        : null;
 
-    const QBSstockRaw = scrapedStock.scraped_warehouses.find(
+    const QBSstock = scrapedStock.scraped_warehouses.find(
         (warehouse) => warehouse.provider === "QBS"
     );
-    const QBSstock = QBSstockRaw
-        ? {
-              amount: Math.max(QBSstockRaw.amount, 0),
-              updated_at: QBSstockRaw.updated_at,
-          }
-        : null;
 
     // fetch data from warehouse db
     const connectionConfig = {
@@ -116,7 +104,7 @@ export const GET = async (req: NextRequest) => {
                 return [];
             });
 
-    const actualStockRaw = warehouseRaw
+    const actualStock = warehouseRaw
         .filter((warehouse) => warehouse.warehouseId === 14)
         .reduce(
             (prev, curr) => {
@@ -127,9 +115,8 @@ export const GET = async (req: NextRequest) => {
             },
             { amount: 0, note: "" }
         );
-    const actualStock = { amount: Math.max(actualStockRaw.amount, 0), note: actualStockRaw.note };
 
-    const fictionalStockRaw = warehouseRaw
+    const fictionalStock = warehouseRaw
         .filter((warehouse) => warehouse.warehouseId === 19) // change 19 to actual warehouse id
         .reduce(
             (prev, curr) => {
@@ -139,7 +126,6 @@ export const GET = async (req: NextRequest) => {
             },
             { amount: 0 }
         );
-    const fictionalStock = { amount: Math.max(fictionalStockRaw.amount, 0) };
 
     if (user.role === "Admin" || user.role === "Salesman") {
         return NextResponse.json(
@@ -178,7 +164,10 @@ export const GET = async (req: NextRequest) => {
     if (user.warehouse_acces === "Actual") {
         return NextResponse.json(
             {
-                sum: (ICLstock?.amount || 0) + (QBSstock?.amount || 0) + (actualStock?.amount || 0),
+                sum: Math.max(
+                    (ICLstock?.amount || 0) + (QBSstock?.amount || 0) + (actualStock?.amount || 0),
+                    0
+                ),
             },
             { status: 200 }
         );
@@ -187,11 +176,13 @@ export const GET = async (req: NextRequest) => {
     if (user.warehouse_acces === "Fictional") {
         return NextResponse.json(
             {
-                sum:
+                sum: Math.max(
                     (ICLstock?.amount || 0) +
-                    (QBSstock?.amount || 0) +
-                    (actualStock?.amount || 0) +
-                    (fictionalStock?.amount || 0),
+                        (QBSstock?.amount || 0) +
+                        (actualStock?.amount || 0) +
+                        (fictionalStock?.amount || 0),
+                    0
+                ),
             },
             { status: 200 }
         );

@@ -18,6 +18,7 @@ export const WarehouseDisplay = ({
     const handleUpdate = async () => {
         setLoading(true);
         const res = await fetch("https://cupculatorbackend-production.up.railway.app/");
+        // const res = await fetch("http://localhost:5000/");
         const status = res.status;
         switch (status) {
             case 200:

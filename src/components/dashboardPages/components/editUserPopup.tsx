@@ -1,3 +1,5 @@
+"use client";
+
 import { Client } from "@/app/dashboard/page";
 import { validateInfo } from "@/lib/validateInfo";
 import { Dispatch, SetStateAction } from "react";
@@ -13,8 +15,8 @@ export const EditUserPopup = ({
     setClients,
 }: {
     client: Client;
-    parentDiv: HTMLDivElement;
-    editButton: HTMLButtonElement;
+    parentDiv: HTMLDivElement|null;
+    editButton: HTMLButtonElement|null;
     loading: boolean;
     setLoading: Dispatch<SetStateAction<boolean>>;
     clients: Client[];

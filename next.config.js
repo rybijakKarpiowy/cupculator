@@ -3,9 +3,6 @@
 const withFonts = require("next-fonts");
 
 const nextConfig = withFonts({
-    experimental: {
-        serverActions: true,
-    },
     images: {
         remotePatterns: [
             {

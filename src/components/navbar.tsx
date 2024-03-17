@@ -59,7 +59,7 @@ export const Navbar = ({
                         className="lg:-ml-[15px] float-left p-[15px] text-lg leading-5 h-[50px]"
                         href={`https://kubki.com.pl/?lang=${lang}`}
                     >
-                        <Image className="h-[80px] w-auto" src={logo20years} alt="Kubki.com.pl" />
+                        <Image className="h-[80px] w-auto" src={logo20years} alt="Kubki.com.pl" loading="lazy" />
                     </Link>
                 </div>
 

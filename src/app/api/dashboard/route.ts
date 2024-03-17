@@ -3,7 +3,7 @@ import { baseUrl } from "@/app/baseUrl";
 import { pgsql } from "@/database/pgsql";
 
 export const POST = async (req: NextRequest) => {
-    const { auth_id, key } = (await req.json()) as { auth_id?: string; key?: string };
+    const { auth_id, key, clientsToo, salesmenToo } = (await req.json()) as { auth_id?: string; key?: string, clientsToo: boolean, salesmenToo: boolean};
 
     if (!auth_id || key !== process.env.SERVER_KEY) {
         return NextResponse.redirect(new URL("/login", baseUrl));
@@ -67,10 +67,10 @@ export const POST = async (req: NextRequest) => {
     const userInfo = users?.find((user) => user.user_id === auth_id);
 
     if (roleData[0].role == "Admin") {
-        return NextResponse.json({ clients, adminsAndSalesmen, userInfo });
+        return NextResponse.json({ ...(clientsToo && {clients}), ...(salesmenToo && {adminsAndSalesmen}), userInfo });
     }
 
     if (roleData[0].role == "Salesman") {
-        return NextResponse.json({ clients, userInfo });
+        return NextResponse.json({ ...(clientsToo && {clients}), userInfo });
     }
 };

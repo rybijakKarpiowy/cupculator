@@ -1,6 +1,6 @@
 import { Navbar } from "@/components/navbar";
 import "./globals.css";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { Database } from "@/database/types";
 import { cookies } from "next/dist/client/components/headers";
@@ -12,7 +12,11 @@ export const dynamic = "force-dynamic";
 export const metadata: Metadata = {
     title: "Kalkulator",
     description: "Kalulator do obliczania cen kubków",
-    viewport: "width=1920, initial-scale=1",
+};
+
+export const viewport: Viewport = {
+    width: 1920,
+    initialScale: 1,
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {

@@ -33,27 +33,18 @@ export const color_pricings = pgTable(
     {
         id: serial("id").primaryKey().notNull(),
         pricing_name: text("pricing_name").notNull(),
-        // TODO: failed to parse database type 'json[]'
         transfer_plus: json("transfer_plus").array().notNull(),
-        // TODO: failed to parse database type 'json[]'
         polylux: json("polylux").array().notNull(),
-        // TODO: failed to parse database type 'json[]'
         direct_print: json("direct_print").array().notNull(),
-        // TODO: failed to parse database type 'json[]'
         trend_color: json("trend_color").array().notNull(),
-        // TODO: failed to parse database type 'json[]'
         pro_color: json("pro_color").array().notNull(),
-        // TODO: failed to parse database type 'json[]'
         deep_effect: json("deep_effect").array().notNull(),
         digital_print: json("digital_print").notNull(),
-        // TODO: failed to parse database type 'json[]'
         cardboard_print: json("cardboard_print").array().notNull(),
         soft_touch: json("soft_touch").notNull(),
-        // TODO: failed to parse database type 'json[]'
         deep_effect_plus: json("deep_effect_plus").array().notNull(),
         trend_color_lowered_edge: json("trend_color_lowered_edge").notNull(),
         additional_costs: json("additional_costs").notNull(),
-        // TODO: failed to parse database type 'json[]'
         cardboards: json("cardboards").array().notNull(),
     },
     (table) => {

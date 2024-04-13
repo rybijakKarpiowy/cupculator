@@ -5,7 +5,7 @@ import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getPricings, getUserData } from "../activationRequests/page";
 import { Client, User } from "../page";
-import { Clients } from "@/components/dashboardPages/clients";
+import { ClientsTabled } from "@/components/dashboardPages/clients/clientsTabled";
 
 const ClientsPage = async ({
     searchParams,
@@ -37,7 +37,7 @@ const ClientsPage = async ({
     return (
         <div>
             <DashBoardNav url={"/clients"} user={user} />
-            <Clients clientsInput={clients} salesmenEmails={salesmenEmails} available_cup_pricings={available_cup_pricings} available_color_pricings={available_color_pricings} />
+            <ClientsTabled clientsInput={clients} salesmenEmails={salesmenEmails} available_cup_pricings={available_cup_pricings} available_color_pricings={available_color_pricings} />
         </div>
     )
 };

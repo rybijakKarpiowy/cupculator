@@ -6,7 +6,7 @@ import { Database } from "@/database/types";
 import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
 import { cookies } from "next/headers";
 import { pgsql } from "@/database/pgsql";
-import { ProductsCardTab } from "@/components/dashboardPages/productsCardTab";
+import { ProductsCardTabled } from "@/components/dashboardPages/productsCard/productsCardTabled";
 
 const ProductsCardPage = async ({ searchParams }: { searchParams?: { [key: string]: string | undefined } }) => {
 	const lang = searchParams?.lang || "1";
@@ -44,7 +44,7 @@ const ProductsCardPage = async ({ searchParams }: { searchParams?: { [key: strin
 	return (
 		<div>
 			<DashBoardNav url={"/productsCard"} user={user} />
-			<ProductsCardTab cupsData={productsCard} />
+			<ProductsCardTabled cupsData={productsCard} />
 		</div>
 	);
 };

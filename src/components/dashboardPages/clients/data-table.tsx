@@ -13,7 +13,7 @@ import {
 } from "@tanstack/react-table";
 
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
@@ -29,7 +29,7 @@ interface DataTableProps<TData, TValue> {
 	available_cup_pricings: string[];
 	available_color_pricings: string[];
 	salesmenEmails: { email: string; user_id: string }[];
-	handleActivation: (user_id: string) => Promise<void>;
+	handleInstantChange: (user_id: string) => Promise<void>;
 	handleDeleteUser: (user_id: string) => Promise<void>;
 }
 
@@ -41,7 +41,7 @@ export function DataTable<TData extends ClientEntry, TValue>({
 	available_cup_pricings,
 	available_color_pricings,
 	salesmenEmails,
-	handleActivation,
+	handleInstantChange,
 	handleDeleteUser,
 }: DataTableProps<TData, TValue>) {
 	const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -78,10 +78,6 @@ export function DataTable<TData extends ClientEntry, TValue>({
 			columnVisibility,
 		},
 	});
-
-	useEffect(() => {
-		console.log(editingData);
-	}, [editingData]);
 
 	return (
 		<>
@@ -155,7 +151,7 @@ export function DataTable<TData extends ClientEntry, TValue>({
 														loading={loading}
 														pricing={row.original.cup_pricing}
 														available_pricings={available_cup_pricings}
-														handleActivation={handleActivation}
+														handleInstantChange={handleInstantChange}
 														user_id={row.original.user_id}
 													/>
 												);
@@ -166,7 +162,7 @@ export function DataTable<TData extends ClientEntry, TValue>({
 														loading={loading}
 														pricing={row.original.color_pricing}
 														available_pricings={available_color_pricings}
-														handleActivation={handleActivation}
+														handleInstantChange={handleInstantChange}
 														user_id={row.original.user_id}
 													/>
 												);
@@ -177,7 +173,7 @@ export function DataTable<TData extends ClientEntry, TValue>({
 														loading={loading}
 														salesman_id={row.original.assigned_salesman}
 														salesmenEmails={salesmenEmails}
-														handleActivation={handleActivation}
+														handleInstantChange={handleInstantChange}
 														user_id={row.original.user_id}
 													/>
 												);
@@ -187,7 +183,7 @@ export function DataTable<TData extends ClientEntry, TValue>({
 														key={cell.id}
 														loading={loading}
 														warehouse_acces={row.original.warehouse_acces}
-														handleActivation={handleActivation}
+														handleInstantChange={handleInstantChange}
 														user_id={row.original.user_id}
 													/>
 												);
@@ -329,7 +325,7 @@ export function DataTable<TData extends ClientEntry, TValue>({
 						) : (
 							<TableRow>
 								<TableCell colSpan={columns.length} className="h-24 text-center">
-									No results.
+									Brak danych.
 								</TableCell>
 							</TableRow>
 						)}
@@ -350,7 +346,7 @@ export function DataTable<TData extends ClientEntry, TValue>({
 
 const CupPricingCell = ({
 	loading,
-	handleActivation,
+	handleInstantChange,
 	pricing: cup_pricing,
 	available_pricings: available_cup_pricings,
 	user_id,
@@ -359,7 +355,7 @@ const CupPricingCell = ({
 		<select
 			id="cup_pricing"
 			disabled={loading}
-			onChange={() => handleActivation(user_id)}
+			onChange={() => handleInstantChange(user_id)}
 			className={`${loading && "bg-slate-400"}`}
 			defaultValue={cup_pricing ? cup_pricing : ""}
 		>
@@ -377,7 +373,7 @@ const CupPricingCell = ({
 
 const ColorPricingCell = ({
 	loading,
-	handleActivation,
+	handleInstantChange,
 	pricing: color_pricing,
 	available_pricings: available_color_pricings,
 	user_id,
@@ -386,7 +382,7 @@ const ColorPricingCell = ({
 		<select
 			id="color_pricing"
 			disabled={loading}
-			onChange={() => handleActivation(user_id)}
+			onChange={() => handleInstantChange(user_id)}
 			className={`${loading && "bg-slate-400"}`}
 			defaultValue={color_pricing ? color_pricing : ""}
 		>
@@ -402,12 +398,12 @@ const ColorPricingCell = ({
 	</td>
 );
 
-const SalesmanCell = ({ loading, handleActivation, salesman_id, salesmenEmails, user_id }: SalesmanCell) => (
+const SalesmanCell = ({ loading, handleInstantChange, salesman_id, salesmenEmails, user_id }: SalesmanCell) => (
 	<td className="p-4 align-middle [&:has([role=checkbox])]:pr-0">
 		<select
 			id="assigned_salesman"
 			disabled={loading}
-			onChange={() => handleActivation(user_id)}
+			onChange={() => handleInstantChange(user_id)}
 			className={`${loading && "bg-slate-400"}`}
 			defaultValue={salesman_id ? salesman_id : ""}
 		>
@@ -425,12 +421,12 @@ const SalesmanCell = ({ loading, handleActivation, salesman_id, salesmenEmails, 
 	</td>
 );
 
-const WarehouseCell = ({ loading, handleActivation, warehouse_acces, user_id }: WarehouseCell) => (
+const WarehouseCell = ({ loading, handleInstantChange, warehouse_acces, user_id }: WarehouseCell) => (
 	<td className="p-4 align-middle [&:has([role=checkbox])]:pr-0">
 		<select
 			id="warehouse_acces"
 			disabled={loading}
-			onChange={() => handleActivation(user_id)}
+			onChange={() => handleInstantChange(user_id)}
 			className={`${loading && "bg-slate-400"} text-center`}
 			defaultValue={warehouse_acces ? warehouse_acces : ""}
 		>
@@ -475,7 +471,6 @@ const ActionsCell = ({
 						type="button"
 						disabled={loading}
 						variant="destructive"
-						// @ts-ignore
 						onClick={() => handleDeleteUser(row.original.user_id)}
 					>
 						Usuń
@@ -609,7 +604,7 @@ const IdTranslate = {
 
 interface CPCInterface {
 	loading: boolean;
-	handleActivation: (user_id: string) => Promise<void>;
+	handleInstantChange: (user_id: string) => Promise<void>;
 	pricing: string;
 	available_pricings: string[];
 	user_id: string;
@@ -617,7 +612,7 @@ interface CPCInterface {
 
 interface SalesmanCell {
 	loading: boolean;
-	handleActivation: (user_id: string) => Promise<void>;
+	handleInstantChange: (user_id: string) => Promise<void>;
 	salesman_id: string | null;
 	salesmenEmails: { email: string; user_id: string }[];
 	user_id: string;
@@ -625,7 +620,7 @@ interface SalesmanCell {
 
 interface WarehouseCell {
 	loading: boolean;
-	handleActivation: (user_id: string) => Promise<void>;
+	handleInstantChange: (user_id: string) => Promise<void>;
 	warehouse_acces: "None" | "Actual" | "Fictional" | null;
 	user_id: string;
 }

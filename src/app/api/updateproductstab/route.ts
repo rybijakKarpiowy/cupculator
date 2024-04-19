@@ -37,7 +37,7 @@ export const POST = async (req: NextRequest) => {
         return NextResponse.redirect(new URL("/", baseUrl));
     }
 
-    const data = (await req.json()) as {
+    const data: Database["public"]["Tables"]["cups"]["Row"] = (await req.json()) as {
         id: number;
         supplier: string | null;
         supplier_code: string | null;
@@ -75,6 +75,14 @@ export const POST = async (req: NextRequest) => {
         zdobienie_paskiem_z_laczeniem: boolean;
         zdobienie_tapeta_na_barylce_I_stopien_trudnosci: boolean;
         zdobienie_tapeta_na_barylce_II_stopien_trudnosci: boolean;
+        category: string;
+		code: string;
+		color: string;
+		icon: string|null;
+		link: string;
+		material: string;
+		name: string;
+		volume: string;
     };
 
     if (!data) {

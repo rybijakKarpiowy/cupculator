@@ -8,7 +8,7 @@ export const POST = async (req: NextRequest) => {
     return new NextResponse(iconImg, {
         headers: {
             "Content-Type": "image/jpg",
-            "Cache-Control": "public, max-age=31536000, immutable",
+            "Cache-Control": "public, max-age=3600, immutable",
         },
     });
 };

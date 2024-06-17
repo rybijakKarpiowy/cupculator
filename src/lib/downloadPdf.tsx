@@ -37,7 +37,10 @@ export const downloadPdf = async ({
             body: JSON.stringify({ icon: selectedCup.icon }),
         });
         if (res.ok) {
+            console.log("icon received")
             iconImg = await res.blob();
+        } else {
+            console.log("icon not received")
         }
     }
 

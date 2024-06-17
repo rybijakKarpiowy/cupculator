@@ -36,11 +36,7 @@ export const PdfPage = ({
     clientPriceUnit: "zł" | "EUR";
     iconImg: Blob | null;
 }) => {
-    const [imageSourceUrl, setImageSourceUrl] = useState<string | null>(null);
-
-    if (iconImg && !imageSourceUrl) {
-        setImageSourceUrl(URL.createObjectURL(iconImg));
-    }
+    const [imageSourceUrl, setImageSourceUrl] = useState<string | null>(iconImg ? URL.createObjectURL(iconImg) : null);
 
     let calculatedPrices = {
         1: {

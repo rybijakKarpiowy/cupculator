@@ -4,6 +4,7 @@ export const POST = async (req: NextRequest) => {
     const { icon } = (await req.json()) as { icon: string }
 
     const url = new URL(icon)
+    url.hostname = "kubki.com.pl"
 
     const res = await fetch(url)
 

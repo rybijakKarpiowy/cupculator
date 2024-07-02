@@ -1,12 +1,14 @@
 import axios from "axios";
 import { NextRequest, NextResponse } from "next/server";
 
+
 export const POST = async (req: NextRequest) => {
     const { icon } = (await req.json()) as { icon: string }
+    const iconLink = icon.replace("kubki.com.pl", "94.152.130.243")
 
     const response = await axios({
         method: "get",
-        url: icon,
+        url: iconLink,
         headers: {
             "Host": "kubki.com.pl",
             "Cache-Control": "no-cache",

@@ -6,7 +6,9 @@ export const POST = async (req: NextRequest) => {
     const url = new URL(icon)
     url.hostname = "kubki.com.pl"
 
-    const res = await fetch(url)
+    const res = await fetch(url, {
+        cache: "no-cache",
+    })
 
     const iconBlob = await res.blob()
 

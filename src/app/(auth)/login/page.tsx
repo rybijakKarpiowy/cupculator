@@ -36,7 +36,7 @@ export default function Login() {
 
         if (data) {
             toast.success(lang === "1" ? "Zalogowano!": "Signed in!", { autoClose: 1000 });
-            setTimeout(()=>window.location.href = `/?cup=${cup}&lang=${lang}`, 1000);
+            setTimeout(() => window.location.replace(`/?cup=${cup}&lang=${lang}`), 1000);
             setLoading(false);
         }
     };

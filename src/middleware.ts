@@ -8,6 +8,7 @@ export async function middleware(req: NextRequest) {
     const searchParams = new URL(req.url).searchParams;
     let lang = searchParams.get("lang");
     let cup = searchParams.get("cup")?.trim().replaceAll(" ", "_");
+    const embed = searchParams.get("embed") == 'true' ? true : false;
     let setBaseParams = false;
 
     if (!lang || lang === "" || lang === "null" || lang === "undefined") {
@@ -28,13 +29,13 @@ export async function middleware(req: NextRequest) {
         if (["/resetpassword", "/account/details"].includes(req.nextUrl.pathname)) {
             if (setBaseParams) {
                 return NextResponse.redirect(
-                    new URL(`${req.nextUrl.pathname}?cup=${cup}&lang=${lang}`, baseUrl)
+                    new URL(`${req.nextUrl.pathname}?cup=${cup}&lang=${lang}&embed=${embed}`, baseUrl)
                 );
             }
         }
 
         if (["/login", "/recovery", "/register"].includes(req.nextUrl.pathname)) {
-            return NextResponse.redirect(new URL(`/?cup=${cup}&lang=${lang}`, baseUrl));
+            return NextResponse.redirect(new URL(`/?cup=${cup}&lang=${lang}&embed=${embed}`, baseUrl));
         }
 
         const userRoleRes = await fetch(new URL("/api/getuserrole", baseUrl), {
@@ -48,7 +49,7 @@ export async function middleware(req: NextRequest) {
                 return NextResponse.next();
             }
             return NextResponse.redirect(
-                new URL(`/account/details?cup=${cup}&lang=${lang}`, baseUrl)
+                new URL(`/account/details?cup=${cup}&lang=${lang}&embed=${embed}`, baseUrl)
             );
         }
 
@@ -74,7 +75,7 @@ export async function middleware(req: NextRequest) {
                 return NextResponse.next();
             }
             return NextResponse.redirect(
-                new URL(`/account/details?cup=${cup}&lang=${lang}`, baseUrl)
+                new URL(`/account/details?cup=${cup}&lang=${lang}&embed=${embed}`, baseUrl)
             );
         }
 
@@ -89,28 +90,28 @@ export async function middleware(req: NextRequest) {
                         return NextResponse.next();
                     }
                     return NextResponse.redirect(
-                        new URL(`/account/details?cup=${cup}&lang=${lang}`, baseUrl)
+                        new URL(`/account/details?cup=${cup}&lang=${lang}&embed=${embed}`, baseUrl)
                     );
                 }
             }
         }
 
         if ((!cup || cup === "" || cup === "null" || cup === "undefined") && data.role === "User") {
-            return NextResponse.redirect(new URL(`https://kubki.com.pl/Kubki?lang=${lang}`));
+            return NextResponse.redirect(new URL(`https://kubki.com.pl/Kubki?lang=${lang}&embed=${embed}`));
         }
 
         if (setBaseParams) {
             if (data.eu) {
                 lang = "2";
             }
-            return NextResponse.redirect(new URL(`?cup=${cup}&lang=${lang}`, req.url));
+            return NextResponse.redirect(new URL(`?cup=${cup}&lang=${lang}&embed=${embed}`, req.url));
         }
 
         return NextResponse.next();
     }
 
     if (!["/login", "/recovery", "/register", "/resetpassword"].includes(req.nextUrl.pathname)) {
-        return NextResponse.redirect(new URL(`/login?cup=${cup}&lang=${lang}`, baseUrl));
+        return NextResponse.redirect(new URL(`/login?cup=${cup}&lang=${lang}&embed=${embed}`, baseUrl));
     }
 
     return NextResponse.next();

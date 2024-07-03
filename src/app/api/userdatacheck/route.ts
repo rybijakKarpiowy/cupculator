@@ -23,10 +23,11 @@ export const GET = async (req: NextRequest) => {
     const params = req.nextUrl.searchParams;
     const lang = params.get("lang");
     const cup = params.get("cup");
+    const embed = params.get("embed") == 'true' ? true : false;
 
     if (!data || error || data.length > 0) {
         console.log(error);
-        return NextResponse.redirect(new URL(`/?cup=${cup}&lang=${lang}`, baseUrl));
+        return NextResponse.redirect(new URL(`/?cup=${cup}&lang=${lang}&embed=${embed}`, baseUrl));
     }
 
     return NextResponse.json({ status: 200 });

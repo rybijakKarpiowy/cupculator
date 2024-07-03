@@ -13,6 +13,7 @@ export default function Login() {
     const searchParams = useSearchParams();
     const lang = searchParams.get("lang") || "1";
     const cup = searchParams.get("cup")?.trim().replaceAll(" ", "_");
+    const embed = searchParams.get("embed") == 'true' ? true : false;
 
     const supabase = createClientComponentClient();
 
@@ -36,7 +37,7 @@ export default function Login() {
 
         if (data) {
             toast.success(lang === "1" ? "Zalogowano!": "Signed in!", { autoClose: 1000 });
-            setTimeout(()=>window.location.href = `/?cup=${cup}&lang=${lang}`, 1000);
+            setTimeout(()=>window.location.href = `/?cup=${cup}&lang=${lang}&embed=${embed}`, 1000);
             setLoading(false);
         }
     };
@@ -81,7 +82,7 @@ export default function Login() {
                 <span className="flex flex-col items-center">
                     {lang === "1" ? "Nie masz konta? " : "Do not have an account yet? "}
                     <Link
-                        href={`/register?cup=${cup}&lang=${lang}`}
+                        href={`/register?cup=${cup}&lang=${lang}&embed=${embed}`}
                         className="font-semibold text-black hover:text-[#c00418]"
                     >
                         {lang === "1" ? "Zarejestruj się" : "Sign up"}
@@ -90,7 +91,7 @@ export default function Login() {
                 <span className="flex flex-col items-center">
                     {lang === "1" ? "Zapomniałeś hasła?" : "Forgot password?"}
                     <Link
-                        href={`/recovery?cup=${cup}&lang=${lang}`}
+                        href={`/recovery?cup=${cup}&lang=${lang}&embed=${embed}`}
                         className="font-semibold text-black hover:text-[#c00418]"
                     >
                         {lang === "1" ? "Zresetuj hasło" : "Reset password"}

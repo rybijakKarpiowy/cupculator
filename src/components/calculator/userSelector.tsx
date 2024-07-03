@@ -12,12 +12,14 @@ export const UserSelector = ({
     allUsersData,
     cup,
     lang,
+    embed,
     additionalValues,
     restrictions
 }: {
     allUsersData: (Database["public"]["Tables"]["users"]["Row"] & pricingsInterface)[];
     cup: string;
     lang: "1" | "2";
+    embed: boolean;
     additionalValues: Database["public"]["Tables"]["additional_values"]["Row"];
     restrictions: Restriction[];
 }) => {
@@ -111,6 +113,7 @@ export const UserSelector = ({
                         cupData={selectedPricingsData.cupData}
                         colorPricing={selectedPricingsData.colorPricing}
                         lang={lang}
+                        embed={embed}
                         clientPriceUnit={selectedUserUnit}
                         additionalValues={additionalValues}
                         restrictions={restrictions}

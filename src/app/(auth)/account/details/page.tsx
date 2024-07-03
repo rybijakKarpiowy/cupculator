@@ -13,6 +13,7 @@ export default function AccountDetails() {
     const searchParams = useSearchParams();
     const lang = searchParams.get("lang") || "1";
     const cup = searchParams.get("cup")?.trim().replaceAll(" ", "_");
+    const embed = searchParams.get("embed") == 'true' ? true : false;
     const error_description = searchParams.get("error_description");
 
     useEffect(() => {
@@ -29,7 +30,7 @@ export default function AccountDetails() {
             }`,
             { autoClose: 3000 }
         );
-        setTimeout(() => (window.location.href = `/register?cup=${cup}&lang=${lang}`), 3000);
+        setTimeout(() => (window.location.href = `/register?cup=${cup}&lang=${lang}&embed=${embed}`), 3000);
     }
 
     const supabase = createClientComponentClient<Database>();
@@ -96,7 +97,7 @@ export default function AccountDetails() {
             toast.error(`${lang === "1" ? "Nie jesteś zalogowany!" : "You are not logged in!"}`, {
                 autoClose: 1000,
             });
-            setTimeout(() => (window.location.href = `/login?cup=${cup}&lang=${lang}`), 1000);
+            setTimeout(() => (window.location.href = `/login?cup=${cup}&lang=${lang}&embed=${embed}`), 1000);
             setLoading(false);
             return;
         }
@@ -274,7 +275,7 @@ export default function AccountDetails() {
                     : "Dear Client, We received your request to get an account and access to the calculator. Expect our confirmation of registration in next upcoming mail from us."
             }`
         );
-        setTimeout(() => (window.location.href = `/?cup=${cup}&lang=${lang}`), 5500);
+        setTimeout(() => (window.location.href = `/?cup=${cup}&lang=${lang}&embed=${embed}`), 5500);
         setLoading(false);
     };
 

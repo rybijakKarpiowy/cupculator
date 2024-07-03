@@ -21,6 +21,7 @@ export default function Register() {
     const searchParams = useSearchParams();
     const lang = searchParams.get("lang") || "1";
     const cup = searchParams.get("cup")?.trim().replaceAll(" ", "_");
+    const embed = searchParams.get("embed") == 'true' ? true : false;
 
     const supabase = createClientComponentClient();
 
@@ -101,7 +102,7 @@ export default function Register() {
             email: userData.email,
             password: userData.password,
             options: {
-                emailRedirectTo: new URL(`/?cup=${cup}&lang=${lang}`, baseUrl).href,
+                emailRedirectTo: new URL(`/?cup=${cup}&lang=${lang}&embed=${embed}`, baseUrl).href,
             },
         });
 
@@ -152,7 +153,7 @@ export default function Register() {
                         : "Registered successfully! Confirm your email address!"
                 }`
             );
-            setTimeout(() => (window.location.href = `/?cup=${cup}&lang=${lang}`), 5000);
+            setTimeout(() => (window.location.href = `/?cup=${cup}&lang=${lang}&embed=${embed}`), 5000);
             setLoading(false);
             return;
         }
@@ -276,7 +277,7 @@ export default function Register() {
                 <span className="flex flex-col items-center">
                     {lang === "1" ? "Masz już konto?" : "Already have an account?"}
                     <Link
-                        href={`/login?cup=${cup}&lang=${lang}`}
+                        href={`/login?cup=${cup}&lang=${lang}&embed=${embed}`}
                         className="font-semibold text-black hover:text-[#c00418]"
                     >
                         {lang === "1" ? "Zaloguj się" : "Sign in"}
@@ -285,7 +286,7 @@ export default function Register() {
                 <span className="flex flex-col items-center">
                     {lang === "1" ? "Zapomniałeś hasła?" : "Forgot password?"}
                     <Link
-                        href={`/recovery?cup=${cup}&lang=${lang}`}
+                        href={`/recovery?cup=${cup}&lang=${lang}&embed=${embed}`}
                         className="font-semibold text-black hover:text-[#c00418]"
                     >
                         {lang === "1" ? "Zresetuj hasło" : "Reset password"}

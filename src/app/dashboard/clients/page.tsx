@@ -10,20 +10,21 @@ import { ClientsTabled } from "@/components/dashboardPages/clients/clientsTabled
 const ClientsPage = async ({ searchParams }: { searchParams?: { [key: string]: string | undefined } }) => {
 	const lang = searchParams?.lang || "1";
 	const cup = searchParams?.cup?.trim().replaceAll(" ", "_") || "";
+	const embed = searchParams?.embed == 'true' ? true : false;
 
 	const supabase = createServerComponentClient<Database>({ cookies });
 	const authUser = (await supabase.auth.getUser()).data.user;
 
 	if (!authUser) {
-		window.location.href = `/?lang=${lang}&cup=${cup}`;
+		window.location.href = `/?lang=${lang}&cup=${cup}&embed=${embed}`;
 		return;
 	}
 
-	const { e, ...userData } = (await getUserData(authUser, lang, cup, true, true).catch((e) => {
+	const { e, ...userData } = (await getUserData(authUser, lang, cup, embed, true, true).catch((e) => {
 		return { e };
 	})) as { e?: any; user: User; clients: Client[]; adminsAndSalesmen?: Client[] };
 	if (e || !userData) {
-		redirect(`/?lang=${lang}&cup=${cup}`);
+		redirect(`/?lang=${lang}&cup=${cup}&embed=${embed}`);
 	}
 
 	const { user, clients, adminsAndSalesmen } = userData;

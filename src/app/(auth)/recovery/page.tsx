@@ -21,6 +21,7 @@ export default function Recovery() {
     const searchParams = useSearchParams();
     const lang = searchParams.get("lang") || "1";
     const cup = searchParams.get("cup")?.trim().replaceAll(" ", "_");
+    const embed = searchParams.get("embed") == 'true' ? true : false;
 
     const supabase = createClientComponentClient();
 
@@ -56,7 +57,7 @@ export default function Recovery() {
                     ? "Wysłano link do zresetowania hasła!"
                     : "Sent a link to reset your password!"
             );
-            setTimeout(() => (window.location.href = `/?cup=${cup}&lang=${lang}`), 5000);
+            setTimeout(() => (window.location.href = `/?cup=${cup}&lang=${lang}&embed=${embed}`), 5000);
             setLoading(false);
         }
     };
@@ -92,7 +93,7 @@ export default function Recovery() {
                 <span className="flex flex-col items-center">
                     {lang === "1" ? "Nie masz konta? " : "Do not have an account yet? "}
                     <Link
-                        href={`/register?cup=${cup}&lang=${lang}`}
+                        href={`/register?cup=${cup}&lang=${lang}&embed=${embed}`}
                         className="font-semibold text-black hover:text-[#c00418]"
                     >
                         {lang === "1" ? "Zarejestruj się" : "Sign up"}
@@ -101,7 +102,7 @@ export default function Recovery() {
                 <span className="flex flex-col items-center">
                     {lang === "1" ? "Pamiętasz hasło?" : "Remember your password?"}
                     <Link
-                        href={`/login?cup=${cup}&lang=${lang}`}
+                        href={`/login?cup=${cup}&lang=${lang}&embed=${embed}`}
                         className="font-semibold text-black hover:text-[#c00418]"
                     >
                         {lang === "1" ? "Zaloguj się" : "Sign in"}

@@ -23,6 +23,7 @@ export const Calculator = ({
     cupData,
     colorPricing,
     lang,
+    embed,
     clientPriceUnit,
     additionalValues,
     restrictions,
@@ -30,6 +31,7 @@ export const Calculator = ({
     cupData: Cup[];
     colorPricing: ColorPricing;
     lang: "1" | "2";
+    embed: boolean;
     clientPriceUnit: "zł" | "EUR";
     additionalValues: Database["public"]["Tables"]["additional_values"]["Row"];
     restrictions: Restriction[];

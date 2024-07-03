@@ -14,10 +14,11 @@ export const dynamic = "force-dynamic";
 export default async function Home({
     searchParams,
 }: {
-    searchParams: { cup: string; lang: string };
+    searchParams: { cup: string; lang: string, embed: string };
 }) {
     const lang = (searchParams.lang || "1") as "1" | "2";
     const cup = searchParams.cup?.trim().replaceAll(" ", "_") as string;
+    const embed = searchParams.embed == 'true' ? true : false;
 
     const supabase = createServerComponentClient<Database>({ cookies });
     const authUser = (await supabase.auth.getUser()).data.user;
@@ -121,6 +122,7 @@ export default async function Home({
                 cupData={cupData}
                 colorPricing={colorPricing}
                 lang={lang}
+                embed={embed}
                 clientPriceUnit={userData.eu ? "EUR" : "zł"}
                 additionalValues={additionalValues!}
                 restrictions={restrictions!}
@@ -155,6 +157,7 @@ export default async function Home({
             allUsersData={allUsersData}
             cup={cup}
             lang={lang}
+            embed={embed}
             additionalValues={additionalValues!}
             restrictions={restrictions!}
         />

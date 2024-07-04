@@ -34,9 +34,10 @@ export const PdfPage = ({
     cupConfig: CupConfigInterface;
     lang: "1" | "2";
     clientPriceUnit: "zł" | "EUR";
-    iconImg: Blob | null;
+    // iconImg: Blob | null;
+    iconImg: string | null
 }) => {
-    const [imageSourceUrl, setImageSourceUrl] = useState<string | null>(iconImg ? URL.createObjectURL(iconImg) : null);
+    // const [imageSourceUrl, setImageSourceUrl] = useState<string | null>(iconImg ? URL.createObjectURL(iconImg) : null);
 
     let calculatedPrices = {
         1: {
@@ -164,7 +165,8 @@ export const PdfPage = ({
                 </Text>
                 <View style={{ display: "flex", flexDirection: "row" }}>
                     <Image
-                        src={imageSourceUrl || "/noimage.png"}
+                        // src={imageSourceUrl || "/noimage.png"}
+                        src={iconImg || "/noimage.png"}
                         style={{ height: "125px", width: "100px", objectFit: "contain" }}
                     />
                     <View style={{ display: "flex", flexDirection: "column", marginLeft: 10 }}>

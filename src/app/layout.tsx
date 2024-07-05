@@ -19,7 +19,7 @@ export const viewport: Viewport = {
     initialScale: 1,
 };
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children, params }: { children: React.ReactNode, params: { embed: string } }) {
     const supabase = createServerComponentClient<Database>({ cookies });
     const authUser = (await supabase.auth.getUser()).data.user?.id;
     let userRestrictedData = null;
@@ -40,11 +40,13 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         }
     }
 
+    const embed = params.embed == "true"
+
     return (
         <html lang="en">
-            <body className="overflow-y-scroll bg-[url('https://kubki.com.pl/img/bg.jpg')] bg-repeat-x bg-[center_115px] bg-white">
+            <body className={`overflow-y-scroll bg-[url('https://kubki.com.pl/img/bg.jpg')] bg-repeat-x ${embed ? "bg-center" : "bg-[center_115px]"} bg-white`}>
                 <Navbar authUser={authUser} role={userRestrictedData?.role} />
-                <main className="mt-[115px]">{children}</main>
+                <main className={!embed ? "mt-[115px]" : ""}>{children}</main>
                 <ToastContainer
                     position="bottom-center"
                     autoClose={5000}

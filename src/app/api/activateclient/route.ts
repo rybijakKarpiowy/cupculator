@@ -1,6 +1,4 @@
 import { NextRequest, NextResponse } from "next/server";
-import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
-import { Database } from "@/database/types";
 import sgmail from "@sendgrid/mail";
 import { baseUrl } from "@/app/baseUrl";
 import { activationEu } from "@/app/emails/activationEu";
@@ -8,10 +6,13 @@ import { activationPl } from "@/app/emails/activationPl";
 import { pgsql } from "@/database/pgsql";
 import * as schema from "@/database/schema";
 import { eq } from "drizzle-orm";
+import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
+import { cookies } from "next/headers";
+import { Database } from "@/database/types";
 
 export const POST = async (req: NextRequest) => {
     const res = NextResponse.next();
-    const clientSupabase = createMiddlewareClient<Database>({ req, res });
+    const clientSupabase = createRouteHandlerClient<Database>({ cookies })
     const auth_id = (await clientSupabase.auth.getSession()).data.session?.user.id;
 
     if (!auth_id) {

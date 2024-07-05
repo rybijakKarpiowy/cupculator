@@ -1,15 +1,15 @@
-import { supabase } from "@/database/supabase";
 import { Database } from "@/database/types";
-import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
+import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
 import { NextRequest, NextResponse } from "next/server";
 import { baseUrl } from "@/app/baseUrl";
 import { pgsql } from "@/database/pgsql";
 import * as schema from "@/database/schema";
 import { eq } from "drizzle-orm";
+import { cookies } from "next/headers";
 
 export const DELETE = async (req: NextRequest) => {
     const res = NextResponse.next();
-    const clientSupabase = createMiddlewareClient<Database>({ req, res });
+    const clientSupabase = createRouteHandlerClient<Database>({ cookies })
     const auth_id = (await clientSupabase.auth.getSession()).data.session?.user.id;
 
     if (!auth_id) {
@@ -59,7 +59,7 @@ export const DELETE = async (req: NextRequest) => {
 
 export const POST = async (req: NextRequest) => {
     const res = NextResponse.next();
-    const clientSupabase = createMiddlewareClient<Database>({ req, res });
+    const clientSupabase = createRouteHandlerClient<Database>({ cookies })
     const auth_id = (await clientSupabase.auth.getSession()).data.session?.user.id;
 
     if (!auth_id) {

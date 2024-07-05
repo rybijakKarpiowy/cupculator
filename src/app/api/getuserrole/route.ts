@@ -1,12 +1,13 @@
 import { baseUrl } from "@/app/baseUrl";
 import { pgsql } from "@/database/pgsql";
 import { Database } from "@/database/types";
-import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
+import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
+import { cookies } from "next/headers";
 import { NextRequest, NextResponse } from "next/server";
 
 export const GET = async (req: NextRequest) => {
     const res = NextResponse.next();
-    const clientSupabase = createMiddlewareClient<Database>({ req, res });
+    const clientSupabase = createRouteHandlerClient<Database>({ cookies })
     const auth_id = (await clientSupabase.auth.getSession()).data.session?.user.id;
 
     if (!auth_id) {

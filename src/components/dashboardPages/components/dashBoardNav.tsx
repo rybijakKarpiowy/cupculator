@@ -4,9 +4,14 @@ import { useState } from "react";
 
 export const DashBoardNav = ({url, user}:{url:string, user:User}) => {
     const [chosenTab, _] = useState<string>(url);
+    
+    const searchParams = new URLSearchParams(window.location.search);
+    const lang = searchParams.get("lang") || "1";
+    const cup = searchParams.get("cup")?.trim().replaceAll(" ", "_") || "";
+    const embed = searchParams.get("embed") == 'true' ? true : false;
 
     const setChosenTab = (tab: string) => {
-        window.location.href = `/dashboard/${tab}`;
+        window.location.href = `/dashboard/${tab}?cup=${cup}&lang=${lang}&embed=${embed}`;
     };
 
     return (

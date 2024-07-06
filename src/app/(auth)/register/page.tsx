@@ -1,11 +1,13 @@
 "use client";
 
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createClient } from "@/database/supabase/client";
+import { revalidatePath } from "next/cache";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { signup } from "../login/actions";
 
 const baseUrl = (
     process.env.PROD === "true"
@@ -21,8 +23,13 @@ export default function Register() {
     const searchParams = useSearchParams();
     const lang = searchParams.get("lang") || "1";
     const cup = searchParams.get("cup")?.trim().replaceAll(" ", "_");
+    const embed = searchParams.get("embed") == 'true' ? true : false;
 
-    const supabase = createClientComponentClient();
+    const supabase = createClient();
+
+    useEffect(() => {
+        document.body.dataset.embed = embed ? "true" : "false";
+    }, []);
 
     const handleSubmit = async (event: React.FormEvent<HTMLButtonElement>) => {
         setLoading(true);
@@ -101,7 +108,7 @@ export default function Register() {
             email: userData.email,
             password: userData.password,
             options: {
-                emailRedirectTo: new URL(`/?cup=${cup}&lang=${lang}`, baseUrl).href,
+                emailRedirectTo: new URL(`/?cup=${cup}&lang=${lang}&embed=${embed}`, baseUrl).href,
             },
         });
 
@@ -152,7 +159,9 @@ export default function Register() {
                         : "Registered successfully! Confirm your email address!"
                 }`
             );
-            setTimeout(() => (window.location.href = `/?cup=${cup}&lang=${lang}`), 5000);
+            // revalidatePath('/', 'layout')
+            signup(new FormData());
+            setTimeout(() => (window.location.href = `/?cup=${cup}&lang=${lang}&embed=${embed}`), 5000);
             setLoading(false);
             return;
         }
@@ -160,9 +169,9 @@ export default function Register() {
 
     return (
         <div className="pt-24">
-            <form className="flex flex-col content-center gap-4" id="form">
-                <div className="flex flex-row justify-end pr-[42%] items-center gap-4">
-                    <label htmlFor="email" className="text-lg">
+            <form className="flex flex-col items-center gap-4" id="form">
+                <div className="flex flex-row justify-end items-center gap-4 relative">
+                    <label htmlFor="email" className="text-lg absolute -left-36">
                         Email:
                     </label>
                     <input
@@ -173,8 +182,8 @@ export default function Register() {
                         disabled={loading}
                     />
                 </div>
-                <div className="flex flex-row justify-end pr-[42%] items-center gap-4">
-                    <label htmlFor="password" className="text-lg">
+                <div className="flex flex-row justify-end items-center gap-4 relative">
+                    <label htmlFor="password" className="text-lg absolute -left-36">
                         {lang === "1" ? "Hasło: " : "Password: "}
                     </label>
                     <input
@@ -185,8 +194,8 @@ export default function Register() {
                         disabled={loading}
                     />
                 </div>
-                <div className="flex flex-row justify-end pr-[42%] items-center gap-4">
-                    <label htmlFor="passwordRepeat" className="text-lg">
+                <div className="flex flex-row justify-end items-center gap-4 relative">
+                    <label htmlFor="passwordRepeat" className="text-lg absolute -left-36">
                         {lang === "1" ? "Powtórz hasło: " : "Repeat password: "}
                     </label>
                     <input
@@ -276,7 +285,7 @@ export default function Register() {
                 <span className="flex flex-col items-center">
                     {lang === "1" ? "Masz już konto?" : "Already have an account?"}
                     <Link
-                        href={`/login?cup=${cup}&lang=${lang}`}
+                        href={`/login?cup=${cup}&lang=${lang}&embed=${embed}`}
                         className="font-semibold text-black hover:text-[#c00418]"
                     >
                         {lang === "1" ? "Zaloguj się" : "Sign in"}
@@ -285,7 +294,7 @@ export default function Register() {
                 <span className="flex flex-col items-center">
                     {lang === "1" ? "Zapomniałeś hasła?" : "Forgot password?"}
                     <Link
-                        href={`/recovery?cup=${cup}&lang=${lang}`}
+                        href={`/recovery?cup=${cup}&lang=${lang}&embed=${embed}`}
                         className="font-semibold text-black hover:text-[#c00418]"
                     >
                         {lang === "1" ? "Zresetuj hasło" : "Reset password"}

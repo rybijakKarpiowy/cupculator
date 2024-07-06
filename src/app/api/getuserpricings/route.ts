@@ -1,14 +1,13 @@
-import { Database } from "@/database/types";
-import { createMiddlewareClient } from "@supabase/auth-helpers-nextjs";
 import { NextRequest, NextResponse } from "next/server";
 import { baseUrl } from "@/app/baseUrl";
 import { Cup } from "../updatecups/route";
 import { pgsql } from "@/database/pgsql";
+import { createClient } from "@/database/supabase/server";
 
 export const POST = async (req: NextRequest) => {
     const res = NextResponse.next();
-    const clientSupabase = createMiddlewareClient<Database>({ req, res });
-    let auth_id = (await clientSupabase.auth.getSession()).data.session?.user.id;
+    const clientSupabase = createClient()
+    let auth_id = (await clientSupabase.auth.getUser()).data.user?.id
 
     const { user_id, cupLink, key } = (await req.json()) as {
         user_id: string;

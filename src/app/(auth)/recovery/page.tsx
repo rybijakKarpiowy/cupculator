@@ -1,9 +1,9 @@
 "use client";
 
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createClient } from "@/database/supabase/client";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -21,8 +21,13 @@ export default function Recovery() {
     const searchParams = useSearchParams();
     const lang = searchParams.get("lang") || "1";
     const cup = searchParams.get("cup")?.trim().replaceAll(" ", "_");
+    const embed = searchParams.get("embed") == 'true' ? true : false;
 
-    const supabase = createClientComponentClient();
+    const supabase = createClient();
+
+    useEffect(() => {
+        document.body.dataset.embed = embed ? "true" : "false";
+    }, []);
 
     const handleSubmit = async (event: React.FormEvent<HTMLButtonElement>) => {
         setLoading(true);
@@ -56,16 +61,16 @@ export default function Recovery() {
                     ? "Wysłano link do zresetowania hasła!"
                     : "Sent a link to reset your password!"
             );
-            setTimeout(() => (window.location.href = `/?cup=${cup}&lang=${lang}`), 5000);
+            setTimeout(() => (window.location.href = `/?cup=${cup}&lang=${lang}&embed=${embed}`), 5000);
             setLoading(false);
         }
     };
 
     return (
         <div className="pt-24">
-            <form className="flex flex-col content-center gap-4">
-                <div className="flex flex-row justify-end pr-[42%] items-center gap-4">
-                    <label htmlFor="email" className="text-lg">
+            <form className="flex flex-col items-center gap-4">
+                <div className="flex flex-row justify-end items-center gap-4 relative">
+                    <label htmlFor="email" className="text-lg absolute -left-16">
                         Email:
                     </label>
                     <input
@@ -92,7 +97,7 @@ export default function Recovery() {
                 <span className="flex flex-col items-center">
                     {lang === "1" ? "Nie masz konta? " : "Do not have an account yet? "}
                     <Link
-                        href={`/register?cup=${cup}&lang=${lang}`}
+                        href={`/register?cup=${cup}&lang=${lang}&embed=${embed}`}
                         className="font-semibold text-black hover:text-[#c00418]"
                     >
                         {lang === "1" ? "Zarejestruj się" : "Sign up"}
@@ -101,7 +106,7 @@ export default function Recovery() {
                 <span className="flex flex-col items-center">
                     {lang === "1" ? "Pamiętasz hasło?" : "Remember your password?"}
                     <Link
-                        href={`/login?cup=${cup}&lang=${lang}`}
+                        href={`/login?cup=${cup}&lang=${lang}&embed=${embed}`}
                         className="font-semibold text-black hover:text-[#c00418]"
                     >
                         {lang === "1" ? "Zaloguj się" : "Sign in"}

@@ -1,9 +1,9 @@
 "use client";
 
+import { createClient } from "@/database/supabase/client";
 import { Database } from "@/database/types";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -13,7 +13,12 @@ export default function ResetPassword() {
     const searchParams = useSearchParams();
     const lang = searchParams.get("lang") || "1";
     const cup = searchParams.get("cup")?.trim().replaceAll(" ", "_");
+    const embed = searchParams.get("embed") == 'true' ? true : false;
     const error_description = searchParams.get("error_description");
+
+    useEffect(() => {
+        document.body.dataset.embed = embed ? "true" : "false";
+    }, []);
 
     if (error_description === "Email link is invalid or has expired") {
         toast.error(
@@ -23,10 +28,10 @@ export default function ResetPassword() {
                     : "The password change link has expired or has been already used! Enter your email address again"
             }`
         );
-        setTimeout(() => (window.location.href = `/recovery?cup=${cup}&lang=${lang}`), 5000);
+        setTimeout(() => (window.location.href = `/recovery?cup=${cup}&lang=${lang}&embed=${embed}`), 5000);
     }
 
-    const supabase = createClientComponentClient<Database>();
+    const supabase = createClient();
     (async () => {
     const user = await supabase.auth.getUser();
     console.log(user);
@@ -84,16 +89,16 @@ export default function ResetPassword() {
             toast.success(
                 `${lang === "1" ? "Hasło zostało zmienione!" : "The password has been changed!"}`
             );
-            setTimeout(() => (window.location.href = `/?cup=${cup}&lang=${lang}`), 5000);
+            setTimeout(() => (window.location.href = `/?cup=${cup}&lang=${lang}&embed=${embed}`), 5000);
             setLoading(false);
         }
     };
 
     return (
         <div className="pt-24">
-            <form className="flex flex-col content-center gap-4">
-                <div className="flex flex-row justify-end pr-[42%] items-center gap-4">
-                    <label htmlFor="password" className="text-lg">
+            <form className="flex flex-col items-center gap-4">
+                <div className="flex flex-row justify-end items-center gap-4 relative">
+                    <label htmlFor="password" className="text-lg absolute -left-36">
                         {lang === "1" ? "Nowe hasło: " : "New password: "}
                     </label>
                     <input
@@ -103,8 +108,8 @@ export default function ResetPassword() {
                         disabled={loading}
                     />
                 </div>
-                <div className="flex flex-row justify-end pr-[42%] items-center gap-4">
-                    <label htmlFor="passwordRepeat" className="text-lg">
+                <div className="flex flex-row justify-end items-center gap-4 relative">
+                    <label htmlFor="passwordRepeat" className="text-lg absolute -left-36">
                         {lang === "1" ? "Powtórz hasło: " : "Repeat password: "}
                     </label>
                     <input

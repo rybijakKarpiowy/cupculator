@@ -1,11 +1,9 @@
 import { Navbar } from "@/components/navbar";
 import "./globals.css";
 import type { Metadata, Viewport } from "next";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { Database } from "@/database/types";
-import { cookies } from "next/dist/client/components/headers";
 import { ToastContainer } from "react-toastify";
 import { pgsql } from "@/database/pgsql";
+import { createClient } from "@/database/supabase/server";
 
 export const dynamic = "force-dynamic";
 
@@ -20,7 +18,7 @@ export const viewport: Viewport = {
 };
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
-    const supabase = createServerComponentClient<Database>({ cookies });
+    const supabase = createClient();
     const authUser = (await supabase.auth.getUser()).data.user?.id;
     let userRestrictedData = null;
 
@@ -42,9 +40,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 
     return (
         <html lang="en">
-            <body className="overflow-y-scroll bg-[url('https://kubki.com.pl/img/bg.jpg')] bg-repeat-x bg-[center_115px] bg-white">
+            <body data-embed="false" className={`overflow-y-scroll data-[embed=false]:bg-[url('https://kubki.com.pl/img/bg.jpg')] bg-repeat-x bg-[center_115px] bg-white group`}>
                 <Navbar authUser={authUser} role={userRestrictedData?.role} />
-                <main className="mt-[115px]">{children}</main>
+                <main data-embed="false" className={"group-data-[embed=false]:mt-[115px] group-data-[embed=true]:h-max"}>{children}</main>
                 <ToastContainer
                     position="bottom-center"
                     autoClose={5000}

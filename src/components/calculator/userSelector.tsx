@@ -12,12 +12,14 @@ export const UserSelector = ({
     allUsersData,
     cup,
     lang,
+    embed,
     additionalValues,
     restrictions
 }: {
     allUsersData: (Database["public"]["Tables"]["users"]["Row"] & pricingsInterface)[];
     cup: string;
     lang: "1" | "2";
+    embed: boolean;
     additionalValues: Database["public"]["Tables"]["additional_values"]["Row"];
     restrictions: Restriction[];
 }) => {
@@ -71,7 +73,7 @@ export const UserSelector = ({
         <>
             <select
                 onChange={(e) => selectHandler(e)}
-                className="w-max fixed top-[87px] left-6 z-[100] border border-[#c00418] rounded-full px-2 py-[2px] bg-white"
+                className="w-max fixed group-data-[embed=true]:top-[57px] top-[87px] left-6 z-[100] border border-[#c00418] rounded-full px-2 py-[2px] bg-white"
                 defaultValue=""
             >
                 <option value="" disabled hidden>
@@ -111,6 +113,7 @@ export const UserSelector = ({
                         cupData={selectedPricingsData.cupData}
                         colorPricing={selectedPricingsData.colorPricing}
                         lang={lang}
+                        embed={embed}
                         clientPriceUnit={selectedUserUnit}
                         additionalValues={additionalValues}
                         restrictions={restrictions}

@@ -10,8 +10,9 @@ export default async function Dashboard({
 }) {
     const lang = searchParams?.lang || "1";
     const cup = searchParams?.cup?.trim().replaceAll(" ", "_") || "";
+    const embed = searchParams?.embed == 'true' ? true : false;
 
-    redirect(`/dashboard/activationRequests?lang=${lang}&cup=${cup}`);
+    redirect(`/dashboard/activationRequests?lang=${lang}&cup=${cup}&embed=${embed}`);
 }
 
 export interface User {

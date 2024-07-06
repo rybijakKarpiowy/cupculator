@@ -1,7 +1,6 @@
 "use client";
 
-import { Database } from "@/database/types";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createClient } from "@/database/supabase/client";
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -13,7 +12,12 @@ export default function AccountDetails() {
     const searchParams = useSearchParams();
     const lang = searchParams.get("lang") || "1";
     const cup = searchParams.get("cup")?.trim().replaceAll(" ", "_");
+    const embed = searchParams.get("embed") == 'true' ? true : false;
     const error_description = searchParams.get("error_description");
+
+    useEffect(() => {
+        document.body.dataset.embed = embed ? "true" : "false";
+    }, []);
 
     useEffect(() => {
         if (loading) document.body.style.cursor = "wait";
@@ -29,10 +33,10 @@ export default function AccountDetails() {
             }`,
             { autoClose: 3000 }
         );
-        setTimeout(() => (window.location.href = `/register?cup=${cup}&lang=${lang}`), 3000);
+        setTimeout(() => (window.location.href = `/register?cup=${cup}&lang=${lang}&embed=${embed}`), 3000);
     }
 
-    const supabase = createClientComponentClient<Database>();
+    const supabase = createClient();
 
     const handleSubmit = async (event: React.FormEvent<HTMLButtonElement>) => {
         setLoading(true);
@@ -96,7 +100,7 @@ export default function AccountDetails() {
             toast.error(`${lang === "1" ? "Nie jesteś zalogowany!" : "You are not logged in!"}`, {
                 autoClose: 1000,
             });
-            setTimeout(() => (window.location.href = `/login?cup=${cup}&lang=${lang}`), 1000);
+            setTimeout(() => (window.location.href = `/login?cup=${cup}&lang=${lang}&embed=${embed}`), 1000);
             setLoading(false);
             return;
         }
@@ -274,15 +278,15 @@ export default function AccountDetails() {
                     : "Dear Client, We received your request to get an account and access to the calculator. Expect our confirmation of registration in next upcoming mail from us."
             }`
         );
-        setTimeout(() => (window.location.href = `/?cup=${cup}&lang=${lang}`), 5500);
+        setTimeout(() => (window.location.href = `/?cup=${cup}&lang=${lang}&embed=${embed}`), 5500);
         setLoading(false);
     };
 
     return (
-        <div className="pt-24">
+        <div className="pt-24 flex justify-center">
             <form className="flex flex-col content-center gap-4" id="form">
-                <div className="flex flex-row justify-end pr-[42%] items-center gap-4">
-                    <label htmlFor="companyName" className="text-lg">
+                <div className="flex flex-row justify-end items-center gap-4 relative">
+                    <label htmlFor="companyName" className="text-lg absolute -left-[112px]">
                         {lang === "1" ? "Nazwa firmy: " : "Company name: "}
                     </label>
                     <input
@@ -292,8 +296,8 @@ export default function AccountDetails() {
                         disabled={loading}
                     />
                 </div>
-                <div className="flex flex-row justify-end pr-[42%] items-center gap-4">
-                    <label htmlFor="firstName" className="text-lg">
+                <div className="flex flex-row justify-end items-center gap-4 relative">
+                    <label htmlFor="firstName" className="text-lg absolute -left-[112px]">
                         {lang === "1" ? "Imię: " : "First name: "}
                     </label>
                     <input
@@ -303,8 +307,8 @@ export default function AccountDetails() {
                         disabled={loading}
                     />
                 </div>
-                <div className="flex flex-row justify-end pr-[42%] items-center gap-4">
-                    <label htmlFor="lastName" className="text-lg">
+                <div className="flex flex-row justify-end items-center gap-4 relative">
+                    <label htmlFor="lastName" className="text-lg absolute -left-[112px] ">
                         {lang === "1" ? "Nazwisko: " : "Last name: "}
                     </label>
                     <input
@@ -314,8 +318,8 @@ export default function AccountDetails() {
                         disabled={loading}
                     />
                 </div>
-                <div className="flex flex-row justify-end pr-[42%] items-center gap-4">
-                    <label htmlFor="phone" className="text-lg">
+                <div className="flex flex-row justify-end items-center gap-4 relative">
+                    <label htmlFor="phone" className="text-lg absolute -left-[112px] ">
                         {lang === "1" ? "Telefon: " : "Phone number: "}
                     </label>
                     <input
@@ -325,8 +329,8 @@ export default function AccountDetails() {
                         disabled={loading}
                     />
                 </div>
-                <div className="flex flex-row justify-end pr-[42%] items-center gap-4">
-                    <label htmlFor="country" className="text-lg">
+                <div className="flex flex-row justify-end items-center gap-4 relative">
+                    <label htmlFor="country" className="text-lg absolute -left-[112px] ">
                         {lang === "1" ? "Kraj: " : "Country: "}
                     </label>
                     <select
@@ -433,8 +437,8 @@ export default function AccountDetails() {
                     </select>
                 </div>
                 {lang === "1" && (
-                    <div className="flex flex-row justify-end pr-[42%] items-center gap-4">
-                        <label htmlFor="region" className="text-lg">
+                    <div className="flex flex-row justify-end items-center gap-4 relative">
+                        <label htmlFor="region" className="text-lg absolute -left-[112px] ">
                             Województwo:
                         </label>
                         <select
@@ -465,8 +469,8 @@ export default function AccountDetails() {
                         </select>
                     </div>
                 )}
-                <div className="flex flex-row justify-end pr-[42%] items-center gap-3">
-                    <label htmlFor="postalCodeprefix" className="text-lg">
+                <div className="flex flex-row justify-end items-center gap-4 relative">
+                    <label htmlFor="postalCode" className="text-lg absolute -left-[112px] ">
                         {lang === "1" ? "Kod pocztowy: " : "Postal code: "}
                     </label>
                     <input
@@ -476,8 +480,8 @@ export default function AccountDetails() {
                         disabled={loading}
                     />
                 </div>
-                <div className="flex flex-row justify-end pr-[42%] items-center gap-4">
-                    <label htmlFor="city" className="text-lg">
+                <div className="flex flex-row justify-end items-center gap-4 relative">
+                    <label htmlFor="city" className="text-lg absolute -left-[112px] ">
                         {lang === "1" ? "Miejscowość: " : "City: "}
                     </label>
                     <input
@@ -487,8 +491,8 @@ export default function AccountDetails() {
                         disabled={loading}
                     />
                 </div>
-                <div className="flex flex-row justify-end pr-[42%] items-center gap-4">
-                    <label htmlFor="adress" className="text-lg">
+                <div className="flex flex-row justify-end items-center gap-4 relative">
+                    <label htmlFor="adress" className="text-lg absolute -left-[112px] ">
                         {lang === "1" ? "Adres: " : "Address: "}
                     </label>
                     <input
@@ -499,8 +503,8 @@ export default function AccountDetails() {
                     />
                 </div>
 
-                <div className="flex flex-row justify-end pr-[42%] items-center gap-2">
-                    <label htmlFor="NIP" className="text-lg mr-2">
+                <div className="flex flex-row justify-end items-center gap-2 relative">
+                    <label htmlFor="NIP" className="text-lg absolute -left-[112px]  mr-2">
                         {lang === "1" ? "NIP: " : "VAT identification number: "}
                     </label>
                     <input

@@ -2,12 +2,11 @@ import { Calculator } from "@/components/calculator/calculator";
 import { UserSelector } from "@/components/calculator/userSelector";
 import { Database } from "@/database/types";
 import { Restriction } from "@/lib/checkRestriction";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/dist/client/components/headers";
 import { baseUrl } from "@/app/baseUrl";
 import { Cup } from "./api/updatecups/route";
 import { ColorPricing } from "@/lib/colorPricingType";
 import { pgsql } from "@/database/pgsql";
+import { createClient } from "@/database/supabase/server";
 
 export const dynamic = "force-dynamic";
 
@@ -20,7 +19,7 @@ export default async function Home({
     const cup = searchParams.cup?.trim().replaceAll(" ", "_") as string;
     const embed = searchParams.embed == 'true' ? true : false;
 
-    const supabase = createServerComponentClient<Database>({ cookies });
+    const supabase = createClient();
     const authUser = (await supabase.auth.getUser()).data.user;
     const authId = authUser?.id as string;
 

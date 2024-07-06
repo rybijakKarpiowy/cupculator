@@ -1,9 +1,9 @@
 "use client";
 
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createClient } from "@/database/supabase/client";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -23,7 +23,11 @@ export default function Recovery() {
     const cup = searchParams.get("cup")?.trim().replaceAll(" ", "_");
     const embed = searchParams.get("embed") == 'true' ? true : false;
 
-    const supabase = createClientComponentClient();
+    const supabase = createClient();
+
+    useEffect(() => {
+        document.body.dataset.embed = embed ? "true" : "false";
+    }, []);
 
     const handleSubmit = async (event: React.FormEvent<HTMLButtonElement>) => {
         setLoading(true);
@@ -64,9 +68,9 @@ export default function Recovery() {
 
     return (
         <div className="pt-24">
-            <form className="flex flex-col content-center gap-4">
-                <div className="flex flex-row justify-end pr-[42%] items-center gap-4">
-                    <label htmlFor="email" className="text-lg">
+            <form className="flex flex-col items-center gap-4">
+                <div className="flex flex-row justify-end items-center gap-4 relative">
+                    <label htmlFor="email" className="text-lg absolute -left-16">
                         Email:
                     </label>
                     <input

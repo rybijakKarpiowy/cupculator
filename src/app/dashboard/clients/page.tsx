@@ -1,18 +1,16 @@
 import { DashBoardNav } from "@/components/dashboardPages/components/dashBoardNav";
-import { Database } from "@/database/types";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { getPricings, getUserData } from "../activationRequests/page";
 import { Client, User } from "../page";
 import { ClientsTabled } from "@/components/dashboardPages/clients/clientsTabled";
+import { createClient } from "@/database/supabase/server";
 
 const ClientsPage = async ({ searchParams }: { searchParams?: { [key: string]: string | undefined } }) => {
 	const lang = searchParams?.lang || "1";
 	const cup = searchParams?.cup?.trim().replaceAll(" ", "_") || "";
 	const embed = searchParams?.embed == 'true' ? true : false;
 
-	const supabase = createServerComponentClient<Database>({ cookies });
+	const supabase = createClient();
 	const authUser = (await supabase.auth.getUser()).data.user;
 
 	if (!authUser) {

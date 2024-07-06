@@ -1,18 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
 import { JWT } from "google-auth-library";
 import { GoogleSpreadsheet } from "google-spreadsheet";
-import { Database } from "@/database/types";
-import { createRouteHandlerClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
 import { baseUrl } from "@/app/baseUrl";
 import { pgsql } from "@/database/pgsql";
 import * as schema from "@/database/schema";
 import { sql } from "drizzle-orm";
+import { createClient } from "@/database/supabase/server";
 
 export const POST = async (req: NextRequest) => {
     const res = NextResponse.next();
-    const clientSupabase = createRouteHandlerClient<Database>({ cookies })
-    const auth_id = (await clientSupabase.auth.getSession()).data.session?.user.id;
+    const clientSupabase = createClient();
+    const auth_id = (await clientSupabase.auth.getUser()).data.user?.id
 
     if (!auth_id) {
         return NextResponse.redirect(new URL("/login", baseUrl));

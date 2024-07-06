@@ -73,7 +73,7 @@ export const UserSelector = ({
         <>
             <select
                 onChange={(e) => selectHandler(e)}
-                className="w-max fixed top-[87px] left-6 z-[100] border border-[#c00418] rounded-full px-2 py-[2px] bg-white"
+                className="w-max fixed group-data-[embed=true]:top-[57px] top-[87px] left-6 z-[100] border border-[#c00418] rounded-full px-2 py-[2px] bg-white"
                 defaultValue=""
             >
                 <option value="" disabled hidden>

@@ -1,6 +1,5 @@
 "use client";
 
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import Image from "next/image";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
@@ -8,6 +7,7 @@ import plImage from "@/../public/pl.jpg";
 import enImage from "@/../public/en.jpg";
 import homeImage from "@/../public/home.png";
 import logo20years from "@/../public/logo-20lat.png";
+import { createClient } from "@/database/supabase/client";
 
 export const Navbar = ({ authUser, role }: { authUser: string | undefined; role: "User" | "Salesman" | "Admin" | undefined }) => {
 	const searchParams = useSearchParams();
@@ -15,7 +15,7 @@ export const Navbar = ({ authUser, role }: { authUser: string | undefined; role:
 	const cup = searchParams.get("cup")?.trim().replaceAll(" ", "_") || "";
 	const embed = searchParams.get("embed") == "true" ? true : false;
 
-	const supabase = createClientComponentClient();
+	const supabase = createClient();
 
 	const handleLogout = async () => {
 		const err = await supabase.auth.signOut({ scope: "global" });
@@ -26,18 +26,16 @@ export const Navbar = ({ authUser, role }: { authUser: string | undefined; role:
 		window.location.reload();
 	};
 
-	if (embed
-		&& role == "User"
-	) return <></>;
+	if (embed && role == "User") return <></>;
 
 	return (
 		<nav
-			className="lg:rounded-none fixed block right-0 left-0 top-0 z-50 bg-white h-[115px] transition-all min-h-[50px] mb-5"
+			className="lg:rounded-none fixed block right-0 left-0 top-0 z-50 bg-white group-data-[embed=true]:h-[64px] h-[115px] transition-all min-h-[50px] mb-5"
 			role="navigation"
 			data-spy="affix"
 			data-offset-top="100"
 		>
-			<div className="block md:w-[750px] lg:w-[970px] xl:w-[1170px] h-full mr-auto ml-auto px-[15px] border-none">
+			<div className="block group-data-[embed=true]:w-full md:w-[750px] lg:w-[970px] xl:w-[1170px] h-full mr-auto ml-auto px-[15px] border-none">
 				{!embed && (
 					<div className="lg:float-left lg:mx-0 block">
 						<button
@@ -131,7 +129,7 @@ export const Navbar = ({ authUser, role }: { authUser: string | undefined; role:
 					{authUser && (
 						<>
 							<label
-								className="z-20 w-[33px] h-[33px] absolute cursor-pointer logout -right-20 top-[47px]"
+								className="z-20 w-[33px] h-[33px] absolute cursor-pointer logout group-data-[embed=true]:right-[48px] -right-20 group-data-[embed=true]:top-8 top-[47px]"
 								onClick={() => handleLogout()}
 							>
 								<svg
@@ -153,12 +151,12 @@ export const Navbar = ({ authUser, role }: { authUser: string | undefined; role:
 					)}
 					{authUser && (role == "Admin" || role == "Salesman") && (
 						<ul>
-							<li className="absolute block h-[33px] -right-[158px] top-[47px]">
+							<li className="absolute block h-[33px] group-data-[embed=true]:right-[198px] -right-[158px] group-data-[embed=true]:top-8 top-[47px]">
 								<Link href={`/dashboard?cup=${cup}&lang=${lang}&embed=${embed}`} className="tab">
 									Panel
 								</Link>
 							</li>
-							<li className="absolute block h-[33px] -right-[260px] top-[47px]">
+							<li className="absolute block h-[33px] group-data-[embed=true]:right-[96px] -right-[260px] group-data-[embed=true]:top-8 top-[47px]">
 								<Link href={`/?cup=${cup}&lang=${lang}&embed=${embed}`} className="tab">
 									Kalkulator
 								</Link>

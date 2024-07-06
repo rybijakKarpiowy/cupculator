@@ -1,11 +1,9 @@
 import { DashBoardNav } from "@/components/dashboardPages/components/dashBoardNav";
-import { Database } from "@/database/types";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { Client, User } from "../page";
 import { AdminsSalesmen } from "@/components/dashboardPages/adminsSalesmen";
 import { getUserData } from "../activationRequests/page";
+import { createClient } from "@/database/supabase/server";
 
 const AdminsAndSalesmenPage = async ({
     searchParams,
@@ -16,7 +14,7 @@ const AdminsAndSalesmenPage = async ({
     const cup = searchParams?.cup?.trim().replaceAll(" ", "_") || "";
     const embed = searchParams?.embed == 'true' ? true : false;
 
-    const supabase = createServerComponentClient<Database>({ cookies });
+    const supabase = createClient()
     const authUser = (await supabase.auth.getUser()).data.user;
 
     if (!authUser) {

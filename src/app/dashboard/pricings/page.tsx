@@ -3,9 +3,7 @@ import { Pricings } from "@/components/dashboardPages/pricings";
 import { redirect } from "next/navigation";
 import { User } from "../page";
 import { getPricings, getUserData } from "../activationRequests/page";
-import { Database } from "@/database/types";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
+import { createClient } from "@/database/supabase/server";
 
 const PricingsPage = async ({
     searchParams,
@@ -16,7 +14,7 @@ const PricingsPage = async ({
     const cup = searchParams?.cup?.trim().replaceAll(" ", "_") || "";
     const embed = searchParams?.embed == 'true' ? true : false;
 
-    const supabase = createServerComponentClient<Database>({ cookies });
+    const supabase = createClient()
     const authUser = (await supabase.auth.getUser()).data.user;
 
     if (!authUser) {

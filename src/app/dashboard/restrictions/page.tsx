@@ -2,19 +2,17 @@ import { DashBoardNav } from "@/components/dashboardPages/components/dashBoardNa
 import { redirect } from "next/navigation";
 import { User } from "../page";
 import { getUserData } from "../activationRequests/page";
-import { Database } from "@/database/types";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
 import { Restrictions } from "@/components/dashboardPages/restrictions";
 import { Restriction } from "@/lib/checkRestriction";
 import { pgsql } from "@/database/pgsql";
+import { createClient } from "@/database/supabase/server";
 
 const RestrictionsPage = async ({ searchParams }: { searchParams?: { [key: string]: string | undefined } }) => {
 	const lang = searchParams?.lang || "1";
 	const cup = searchParams?.cup?.trim().replaceAll(" ", "_") || "";
 	const embed = searchParams?.embed == 'true' ? true : false;
 
-	const supabase = createServerComponentClient<Database>({ cookies });
+	const supabase = createClient()
 	const authUser = (await supabase.auth.getUser()).data.user;
 
 	if (!authUser) {

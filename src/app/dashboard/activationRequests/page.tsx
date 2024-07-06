@@ -1,12 +1,10 @@
 import { DashBoardNav } from "@/components/dashboardPages/components/dashBoardNav";
-import { Database } from "@/database/types";
-import { createServerComponentClient } from "@supabase/auth-helpers-nextjs";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import { Client, User } from "../page";
 import { AuthUser } from "@supabase/supabase-js";
 import { baseUrl } from "@/app/baseUrl";
 import { ActivationRequestsTabled } from "@/components/dashboardPages/activationRequests/activationRequestsTabled";
+import { createClient } from "@/database/supabase/server";
 
 export const getUserData = async (authUser: AuthUser, lang: string, cup: string, embed: boolean, clientsToo: boolean, salesmenToo: boolean) => {
 	const res = await fetch(`${baseUrl}/api/dashboard`, {
@@ -64,7 +62,7 @@ const ActivationRequestsPage = async ({ searchParams }: { searchParams?: { [key:
 	const cup = searchParams?.cup?.trim().replaceAll(" ", "_") || "";
 	const embed = searchParams?.embed == 'true' ? true : false;
 
-	const supabase = createServerComponentClient<Database>({ cookies });
+	const supabase = createClient()
 	const authUser = (await supabase.auth.getUser()).data.user;
 
 	if (!authUser) {

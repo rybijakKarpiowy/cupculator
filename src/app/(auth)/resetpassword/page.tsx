@@ -1,9 +1,9 @@
 "use client";
 
+import { createClient } from "@/database/supabase/client";
 import { Database } from "@/database/types";
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
 import { useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -16,6 +16,10 @@ export default function ResetPassword() {
     const embed = searchParams.get("embed") == 'true' ? true : false;
     const error_description = searchParams.get("error_description");
 
+    useEffect(() => {
+        document.body.dataset.embed = embed ? "true" : "false";
+    }, []);
+
     if (error_description === "Email link is invalid or has expired") {
         toast.error(
             `${
@@ -27,7 +31,7 @@ export default function ResetPassword() {
         setTimeout(() => (window.location.href = `/recovery?cup=${cup}&lang=${lang}&embed=${embed}`), 5000);
     }
 
-    const supabase = createClientComponentClient<Database>();
+    const supabase = createClient();
     (async () => {
     const user = await supabase.auth.getUser();
     console.log(user);
@@ -92,9 +96,9 @@ export default function ResetPassword() {
 
     return (
         <div className="pt-24">
-            <form className="flex flex-col content-center gap-4">
-                <div className="flex flex-row justify-end pr-[42%] items-center gap-4">
-                    <label htmlFor="password" className="text-lg">
+            <form className="flex flex-col items-center gap-4">
+                <div className="flex flex-row justify-end items-center gap-4 relative">
+                    <label htmlFor="password" className="text-lg absolute -left-36">
                         {lang === "1" ? "Nowe hasło: " : "New password: "}
                     </label>
                     <input
@@ -104,8 +108,8 @@ export default function ResetPassword() {
                         disabled={loading}
                     />
                 </div>
-                <div className="flex flex-row justify-end pr-[42%] items-center gap-4">
-                    <label htmlFor="passwordRepeat" className="text-lg">
+                <div className="flex flex-row justify-end items-center gap-4 relative">
+                    <label htmlFor="passwordRepeat" className="text-lg absolute -left-36">
                         {lang === "1" ? "Powtórz hasło: " : "Repeat password: "}
                     </label>
                     <input

@@ -26,11 +26,6 @@ export default function Login() {
 		const email = (document.getElementById("email") as HTMLInputElement).value;
 		const password = (document.getElementById("password") as HTMLInputElement).value;
 
-		// const { data, error } = await supabase.auth.signInWithPassword({
-		//     email: email,
-		//     password: password,
-		// });
-
 		const res = await fetch("/api/login", {
 			method: "POST",
 			body: JSON.stringify({ email, password }),

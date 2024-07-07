@@ -3,6 +3,7 @@ import { type NextRequest, NextResponse } from 'next/server'
 
 import { createClient } from '@/database/supabase/server'
 import { redirect } from 'next/navigation'
+import { baseUrl } from '@/app/baseUrl'
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url)
@@ -16,11 +17,17 @@ export async function GET(request: NextRequest) {
     const { error } = await supabase.auth.verifyOtp({
       type,
       token_hash,
+      options: {
+        redirectTo: new URL("/resetpassword", baseUrl).href,
+      }
     })
+
     if (!error) {
       // redirect user to specified redirect URL or root of app
       redirect(next)
     }
+
+    console.error(error)
   }
 
   // redirect the user to an error page with some instructions

@@ -63,8 +63,8 @@ export async function middleware(request: NextRequest) {
     !user &&
     !request.nextUrl.pathname.startsWith('/login') &&
     !request.nextUrl.pathname.startsWith('/recovery') &&
-    !request.nextUrl.pathname.startsWith('/register') &&
-    !request.nextUrl.pathname.startsWith('/resetpassword')
+    !request.nextUrl.pathname.startsWith('/register')
+    // && !request.nextUrl.pathname.startsWith('/resetpassword')
   ) {
     // no user, potentially respond by redirecting the user to the login page
     url.pathname = '/login'

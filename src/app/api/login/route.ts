@@ -4,7 +4,6 @@ import { NextRequest, NextResponse } from "next/server";
 
 export const POST = async (req: NextRequest) => {
 	const searchParams = new URLSearchParams();
-	const redirect = searchParams.get("redirect");
 
 	const clientSupabase = createClient();
 
@@ -33,14 +32,6 @@ export const POST = async (req: NextRequest) => {
 		sameSite: "none",
 		secure: true,
 	});
-
-	if (redirect) {
-		return NextResponse.redirect("https://kubki.com.pl" + redirect, {
-			headers: {
-				"Set-Cookie": cookiesObj.toString(),
-			},
-		});
-	}
 
 	return NextResponse.json(
 		{ data },

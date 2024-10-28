@@ -27,7 +27,7 @@ export default function Login() {
 		const email = (document.getElementById("email") as HTMLInputElement).value;
 		const password = (document.getElementById("password") as HTMLInputElement).value;
 
-		const res = await fetch(`/api/login?redirect=${redirect}`, {
+		const res = await fetch(`/api/login`, {
 			method: "POST",
 			body: JSON.stringify({ email, password }),
 		});
@@ -44,7 +44,13 @@ export default function Login() {
 		if (data) {
 			toast.success(lang === "1" ? "Zalogowano!" : "Signed in!", { autoClose: 1000 });
 			login(new FormData());
-			setTimeout(() => (window.location.href = `/?cup=${cup}&lang=${lang}&embed=${embed}`), 1000);
+			setTimeout(() => {
+				if (!redirect) {
+					window.location.href = `/?cup=${cup}&lang=${lang}&embed=${embed}`
+				}
+				else {
+					window.location.href = "https://kubki.com.pl" + redirect + "?lang=" + lang
+			}, 1000);
 			setLoading(false);
 		}
 	};

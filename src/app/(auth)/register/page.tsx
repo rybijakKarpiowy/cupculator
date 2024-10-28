@@ -167,7 +167,7 @@ export default function Register() {
                     window.location.href = `/?cup=${cup}&lang=${lang}&embed=${embed}`
                 }
                 else {
-                    window.location.href = "https://kubki.com.pl" + redirect;
+                    window.location.href = "https://kubki.com.pl" + redirect + "?lang=" + lang
                 }
             }, 5000);
             setLoading(false);

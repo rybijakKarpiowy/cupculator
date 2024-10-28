@@ -24,6 +24,7 @@ export default function Register() {
     const lang = searchParams.get("lang") || "1";
     const cup = searchParams.get("cup")?.trim().replaceAll(" ", "_");
     const embed = searchParams.get("embed") == 'true' ? true : false;
+    const redirect = searchParams.get("redirect");
 
     const supabase = createClient();
 
@@ -161,7 +162,14 @@ export default function Register() {
             );
             // revalidatePath('/', 'layout')
             signup(new FormData());
-            setTimeout(() => (window.location.href = `/?cup=${cup}&lang=${lang}&embed=${embed}`), 5000);
+            setTimeout(() => {
+                if (!redirect) {
+                    window.location.href = `/?cup=${cup}&lang=${lang}&embed=${embed}`
+                }
+                else {
+                    window.location.href = "https://kubki.com.pl" + redirect;
+                }
+            }, 5000);
             setLoading(false);
             return;
         }

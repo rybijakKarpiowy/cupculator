@@ -15,6 +15,7 @@ export default function Login() {
 	const lang = searchParams.get("lang") || "1";
 	const cup = searchParams.get("cup")?.trim().replaceAll(" ", "_");
 	const embed = searchParams.get("embed") == "true" ? true : false;
+	const redirect = searchParams.get("redirect");
 
 	useEffect(() => {
         document.body.dataset.embed = embed ? "true" : "false";
@@ -26,7 +27,7 @@ export default function Login() {
 		const email = (document.getElementById("email") as HTMLInputElement).value;
 		const password = (document.getElementById("password") as HTMLInputElement).value;
 
-		const res = await fetch("/api/login", {
+		const res = await fetch(`/api/login?redirect=${redirect}`, {
 			method: "POST",
 			body: JSON.stringify({ email, password }),
 		});

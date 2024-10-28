@@ -50,6 +50,7 @@ export default function Login() {
 				}
 				else {
 					window.location.href = "https://kubki.com.pl" + redirect + "?lang=" + lang
+				}
 			}, 1000);
 			setLoading(false);
 		}

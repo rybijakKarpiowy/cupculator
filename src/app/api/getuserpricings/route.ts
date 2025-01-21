@@ -67,10 +67,27 @@ export const POST = async (req: NextRequest) => {
         return NextResponse.json("user.cup_pricing or user.color_pricing is null", { status: 500 });
     }
 
+    // generate all combinations with changing underscores to spaces
+    const cupLinksFormatted: string[] = []
+    const underscoresCount = cupLink.split("_").length - 1;
+    for (let i = 0; i < 2 ** underscoresCount; i++) {
+        let encounteredUnderscores = 0;
+        let cupLinkFormatted = cupLink;
+        for (let j = 0; j < cupLink.length; j++) {
+            if (cupLink[j] === "_") {
+                if (i & 2 ** encounteredUnderscores) {
+                    cupLinkFormatted = cupLinkFormatted.slice(0, j) + " " + cupLinkFormatted.slice(j + 1);
+                }
+                encounteredUnderscores++;
+            }
+        }
+        cupLinksFormatted.push(cupLinkFormatted);
+    }
+
     // get cups (it is one cup in multiple color variants) and its pricings
     const { data: cupDataRaw, error: error2 } = await pgsql.query.cups
         .findMany({
-            where: (cups, { eq }) => eq(cups.link, cupLink),
+            where: (cups, { inArray }) => inArray(cups.link, cupLinksFormatted),
             with: {
                 cup_pricings: {
                     columns: {

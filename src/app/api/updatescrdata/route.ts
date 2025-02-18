@@ -49,15 +49,13 @@ export const POST = async (req: NextRequest) => {
         .insert(schema.scraped_warehouses)
         .values({
             provider,
-            code_link: code_link.trim(),
             cup_id,
+            code_link: code_link.trim()
         })
         .onConflictDoUpdate({
-            target: [schema.scraped_warehouses.provider, schema.scraped_warehouses.code_link],
+            target: [schema.scraped_warehouses.provider, schema.scraped_warehouses.cup_id],
             set: {
-                provider,
-                code_link,
-                cup_id,
+                code_link
             },
         })
         .then(() => ({ error: null }))

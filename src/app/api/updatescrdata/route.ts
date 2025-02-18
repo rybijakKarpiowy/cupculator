@@ -35,7 +35,11 @@ export const POST = async (req: NextRequest) => {
         return NextResponse.redirect(new URL("/", baseUrl));
     }
 
-    const { provider, code_link, cup_id } = await req.json();
+    const { provider, code_link, cup_id } = await req.json() as {
+        provider: string;
+        code_link: string;
+        cup_id: number;
+    };
 
     if (!provider || !code_link || !cup_id) {
         return NextResponse.json("Missing data", { status: 400 });
@@ -45,7 +49,7 @@ export const POST = async (req: NextRequest) => {
         .insert(schema.scraped_warehouses)
         .values({
             provider,
-            code_link,
+            code_link: code_link.trim(),
             cup_id,
         })
         .onConflictDoUpdate({

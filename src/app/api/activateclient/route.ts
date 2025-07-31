@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import sgmail from "@sendgrid/mail";
+import { Resend } from "resend";
 import { baseUrl } from "@/app/baseUrl";
 import { activationEu } from "@/app/emails/activationEu";
 import { activationPl } from "@/app/emails/activationPl";
@@ -101,10 +101,7 @@ export const POST = async (req: NextRequest) => {
 
         const msgtoClient = {
             to: activatedUserEmail.email,
-            from: {
-                name: "Pro Media",
-                email: "biuro@kubki.com.pl",
-            },
+            from: "Pro Media <biuro@kubki.com.pl>",
             subject:
                 eu === true ? "Your account has been activated" : "Twoje konto zostało aktywowane",
             text:
@@ -114,9 +111,9 @@ export const POST = async (req: NextRequest) => {
             html: eu === true ? activationEu : activationPl,
         };
 
-        sgmail.setApiKey(process.env.SENDGRID_KEY!);
+        const resend = new Resend(process.env.RESEND_KEY!);
         // send email to client
-        await sgmail
+        await resend.emails
             .send(msgtoClient)
             .then(() => {
                 console.log("Email to client sent");

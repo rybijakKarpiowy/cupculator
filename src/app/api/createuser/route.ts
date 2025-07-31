@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { baseUrl } from "@/app/baseUrl";
 import { pgsql } from "@/database/pgsql";
 import * as schema from "@/database/schema";
-import sgmail from "@sendgrid/mail";
+import { Resend } from "resend";
 import { createClient } from "@/database/supabase/server";
 
 export const GET = async (req: NextRequest) => {
@@ -65,18 +65,15 @@ export const GET = async (req: NextRequest) => {
 
     const msgtoAdmin = {
         to: emailsToSendTo.map((email) => email.email),
-        from: {
-            name: "Pro Media",
-            email: "biuro@kubki.com.pl",
-        },
+        from: "Pro Media <biuro@kubki.com.pl>",
         subject: `${activatedUserEmail.company_name} czeka na aktywację`,
         text: `${activatedUserEmail.company_name} czeka na aktywację`,
         html: `<!DOCTYPE html><html><body><h1>${activatedUserEmail.company_name} czeka na aktywację</h1></body></html>`,
     };
 
-    sgmail.setApiKey(process.env.SENDGRID_KEY!);
+    const resend = new Resend(process.env.RESEND_KEY!);
     // send email to admin/specified email
-    await sgmail
+    await resend.emails
         .send(msgtoAdmin)
         .then(() => {
             console.log("Email to admin sent");

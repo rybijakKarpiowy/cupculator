@@ -5,7 +5,10 @@ import { NextURL } from 'next/dist/server/web/next-url';
 
 function setBaseParameters(url: NextURL, eu: boolean) {
     url.searchParams.set("lang", eu ? "2" : "1")
-    url.searchParams.set("cup", "null")
+    const cup = url.searchParams.get("cup");
+    if (!cup || cup == "null" || cup == "undefined") {
+      url.searchParams.set("cup", "null")
+    }
     return url
 }
 

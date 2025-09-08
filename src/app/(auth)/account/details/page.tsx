@@ -504,10 +504,10 @@ export default function AccountDetails() {
                 </div>
 
                 <div className="flex flex-row justify-end items-center gap-2 relative">
-                    <label htmlFor="NIP" className="text-lg absolute -left-[112px]  mr-2">
+                    <label htmlFor="NIP" className={lang == "1" ? "text-lg absolute -left-[112px]  mr-2" : "text-lg absolute -left-[200px]  mr-2"}>
                         {lang === "1" ? "NIP: " : "VAT identification number: "}
                     </label>
-                    <input
+                    <input 
                         defaultValue={lang == "1" ? "PL" : ""}
                         id="NIPprefix"
                         type="text"

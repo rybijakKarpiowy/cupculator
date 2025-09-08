@@ -109,7 +109,7 @@ export default function Register() {
             email: userData.email,
             password: userData.password,
             options: {
-                emailRedirectTo: new URL(`/?cup=${cup}&lang=${lang}&embed=${embed}`, baseUrl).href,
+                emailRedirectTo: new URL(`/?cup=${cup}&lang=${lang}&embed=false`, baseUrl).href,
             },
         });
 

@@ -40,3 +40,5 @@ next-env.d.ts
 
 # migrations
 drizzle/*.sql
+# Sentry Config File
+.env.sentry-build-plugin

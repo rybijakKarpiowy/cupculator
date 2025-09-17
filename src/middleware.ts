@@ -4,7 +4,10 @@ import { baseUrl } from "@/app/baseUrl";
 import { NextURL } from 'next/dist/server/web/next-url';
 
 function setBaseParameters(url: NextURL, eu: boolean) {
-    url.searchParams.set("lang", eu ? "2" : "1")
+    const lang = url.searchParams.get("lang");
+    if (!lang || lang == "null" || lang == "undefined") {
+      url.searchParams.set("lang", eu ? "2" : "1")
+    }
     const cup = url.searchParams.get("cup");
     if (!cup || cup == "null" || cup == "undefined") {
       url.searchParams.set("cup", "null")
@@ -89,7 +92,7 @@ export async function middleware(request: NextRequest) {
     });
 
     if (!userRoleRes.ok) {
-        url.pathname = "/account/details?" + url.searchParams.toString()
+        url.pathname = "/account/details"
         return NextResponse.redirect(url);
     }
 
@@ -111,7 +114,7 @@ export async function middleware(request: NextRequest) {
     };
 
     if (!data || !data.role) {
-        url.pathname = "/account/details?" + url.searchParams.toString()
+        url.pathname = "/account/details"
         return NextResponse.redirect(url);
     }
 
@@ -123,7 +126,7 @@ export async function middleware(request: NextRequest) {
                     continue;
                 }
 
-                url.pathname = "/account/details?" + url.searchParams.toString()
+                url.pathname = "/account/details"
                 return NextResponse.redirect(url);
             }
         }

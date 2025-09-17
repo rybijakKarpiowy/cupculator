@@ -89,7 +89,7 @@ export async function middleware(request: NextRequest) {
     });
 
     if (!userRoleRes.ok) {
-        url.pathname = "/account/details"
+        url.pathname = "/account/details?" + url.searchParams.toString()
         return NextResponse.redirect(url);
     }
 
@@ -111,7 +111,7 @@ export async function middleware(request: NextRequest) {
     };
 
     if (!data || !data.role) {
-        url.pathname = "/account/details"
+        url.pathname = "/account/details?" + url.searchParams.toString()
         return NextResponse.redirect(url);
     }
 
@@ -123,7 +123,7 @@ export async function middleware(request: NextRequest) {
                     continue;
                 }
 
-                url.pathname = "/account/details"
+                url.pathname = "/account/details?" + url.searchParams.toString()
                 return NextResponse.redirect(url);
             }
         }

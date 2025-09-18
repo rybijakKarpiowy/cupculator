@@ -35,7 +35,7 @@ export default function Login() {
 		const { data, error } = await res.json();
 
 		if (error) {
-			console.log(error.message);
+			console.error(error.message);
 			toast.error(lang === "1" ? "Błędny email lub hasło" : "Incorrect email or password");
 			setLoading(false);
 			return;

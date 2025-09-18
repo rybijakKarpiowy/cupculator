@@ -55,7 +55,7 @@ export const POST = async (req: NextRequest) => {
         .catch((error) => ({ data: null, error }));
 
     if (error1) {
-        console.log(error1, "error1");
+        console.error(error1, "error1");
         return NextResponse.json(error1.message, { status: 500 });
     }
     if (!user) {
@@ -101,7 +101,7 @@ export const POST = async (req: NextRequest) => {
         .catch((error) => ({ data: null, error }));
 
     if (error2) {
-        console.log(error2, "error2");
+        console.error(error2, "error2");
         return NextResponse.json(error2.message, { status: 500 });
     }
     if (!cupDataRaw || cupDataRaw.length === 0) {
@@ -149,7 +149,7 @@ export const POST = async (req: NextRequest) => {
         .catch((error) => ({ data: null, error }))
         .catch((error) => ({ data: null, error }));
     if (error4) {
-        console.log(error4, "error4");
+        console.error(error4, "error4");
         return NextResponse.json(error4.message, { status: 500 });
     }
     if (!colorPricing) {

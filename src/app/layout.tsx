@@ -39,7 +39,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
 			.catch((error) => ({ data: null, error }));
 
 		if (error) {
-			console.log(error);
+			console.error(error);
 		}
 		if (data && data.length > 0) {
 			userRestrictedData = data[0];

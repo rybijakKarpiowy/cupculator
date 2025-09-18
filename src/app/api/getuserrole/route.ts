@@ -26,7 +26,7 @@ export const GET = async (req: NextRequest) => {
         .catch((error) => ({ data: null, error }));
 
     if (error || !data) {
-        console.log(error);
+        console.error(error);
         return NextResponse.json({ error }, { status: 500 });
     }
 

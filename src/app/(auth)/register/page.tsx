@@ -114,7 +114,7 @@ export default function Register() {
         });
 
         if (error) {
-            console.log(error);
+            console.error(error);
             if (error.status === 429) {
                 toast.error(
                     `${

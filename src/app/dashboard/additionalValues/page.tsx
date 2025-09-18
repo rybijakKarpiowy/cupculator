@@ -40,7 +40,7 @@ const AdditionalValuesPage = async ({
         .then((data) => ({ data, error: null }))
         .catch((e) => ({ data: null, error: e }));
     if (error) {
-        console.log(error);
+        console.error(error);
         redirect(`/?lang=${lang}&cup=${cup}&embed=${embed}`);
     }
 

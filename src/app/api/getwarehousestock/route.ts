@@ -32,7 +32,7 @@ export const GET = async (req: NextRequest) => {
         .catch((error) => ({ data: null, error }));
 
     if (!user || error) {
-        console.log(error);
+        console.error(error);
         return NextResponse.redirect(new URL("/login", baseUrl));
     }
 
@@ -63,7 +63,7 @@ export const GET = async (req: NextRequest) => {
         .catch((error) => ({ error, data: null }));
 
     if (!scrapedStock || error1) {
-        console.log(error1);
+        console.error(error1);
         return NextResponse.json({}, { status: 500 });
     }
 

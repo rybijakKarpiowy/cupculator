@@ -34,7 +34,7 @@ export default async function Home({
         .catch((error) => ({ data: null, error }));
 
     if (error1) {
-        console.log(error1);
+        console.error(error1);
         return (
             <div className="text-center text-2xl mt-72">
                 {lang === "1" ? "Wystąpił błąd" : "An error occured"}
@@ -54,7 +54,7 @@ export default async function Home({
         .then((data) => ({ data, error: null }))
         .catch((error) => ({ data: null, error }));
     if (error2) {
-        console.log(error2);
+        console.error(error2);
         return (
             <div className="text-center text-2xl mt-72">
                 {lang === "1" ? "Wystąpił błąd" : "An error occured"}
@@ -67,7 +67,7 @@ export default async function Home({
         .then((data) => ({ data, error: null } as { data: Restriction[]; error: null }))
         .catch((error) => ({ data: null, error }));
     if (error3 || !restrictions) {
-        console.log(error3);
+        console.error(error3);
         return (
             <div className="text-center text-2xl mt-72">
                 {lang === "1" ? "Wystąpił błąd" : "An error occured"}

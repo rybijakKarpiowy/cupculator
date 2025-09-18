@@ -32,7 +32,7 @@ export const POST = async (req: NextRequest) => {
         .catch((error) => ({ data: null, error }));
 
     if (error1) {
-        console.log(error1);
+        console.error(error1);
         return NextResponse.json(error1.message, { status: 500 });
     }
 
@@ -90,7 +90,7 @@ export const POST = async (req: NextRequest) => {
             .catch((err) => ({ error: err }));
 
         if (error2) {
-            console.log(error2);
+            console.error(error2);
             return NextResponse.json(error2.message, { status: 500 });
         }
 

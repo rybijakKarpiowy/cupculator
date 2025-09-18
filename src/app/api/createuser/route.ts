@@ -55,7 +55,7 @@ export const GET = async (req: NextRequest) => {
         .catch((error) => ({ data: null, error }));
 
     if (error3) {
-        console.log(error3);
+        console.error(error3);
         return NextResponse.json(error3.message, { status: 500 });
     }
 

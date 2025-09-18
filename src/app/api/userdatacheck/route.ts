@@ -25,7 +25,7 @@ export const GET = async (req: NextRequest) => {
     const embed = params.get("embed") == 'true' ? true : false;
 
     if (!data || error || data.length > 0) {
-        console.log(error);
+        console.error(error);
         return NextResponse.redirect(new URL(`/?cup=${cup}&lang=${lang}&embed=${embed}`, baseUrl));
     }
 

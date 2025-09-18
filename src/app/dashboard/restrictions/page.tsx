@@ -43,7 +43,7 @@ const RestrictionsPage = async ({ searchParams }: { searchParams?: { [key: strin
 		)
 		.catch((error) => ({ data: null, error }));
 	if (error2 || !restrictions) {
-		console.log(error2);
+		console.error(error2);
 		redirect(`/dashboard?lang=${lang}&cup=${cup}&embed=${embed}`);
 	}
 

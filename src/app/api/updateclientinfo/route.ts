@@ -106,7 +106,7 @@ export const POST = async (req: NextRequest) => {
         .catch((error) => ({ data: null, error }));
 
     if (error) {
-        console.log(error);
+        console.error(error);
         return NextResponse.json(error.message, { status: 500 });
     }
 

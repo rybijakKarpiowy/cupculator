@@ -8,6 +8,7 @@ import enImage from "@/../public/en.jpg";
 import homeImage from "@/../public/home.png";
 import logo20years from "@/../public/logo-20lat.png";
 import { createClient } from "@/database/supabase/client";
+import { useEffect } from "react";
 
 export const Navbar = ({ authUser, role }: { authUser: string | undefined; role: "User" | "Salesman" | "Admin" | undefined }) => {
 	const searchParams = useSearchParams();
@@ -26,7 +27,32 @@ export const Navbar = ({ authUser, role }: { authUser: string | undefined; role:
 		window.location.reload();
 	};
 
-	if (embed && role == "User") return <></>;
+	console.log({ embed, role });
+	if (embed && role == "User") {
+		return (
+			<>
+				<label
+					className="z-20 w-[33px] h-[33px] absolute cursor-pointer logout group-data-[embed=true]:right-[48px] -right-20 group-data-[embed=true]:top-8 top-[47px]"
+					onClick={() => handleLogout()}
+				>
+					<svg
+						xmlns="http://www.w3.org/2000/svg"
+						fill="none"
+						viewBox="0 0 24 24"
+						strokeWidth="1.5"
+						stroke="white"
+						className="w-6 h-6 relative top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2"
+					>
+						<path
+							strokeLinecap="round"
+							strokeLinejoin="round"
+							d="M15.75 9V5.25A2.25 2.25 0 0013.5 3h-6a2.25 2.25 0 00-2.25 2.25v13.5A2.25 2.25 0 007.5 21h6a2.25 2.25 0 002.25-2.25V15m3 0l3-3m0 0l-3-3m3 3H9"
+						/>
+					</svg>
+				</label>
+			</>
+		);
+	}
 
 	return (
 		<nav

@@ -159,6 +159,10 @@ export const PdfPage = ({
                     {new Date().toLocaleDateString("pl-PL", {timeZone: "Europe/Warsaw"})}
                 </Text>
             </View>
+            {/* className="text-6xl text-center pb-16 pt-8" */}
+            <Text style={{ ...styles.p, fontSize: 20, textAlign: "center", marginBottom: 16, marginTop: 8 }}>
+				{lang === "1" ? "Twoja oferta z rabatem" : "Your discounted offer"}
+            </Text>
             <View style={{ display: "flex", flexDirection: "column", marginLeft: 10 }}>
                 <Text style={{ ...styles.p, fontWeight: "bold" }}>
                     {lang === "1" ? "Specyfikacja" : "Specification"}

@@ -170,7 +170,7 @@ export const Calculator = ({
 					toast.warn(
 						lang === "1"
 							? "Minimalna ilość przy nadruku bezpośrednim to 72 sztuki"
-							: "Minimum amount for direct print is 72 pieces"
+							: "Minimum amount for direct print is 72 pieces",
 					);
 					return;
 				} else if (amount && amount < 216 && cupConfig.imprintColors > 1) {
@@ -180,7 +180,7 @@ export const Calculator = ({
 					toast.warn(
 						lang === "1"
 							? "Druk bezpośredni powyżej jednego koloru jest niedostępny dla zamówień poniżej 216 sztuk"
-							: "Direct print with more that one color is not available for orders of less than 216 cups"
+							: "Direct print with more that one color is not available for orders of less than 216 cups",
 					);
 					return;
 				}
@@ -240,13 +240,16 @@ export const Calculator = ({
 			toast.info(
 				lang === "1"
 					? "Aby uzyskać indywidualną wycenę skontaktuj się ze swoim opiekunem handlowym (dla ilości powyżej 5040szt.)"
-					: "In order to get a special offer contact your sales department advisor (for amounts over 5040 pcs)"
+					: "In order to get a special offer contact your sales department advisor (for amounts over 5040 pcs)",
 			);
 			return;
 		}
 	};
 	return (
 		<div className="flex flex-col items-center group-data-[embed=true]:pt-24 pt-12 pb-16">
+			<h1 className="text-6xl text-center pb-16 pt-8">
+				{lang === "1" ? "Twoja oferta z rabatem" : "Your discounted offer"}
+			</h1>
 			<div className="flex flex-row w-full items-center justify-center gap-8">
 				{selectedCup.icon ? (
 					<Image src={selectedCup.icon} alt={""} width={200} height={250} />
@@ -407,11 +410,11 @@ export const Calculator = ({
 													? setAmounts({
 															...amounts,
 															amount1: parseInt(e.target.value),
-													  })
+														})
 													: setAmounts({
 															...amounts,
 															amount1: null,
-													  });
+														});
 												amountAlerts(parseInt(e.target.value), 1);
 											}}
 											onKeyUp={(e) => {
@@ -430,11 +433,11 @@ export const Calculator = ({
 														? setAmounts({
 																...amounts,
 																amount2: parseInt(e.target.value),
-														  })
+															})
 														: setAmounts({
 																...amounts,
 																amount2: null,
-														  });
+															});
 													amountAlerts(parseInt(e.target.value), 2);
 												}}
 												onKeyUp={(e) => {
@@ -454,11 +457,11 @@ export const Calculator = ({
 														? setAmounts({
 																...amounts,
 																amount3: parseInt(e.target.value),
-														  })
+															})
 														: setAmounts({
 																...amounts,
 																amount3: null,
-														  });
+															});
 													amountAlerts(parseInt(e.target.value), 3);
 												}}
 												onKeyUp={(e) => {
@@ -754,7 +757,7 @@ export const Calculator = ({
 												].includes(e.target.value)
 											) {
 												const imprintColorsSelect = document.getElementById(
-													"imprintColors"
+													"imprintColors",
 												) as HTMLSelectElement | null;
 												if (imprintColorsSelect) {
 													imprintColorsSelect.value = "1";
@@ -852,7 +855,7 @@ export const Calculator = ({
 																{index.toString()}
 															</option>
 														)
-													)
+													),
 												)}
 											{[
 												"transfer_plus_1",
@@ -872,7 +875,7 @@ export const Calculator = ({
 																{index.toString()}
 															</option>
 														)
-													)
+													),
 												)}
 										</select>
 										{["digital_print", ""].includes(cupConfig.imprintType) && anyAdditionalPrint(cupConfig) && (
@@ -897,11 +900,11 @@ export const Calculator = ({
 													? setCupConfig({
 															...cupConfig,
 															nadruk_wewnatrz_na_sciance: 1,
-													  })
+														})
 													: setCupConfig({
 															...cupConfig,
 															nadruk_wewnatrz_na_sciance: 0,
-													  })
+														})
 											}
 											className="cursor-pointer"
 										/>
@@ -1143,11 +1146,11 @@ export const Calculator = ({
 													? setCupConfig({
 															...cupConfig,
 															nadruk_na_powloce_magicznej_1_kolor: true,
-													  })
+														})
 													: setCupConfig({
 															...cupConfig,
 															nadruk_na_powloce_magicznej_1_kolor: false,
-													  })
+														})
 											}
 											className="cursor-pointer"
 										/>
@@ -1220,11 +1223,11 @@ export const Calculator = ({
 													? setCupConfig({
 															...cupConfig,
 															naklejka_papierowa_z_nadrukiem: true,
-													  })
+														})
 													: setCupConfig({
 															...cupConfig,
 															naklejka_papierowa_z_nadrukiem: false,
-													  })
+														})
 											}
 											className="cursor-pointer"
 										/>
@@ -1243,11 +1246,11 @@ export const Calculator = ({
 													? setCupConfig({
 															...cupConfig,
 															wkladanie_ulotek_do_kubka: true,
-													  })
+														})
 													: setCupConfig({
 															...cupConfig,
 															naklejka_papierowa_z_nadrukiem: false,
-													  })
+														})
 											}
 											className="cursor-pointer"
 										/>
@@ -1373,7 +1376,7 @@ export const Calculator = ({
 								toast.error(
 									lang === "1"
 										? "Wystąpił błąd podczas kopiowania do schowka"
-										: "An error occurred while copying to clipboard"
+										: "An error occurred while copying to clipboard",
 								);
 							}}
 							disabled={!amounts.amount1 && !amounts.amount2 && !amounts.amount3}

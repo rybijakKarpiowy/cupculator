@@ -1,6 +1,6 @@
 MIT License
 
-Copyright (c) 2023 Antoni Jurga
+Copyright (c) 2023 Ashley Jurga
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

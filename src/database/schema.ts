@@ -180,7 +180,7 @@ export const scraped_warehouses = pgTable(
     },
     (table) => {
         return {
-            scrapedWarehousesPkey: primaryKey(table.provider, table.code_link),
+            scrapedWarehousesPkey: primaryKey(table.cup_id, table.provider)
         };
     }
 );

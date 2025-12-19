@@ -5,8 +5,15 @@
     {
       "idx": 0,
       "version": "5",
-      "when": 1696003809245,
-      "tag": "0000_misty_sleeper",
+      "when": 1766170239848,
+      "tag": "0000_abnormal_shadow_king",
+      "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "5",
+      "when": 1766170252801,
+      "tag": "0001_wild_tag",
       "breakpoints": true
     }
   ]

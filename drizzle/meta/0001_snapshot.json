@@ -1,8 +1,8 @@
 {
   "version": "5",
   "dialect": "pg",
-  "id": "949d312d-056b-4421-b992-96f15534dcec",
-  "prevId": "00000000-0000-0000-0000-000000000000",
+  "id": "06546f72-e957-402e-a8fb-68bc9d402f9d",
+  "prevId": "949d312d-056b-4421-b992-96f15534dcec",
   "tables": {
     "additional_values": {
       "name": "additional_values",
@@ -728,11 +728,11 @@
         }
       },
       "compositePrimaryKeys": {
-        "scraped_warehouses_provider_code_link": {
-          "name": "scraped_warehouses_provider_code_link",
+        "scraped_warehouses_cup_id_provider": {
+          "name": "scraped_warehouses_cup_id_provider",
           "columns": [
-            "provider",
-            "code_link"
+            "cup_id",
+            "provider"
           ]
         }
       },

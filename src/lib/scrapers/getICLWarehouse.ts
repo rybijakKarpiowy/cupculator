@@ -85,7 +85,14 @@ export const getICLWarehouse = async (cups: { cup_id: number; link: string }[]) 
 
     const pageCups = cupPagesBody.map((page) => {
         const body = page.body;
-        const amount = parseInt(body(".product section div div div div div div div div span b").first().text().replace(" ", "").trim()) || 0;
+        const amount =
+			parseInt(
+				body(".product div div div span b")
+					.first()
+					.text()
+					.replace(" ", "")
+					.trim()
+			) || 0;
 
         return { code_link: page.link, amount };
     });

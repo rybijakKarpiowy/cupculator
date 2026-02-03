@@ -147,7 +147,7 @@ export const PdfPage = ({
         <Page size="A4" style={styles.page}>
             <Image
                 src="/logo-20lat.png"
-                style={{ height: "63px", width: "200px", margin: "10 10 0 10" }}
+                style={{ height: "74px", width: "260px", padding: "10 10 0 10" }}
             />
             <View
                 style={{
